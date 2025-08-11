@@ -1,0 +1,283 @@
+/* ===== TAILWIND OVERRIDES - AGTECH V2.0 ===== */
+
+/* Force Inter font family */
+* {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+}
+
+/* Header improvements */
+.app-header,
+header.app-header {
+  background: linear-gradient(135deg, #16a34a 0%, #15803d 100%) !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+  border-bottom: none !important;
+}
+
+/* Sidebar improvements */
+.app-sidebar,
+aside.app-sidebar {
+  background: #ffffff !important;
+  border-right: 1px solid #e2e8f0 !important;
+  box-shadow: 2px 0 4px rgba(0, 0, 0, 0.05) !important;
+}
+
+/* Navigation links */
+.nav-link {
+  border-radius: 8px !important;
+  margin: 4px 12px !important;
+  padding: 12px 16px !important;
+  transition: all 0.2s ease !important;
+  color: #64748b !important;
+  font-weight: 500 !important;
+}
+
+.nav-link:hover {
+  background: #f1f5f9 !important;
+  color: #16a34a !important;
+  transform: translateX(4px) !important;
+}
+
+.nav-link.active {
+  background: #16a34a !important;
+  color: white !important;
+  box-shadow: 0 2px 4px rgba(22, 163, 74, 0.2) !important;
+}
+
+/* Cards improvements */
+.card,
+.bg-white {
+  background: #ffffff !important;
+  border-radius: 12px !important;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06) !important;
+  border: 1px solid #f1f5f9 !important;
+  transition: all 0.3s ease !important;
+}
+
+.card:hover,
+.bg-white:hover {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+  transform: translateY(-2px) !important;
+}
+
+/* Button improvements */
+.btn,
+button {
+  border-radius: 8px !important;
+  font-weight: 500 !important;
+  transition: all 0.2s ease !important;
+  min-height: 44px !important;
+  padding: 12px 24px !important;
+}
+
+.btn-primary,
+.bg-green-600 {
+  background: linear-gradient(135deg, #16a34a 0%, #15803d 100%) !important;
+  border: none !important;
+  color: white !important;
+}
+
+.btn-primary:hover,
+.bg-green-600:hover {
+  background: linear-gradient(135deg, #15803d 0%, #166534 100%) !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Text improvements */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 600 !important;
+  color: #1e293b !important;
+  line-height: 1.2 !important;
+}
+
+.text-gray-600 {
+  color: #64748b !important;
+}
+
+.text-gray-700 {
+  color: #475569 !important;
+}
+
+.text-gray-900 {
+  color: #1e293b !important;
+}
+
+/* Dashboard metrics */
+.metric-card {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%) !important;
+  border-radius: 12px !important;
+  padding: 24px !important;
+  border: 1px solid #e2e8f0 !important;
+}
+
+/* Weather widget */
+.weather-widget {
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%) !important;
+  color: white !important;
+  border-radius: 12px !important;
+}
+
+/* Alerts */
+.alert {
+  border-radius: 8px !important;
+  border-left: 4px solid !important;
+  padding: 16px !important;
+  margin-bottom: 16px !important;
+}
+
+.alert-success {
+  background: #f0fdf4 !important;
+  border-left-color: #16a34a !important;
+  color: #15803d !important;
+}
+
+.alert-warning {
+  background: #fefce8 !important;
+  border-left-color: #eab308 !important;
+  color: #a16207 !important;
+}
+
+.alert-error {
+  background: #fef2f2 !important;
+  border-left-color: #ef4444 !important;
+  color: #dc2626 !important;
+}
+
+/* Form improvements */
+input, select, textarea {
+  border-radius: 8px !important;
+  border: 1px solid #d1d5db !important;
+  padding: 12px 16px !important;
+  transition: all 0.2s ease !important;
+  font-size: 16px !important; /* Prevent zoom on iOS */
+}
+
+input:focus, select:focus, textarea:focus {
+  border-color: #16a34a !important;
+  box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.1) !important;
+  outline: none !important;
+}
+
+/* Mobile improvements */
+@media (max-width: 768px) {
+  .app-sidebar {
+    transform: translateX(-100%) !important;
+    position: fixed !important;
+    top: 60px !important;
+    left: 0 !important;
+    height: calc(100vh - 60px) !important;
+    z-index: 1000 !important;
+    width: 280px !important;
+  }
+  
+  .app-sidebar.open {
+    transform: translateX(0) !important;
+  }
+  
+  .app-content {
+    margin-left: 0 !important;
+    padding: 16px !important;
+  }
+  
+  .card {
+    margin-bottom: 16px !important;
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: #0f172a !important;
+    color: #f8fafc !important;
+  }
+  
+  .card, .bg-white {
+    background: #1e293b !important;
+    border-color: #334155 !important;
+    color: #f8fafc !important;
+  }
+  
+  .app-sidebar {
+    background: #1e293b !important;
+    border-color: #334155 !important;
+  }
+  
+  .nav-link {
+    color: #cbd5e1 !important;
+  }
+  
+  .nav-link:hover {
+    background: #334155 !important;
+    color: #16a34a !important;
+  }
+}
+
+/* Animation improvements */
+.fade-in {
+  animation: fadeIn 0.5s ease-out !important;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Loading states */
+.loading {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid #16a34a;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Utility overrides */
+.shadow {
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06) !important;
+}
+
+.shadow-lg {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+}
+
+.rounded {
+  border-radius: 8px !important;
+}
+
+.rounded-lg {
+  border-radius: 12px !important;
+}
+
+/* Specific dashboard improvements */
+.dashboard-grid {
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: 24px !important;
+  margin-bottom: 32px !important;
+}
+
+@media (min-width: 768px) {
+  .dashboard-grid {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)) !important;
+  }
+}
+
+@media (min-width: 1024px) {
+  .dashboard-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+}
+

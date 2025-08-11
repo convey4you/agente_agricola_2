@@ -150,11 +150,11 @@ html {
 }
 
 body {
-  font-family: var(--font-family-primary);
-  font-size: var(--font-size-base);
-  line-height: 1.6;
-  color: var(--color-neutral-900);
-  background-color: var(--color-neutral-50);
+  font-family: var(--font-family-primary) !important;
+  font-size: var(--font-size-base) !important;
+  line-height: 1.6 !important;
+  color: var(--color-neutral-900) !important;
+  background-color: var(--color-neutral-50) !important;
   touch-action: manipulation;
 }
 
@@ -187,14 +187,14 @@ p {
 }
 
 .app-header {
-  background: var(--color-primary-600);
-  color: white;
-  padding: var(--space-md);
-  position: sticky;
-  top: 0;
-  z-index: var(--z-sticky);
-  box-shadow: var(--shadow-md);
-  transition: all var(--transition-base);
+  background: var(--color-primary-600) !important;
+  color: white !important;
+  padding: var(--space-md) !important;
+  position: sticky !important;
+  top: 0 !important;
+  z-index: var(--z-sticky) !important;
+  box-shadow: var(--shadow-md) !important;
+  transition: all var(--transition-base) !important;
 }
 
 .app-main {
