@@ -1,0 +1,300 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - AgTech Portugal{% endblock %}
+
+{% block content %}
+<div class="dashboard-grid">
+    <!-- Card de Visão Geral -->
+    <div class="dashboard-card overview-card">
+        <div class="card-header">
+            <h2 class="card-title">Visão Geral</h2>
+            <button class="btn btn-secondary btn-sm" id="refresh-dashboard-btn">
+                <i class="fas fa-sync-alt"></i>
+            </button>
+        </div>
+        <div class="card-content">
+            <div class="metrics-grid">
+                <div class="metric-item">
+                    <span class="metric-value">{{ overview.active_cultures or 0 }}</span>
+                    <span class="metric-label">Culturas Ativas</span>
+                </div>
+                <div class="metric-item">
+                    <span class="metric-value">{{ overview.total_area or 0 }}m²</span>
+                    <span class="metric-label">Área Total</span>
+                </div>
+                <div class="metric-item">
+                    <span class="metric-value">€{{ "%.0f"|format(overview.projected_revenue or 0) }}</span>
+                    <span class="metric-label">Receita Prevista</span>
+                </div>
+                <div class="metric-item">
+                    <span class="metric-value">{{ (tasks|length) or 0 }}</span>
+                    <span class="metric-label">Tarefas Pendentes</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Card de Alertas Inteligentes -->
+    <div class="dashboard-card">
+        <div id="alerts-widget">
+            <!-- Widget de alertas será carregado dinamicamente -->
+            <div class="flex items-center justify-center py-8">
+                <div class="text-center">
+                    <i class="fas fa-spinner fa-spin text-gray-400 text-2xl mb-2"></i>
+                    <p class="text-gray-500 text-sm">Carregando alertas...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Card de Clima -->
+    <div class="dashboard-card weather-card">
+        <div class="card-header">
+            <h3 class="card-title">Clima</h3>
+            <div class="flex items-center space-x-2">
+                <button id="refresh-weather-btn" class="text-gray-400 hover:text-gray-600">
+                    <i class="fas fa-sync-alt text-xs"></i>
+                </button>
+            </div>
+        </div>
+        <div class="card-content" id="weather-info">
+            <div class="text-center py-4">
+                <i class="fas fa-spinner fa-spin text-gray-300 text-2xl mb-2"></i>
+                <p class="text-gray-500 text-sm">Carregando dados meteorológicos...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Card de Tarefas -->
+    <div class="dashboard-card">
+        <div class="card-header">
+            <h3 class="card-title">Próximas Tarefas</h3>
+            <a href="{{ url_for('culture.list_cultures') }}" class="text-sm text-green-600 hover:text-green-800">
+                Ver todas
+            </a>
+        </div>
+        <div class="card-content">
+            {% if tasks %}
+                <div class="space-y-3">
+                    {% for task in tasks[:6] %}
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded">
+                        <div class="flex items-center">
+                            <div class="w-3 h-3 rounded-full {{ 'bg-red-500' if task.priority == 'high' else 'bg-yellow-500' if task.priority == 'medium' else 'bg-green-500' }} mr-3"></div>
+                            <div>
+                                <div class="font-medium text-sm">{{ task.title }}</div>
+                                <div class="text-xs text-gray-500">
+                                    {{ task.scheduled_date.strftime('%d/%m/%Y') if task.scheduled_date else 'Sem data' }}
+                                </div>
+                            </div>
+                        </div>
+                        <button class="btn btn-sm btn-secondary">
+                            <i class="fas fa-check"></i>
+                        </button>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-gray-500 text-center">Nenhuma tarefa pendente</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Card de Culturas Ativas -->
+    <div class="dashboard-card cultures-card">
+        <div class="card-header">
+            <h3 class="card-title">Culturas Ativas</h3>
+            <a href="{{ url_for('culture.culture_wizard') }}" class="btn btn-primary btn-sm">
+                <i class="fas fa-plus"></i> Nova Cultura
+            </a>
+        </div>
+        <div class="card-content">
+            {% if cultures %}
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    {% for culture in cultures %}
+                    <div class="culture-item bg-gray-50 rounded-lg p-4">
+                        <div class="flex items-center justify-between mb-2">
+                            <h4 class="font-medium text-sm">{{ culture.nome }}</h4>
+                            <div class="w-3 h-3 rounded-full {{ 'bg-green-500' if culture.health_status == 'healthy' else 'bg-yellow-500' if culture.health_status == 'warning' else 'bg-red-500' }}"></div>
+                        </div>
+                        <div class="text-xs text-gray-600 space-y-1">
+                            <div>{{ culture.variedade or 'Variedade não especificada' }}</div>
+                            <div>{{ culture.area_plantada or 0 }}m²</div>
+                            {% if culture.data_plantio_formatted %}
+                            <div>Plantado: {{ culture.data_plantio_formatted }}</div>
+                            {% endif %}
+                        </div>
+                        {% if culture.next_activity %}
+                        <div class="mt-2 text-xs text-blue-600">
+                            Próx: {{ culture.next_activity.title }}
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="text-center py-8">
+                    <i class="fas fa-seedling text-gray-300 text-4xl mb-4"></i>
+                    <p class="text-gray-500 mb-4">Ainda não tem culturas registadas</p>
+                    <a href="{{ url_for('culture.list_cultures') }}" class="btn btn-primary">
+                        Adicionar primeira cultura
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Ações rápidas -->
+<div class="mt-8">
+    <div class="dashboard-card">
+        <div class="card-header">
+            <h3 class="card-title">Ações Rápidas</h3>
+        </div>
+        <div class="card-content">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <a href="{{ url_for('culture.get_culture', culture_id=1) }}" class="quick-action">
+                    <i class="fas fa-plus-circle text-green-600 text-2xl mb-2"></i>
+                    <span>Nova Cultura</span>
+                </a>
+                <a href="{{ url_for('agent.index') }}" class="quick-action">
+                    <i class="fas fa-robot text-blue-600 text-2xl mb-2"></i>
+                    <span>Perguntar ao IA</span>
+                </a>
+                <a href="{{ url_for('reports.index') }}" class="quick-action">
+                    <i class="fas fa-chart-line text-orange-600 text-2xl mb-2"></i>
+                    <span>Relatórios</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.quick-action {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1rem;
+    text-decoration: none;
+    color: #6b7280;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.quick-action:hover {
+    border-color: #10b981;
+    background-color: #f0fdf4;
+    transform: translateY(-2px);
+}
+
+.culture-item {
+    transition: transform 0.2s ease;
+}
+
+.culture-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    border-radius: 9999px;
+}
+
+.badge-warning {
+    background-color: #fef3c7;
+    color: #92400e;
+}
+
+/* Estilos para o card de clima */
+.weather-card .weather-content {
+    min-height: 200px;
+}
+
+.weather-card .weather-icon {
+    font-size: 2.5rem;
+    line-height: 1;
+}
+
+.weather-card .weather-detail {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.25rem 0;
+}
+
+.weather-card .weather-detail span:first-child {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+/* Responsividade do grid de clima */
+@media (max-width: 768px) {
+    .weather-card .weather-content .grid {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+    }
+}
+</style>
+{% endblock %}
+
+{% block scripts %}
+<!-- Script para dados climáticos -->
+<script src="{{ url_for('static', filename='js/dashboard-weather.js') }}"></script>
+
+<script nonce="{{ g.csp_nonce if g.csp_nonce else 'default' }}">
+async function refreshDashboard() {
+    try {
+        const response = await fetch('/api/dashboard');
+        if (response.ok) {
+            const data = await response.json();
+            updateDashboardData(data);
+            AgTech.Utils.showToast('Dashboard actualizado', 'success');
+        }
+    } catch (error) {
+        AgTech.Utils.showToast('Erro ao actualizar dashboard', 'error');
+    }
+}
+
+// Função para atualizar dados do dashboard
+function updateDashboardData(data) {
+    // Implementar atualização dos dados do dashboard
+    console.log('Dados atualizados:', data);
+}
+
+// Função para refresh do dashboard
+function refreshDashboard() {
+    console.log('🔄 Iniciando refresh do dashboard...');
+    // Aqui você pode implementar a lógica de refresh
+    // Por exemplo, recarregar widgets específicos ou toda a página
+    location.reload();
+}
+
+// Configurar event listeners quando DOM estiver carregado
+document.addEventListener('DOMContentLoaded', function() {
+    // Event listener para botão de refresh do dashboard
+    const refreshButton = document.querySelector('[data-action="refresh-dashboard"]');
+    if (refreshButton) {
+        refreshButton.addEventListener('click', function(e) {
+            e.preventDefault();
+            refreshDashboard();
+        });
+        console.log('✅ Event listener do refresh dashboard configurado');
+    }
+});
+
+// Definir token CSRF para requisições AJAX
+window.csrfToken = '{{ csrf_token() }}';
+console.log('🔒 Token CSRF definido no dashboard:', window.csrfToken ? 'SIM' : 'NÃO');
+</script>
+
+<!-- Script do Sistema de Alertas -->
+<script src="{{ url_for('static', filename='js/alerts-manager.js') }}"></script>
+{% endblock %}
