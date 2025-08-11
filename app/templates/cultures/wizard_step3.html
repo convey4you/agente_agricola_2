@@ -1,0 +1,787 @@
+{% extends "base.html" %}
+
+{% block title %}Nova Cultura - Passo 3{% endblock %}
+
+{% block head %}
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<meta name="cache-version" content="{{ cache_version }}">
+{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-green-50 to-green-100 flex items-center justify-center px-4">
+    <div class="max-w-2xl w-full">
+        <!-- Progress Bar -->
+        <div class="mb-8">
+            <div class="flex justify-between items-center mb-2">
+                <span class="text-sm font-medium text-green-600">Passo 3 de 5</span>
+                <span class="text-sm text-gray-500">60%</span>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-2">
+                <div class="bg-green-600 h-2 rounded-full" style="width: 60%"></div>
+            </div>
+        </div>
+
+        <!-- Calendar Setup Card -->
+        <div class="bg-white rounded-lg shadow-xl p-8">
+            <!-- Header -->
+            <div class="text-center mb-6">
+                <div class="mx-auto h-16 w-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
+                    <svg class="h-8 w-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                    </svg>
+                </div>
+                <h1 class="text-2xl font-bold text-gray-900 mb-2">
+                    Configure o Calendário 📅
+                </h1>
+                <p class="text-gray-600">
+                    Defina as datas de plantio e colheita da sua cultura
+                </p>
+            </div>
+
+            <!-- Resumo das Etapas Anteriores -->
+            <div id="resumo-anterior" class="bg-gray-50 rounded-lg p-4 mb-6">
+                <h3 class="font-medium text-gray-900 mb-2">📋 Resumo do Planejamento:</h3>
+                <div id="resumo-conteudo" class="text-sm text-gray-600">
+                    Carregando...
+                </div>
+            </div>
+
+            <!-- Form -->
+            <form id="wizardStep3Form">
+                <div class="space-y-6">
+                    <!-- Data de Plantio -->
+                    <div>
+                        <label for="data_plantio" class="block text-sm font-medium text-gray-700 mb-2">
+                            Data de Plantio *
+                        </label>
+                        <input type="date" id="data_plantio" name="data_plantio" required
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                        <p class="mt-1 text-xs text-gray-500">
+                            Quando você pretende plantar esta cultura
+                        </p>
+                    </div>
+
+                    <!-- Ciclo da Cultura (Automático) -->
+                    <div>
+                        <label for="ciclo_dias" class="block text-sm font-medium text-gray-700 mb-2">
+                            Ciclo da Cultura (dias)
+                        </label>
+                        <div class="flex">
+                            <input type="number" id="ciclo_dias" name="ciclo_dias"
+                                   min="1" max="365" readonly
+                                   class="flex-1 px-3 py-2 border border-gray-300 rounded-l-md bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                                   placeholder="Será calculado automaticamente">
+                            <span class="inline-flex items-center px-3 py-2 border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm rounded-r-md">
+                                dias
+                            </span>
+                        </div>
+                        <p class="mt-1 text-xs text-gray-500">
+                            📊 Calculado automaticamente com base nas características específicas da cultura
+                        </p>
+                        
+                        <!-- Informação sobre o ciclo específico -->
+                        <div id="info-ciclo" class="mt-2 hidden bg-green-50 border border-green-200 rounded-lg p-3">
+                            <div class="text-sm text-green-800">
+                                🎯 <span id="ciclo-info-texto">Ciclo específico desta cultura será exibido aqui</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Data de Colheita Prevista -->
+                    <div>
+                        <label for="data_colheita_prevista" class="block text-sm font-medium text-gray-700 mb-2">
+                            Data de Colheita Prevista
+                        </label>
+                        <input type="date" id="data_colheita_prevista" name="data_colheita_prevista"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                               readonly>
+                        <p class="mt-1 text-xs text-gray-500">
+                            Calculada automaticamente com base na data de plantio e ciclo
+                        </p>
+                    </div>
+
+                    <!-- Condições Climáticas Automáticas -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-3">
+                            Condições Climáticas
+                        </label>
+                        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                            <div class="text-sm text-blue-800">
+                                📊 As condições climáticas serão calculadas automaticamente com base na data de plantio selecionada e nas características específicas da cultura.
+                            </div>
+                        </div>
+                        
+                        <!-- Campos ocultos para armazenar os dados calculados -->
+                        <input type="hidden" id="estacao_plantio" name="estacao_plantio">
+                        <input type="hidden" id="temp_min" name="temp_min">
+                        <input type="hidden" id="temp_max" name="temp_max">
+                    </div>
+
+                    <!-- Fases da Cultura -->
+                    <div class="border-t pt-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-3">
+                            Fases Principais do Cultivo
+                        </label>
+                        <div id="fases-cultivo" class="space-y-3">
+                            <!-- As fases serão calculadas automaticamente -->
+                        </div>
+                    </div>
+
+                    <!-- Alertas e Recomendações -->
+                    <div id="alertas-calendario" class="hidden bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                        <h4 class="font-medium text-yellow-900 mb-2">⚠️ Alertas</h4>
+                        <div id="alertas-conteudo"></div>
+                    </div>
+                </div>
+
+                <!-- Navigation Buttons -->
+                <div class="flex justify-between mt-8">
+                    <a href="{{ url_for('culture.culture_wizard', step='2') }}" 
+                       class="px-6 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition duration-200">
+                        Voltar
+                    </a>
+                    <button type="submit"
+                            class="px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition duration-200">
+                        Próximo: Recursos
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Calendar Preview -->
+        <div class="mt-6">
+            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <h4 class="font-medium text-blue-900 mb-2">📈 Cronograma Visual</h4>
+                <div id="cronograma-visual" class="text-sm text-blue-800">
+                    Selecione uma data de plantio para ver o cronograma completo
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script nonce="{{ g.csp_nonce }}">
+// Cache busting version: {{ cache_version }}
+// Force browser refresh - wizard step 3 functionality
+let dadosCultura = {};
+
+// Sugestões de ciclo por tipo de cultura
+const ciclosPorTipo = {
+    'hortalica': [30, 45, 60, 75, 90],
+    'arvore_frutifera': [365, 730, 1095],
+    'erva_aromatica': [45, 60, 75],
+    'cereal': [90, 120, 150],
+    'leguminosa': [60, 75, 90, 120],
+    'tuberculo': [90, 120, 150]
+};
+
+// Temperaturas ideais por clima
+const temperaturasPorClima = {
+    'Temperado': { min: 15, max: 25 },
+    'Mediterrânico': { min: 18, max: 28 },
+    'Fresco': { min: 10, max: 20 },
+    'Quente e húmido': { min: 20, max: 30 },
+    'Quente e seco': { min: 22, max: 32 },
+    'Seco e ensolarado': { min: 20, max: 30 },
+    'Húmido e fresco': { min: 12, max: 22 },
+    'Frio e seco': { min: 5, max: 15 }
+};
+
+// Temperaturas sazonais para Portugal (hemisfério norte)
+const temperaturasPortugalPorEstacao = {
+    'primavera': { min: 12, max: 20, descricao: 'Primavera em Portugal' },
+    'verao': { min: 20, max: 30, descricao: 'Verão em Portugal' },
+    'outono': { min: 15, max: 22, descricao: 'Outono em Portugal' },
+    'inverno': { min: 5, max: 15, descricao: 'Inverno em Portugal' }
+};
+
+// Carregar dados das etapas anteriores
+async function carregarResumo() {
+    try {
+        // Tentar carregar dados do servidor primeiro
+        const response = await fetch('{{ url_for("culture.get_wizard_data") }}');
+        const result = await response.json();
+        let data = result.data || {};
+        
+        console.log('DEBUG: Dados do servidor:', data);
+        
+        // FALLBACK: Se servidor não tem dados, tentar localStorage
+        if (!data.nome) {
+            console.log('DEBUG: Dados do servidor vazios, tentando localStorage...');
+            const localData = localStorage.getItem('culture_wizard_backup');
+            if (localData) {
+                try {
+                    data = JSON.parse(localData);
+                    console.log('DEBUG: Dados recuperados do localStorage:', data);
+                } catch (e) {
+                    console.error('Erro ao parser localStorage:', e);
+                }
+            }
+        }
+        
+        dadosCultura = data;
+        
+        if (data.nome) {
+            const resumoDiv = document.getElementById('resumo-conteudo');
+            resumoDiv.innerHTML = `
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <p><strong>Cultura:</strong> ${data.nome}</p>
+                        <p><strong>Tipo:</strong> ${data.tipo || 'Não especificado'}</p>
+                        ${data.variedade ? `<p><strong>Variedade:</strong> ${data.variedade}</p>` : ''}
+                    </div>
+                    <div>
+                        <p><strong>Área:</strong> ${data.area_plantada ? data.area_plantada + ' m²' : 'Não especificada'}</p>
+                        <p><strong>Localização:</strong> ${data.localizacao || 'Não especificada'}</p>
+                    </div>
+                </div>
+            `;
+            
+            // Primeiro tentar usar dados específicos da cultura do sessionStorage
+            await aplicarDadosEspecificosCulturaAvancado(data.nome, data.tipo);
+            
+            // Preencher temperaturas ideais baseadas no clima da cultura
+            preencherTemperaturasIdeais(data);
+        } else {
+            // Se ainda não temos dados, mostrar erro mais detalhado
+            console.error('DEBUG: Nenhum dado encontrado nem no servidor nem no localStorage');
+            const resumoDiv = document.getElementById('resumo-conteudo');
+            resumoDiv.innerHTML = `
+                <div class="text-red-600">
+                    <p><strong>⚠️ Dados não encontrados</strong></p>
+                    <p class="text-sm">Por favor, volte aos passos anteriores para inserir os dados.</p>
+                </div>
+            `;
+        }
+    } catch (error) {
+        console.error('Erro ao carregar resumo:', error);
+        
+        // Fallback final: tentar localStorage
+        const localData = localStorage.getItem('culture_wizard_backup');
+        if (localData) {
+            try {
+                const data = JSON.parse(localData);
+                dadosCultura = data;
+                console.log('DEBUG: Usando dados de emergência do localStorage');
+                // Repetir lógica de renderização
+                if (data.nome) {
+                    const resumoDiv = document.getElementById('resumo-conteudo');
+                    resumoDiv.innerHTML = `
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <p><strong>Cultura:</strong> ${data.nome} (backup)</p>
+                                <p><strong>Tipo:</strong> ${data.tipo || 'Não especificado'}</p>
+                            </div>
+                            <div>
+                                <p><strong>Área:</strong> ${data.area_plantada ? data.area_plantada + ' m²' : 'Não especificada'}</p>
+                                <p><strong>Localização:</strong> ${data.localizacao || 'Não especificada'}</p>
+                            </div>
+                        </div>
+                    `;
+                }
+            } catch (e) {
+                console.error('Erro no fallback localStorage:', e);
+            }
+        }
+    }
+}
+
+function preencherTemperaturasIdeais(data) {
+    console.log('DEBUG: Calculando temperaturas ideais automaticamente para:', data.nome);
+    
+    // IMPLEMENTAÇÃO HÍBRIDA: Calcular condições ideais da cultura automaticamente
+    let temperaturaIdeal = null;
+    
+    // Primeiro, tentar usar o clima ideal específico da cultura
+    if (data.clima_ideal && temperaturasPorClima[data.clima_ideal]) {
+        temperaturaIdeal = temperaturasPorClima[data.clima_ideal];
+        console.log(`DEBUG: Usando clima específico '${data.clima_ideal}' - Temp ideal: ${temperaturaIdeal.min}°C - ${temperaturaIdeal.max}°C`);
+    } else {
+        // Fallback baseado no tipo de cultura se não tiver clima específico
+        const temperaturasPadrao = {
+            'Hortícola': { min: 15, max: 25 },
+            'Aromática': { min: 18, max: 28 },
+            'Cereal': { min: 12, max: 22 },
+            'Leguminosa': { min: 15, max: 25 }
+        };
+        
+        if (data.categoria && temperaturasPadrao[data.categoria]) {
+            temperaturaIdeal = temperaturasPadrao[data.categoria];
+            console.log(`DEBUG: Usando categoria '${data.categoria}' - Temp ideal: ${temperaturaIdeal.min}°C - ${temperaturaIdeal.max}°C`);
+        }
+    }
+    
+    // Salvar as temperaturas ideais nos campos ocultos
+    if (temperaturaIdeal) {
+        document.getElementById('temp_min').value = temperaturaIdeal.min;
+        document.getElementById('temp_max').value = temperaturaIdeal.max;
+        console.log(`DEBUG: Temperaturas ideais calculadas e salvas: ${temperaturaIdeal.min}°C - ${temperaturaIdeal.max}°C`);
+    } else {
+        console.log('DEBUG: Nenhuma informação de temperatura ideal encontrada');
+    }
+}
+
+function mostrarComparacaoClimatica(dataPlantio) {
+    // Esta função será chamada quando uma data de plantio for selecionada
+    if (!dataPlantio) return;
+    
+    const estacao = calcularEstacao(new Date(dataPlantio));
+    const tempEsperada = temperaturasPortugalPorEstacao[estacao];
+    const tempIdeal = {
+        min: parseInt(document.getElementById('temp_min').value) || 0,
+        max: parseInt(document.getElementById('temp_max').value) || 0
+    };
+    
+    // Criar/atualizar div de comparação climática
+    let comparacaoDiv = document.getElementById('comparacao-climatica');
+    if (!comparacaoDiv) {
+        // Criar a div se não existir
+        comparacaoDiv = document.createElement('div');
+        comparacaoDiv.id = 'comparacao-climatica';
+        comparacaoDiv.className = 'mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg';
+        
+        // Inserir a análise climática de forma simples
+        const formContainer = document.querySelector('#wizardStep3Form .space-y-6');
+        if (formContainer) {
+            // Encontrar a div das condições climáticas e inserir a análise após ela
+            const condicoesDiv = formContainer.children[3]; // A 4ª div (índice 3) é a das condições climáticas
+            if (condicoesDiv) {
+                // Anexar no final da div de condições climáticas
+                condicoesDiv.appendChild(comparacaoDiv);
+            } else {
+                // Fallback: anexar no final do container
+                formContainer.appendChild(comparacaoDiv);
+            }
+        }
+    }
+    
+    let alertaClasse = 'text-blue-800';
+    let alertaIcone = '📊';
+    let alertaMensagem = '';
+    
+    // Verificar compatibilidade de temperatura (com sobreposição)
+    const tempEsperadaMin = tempEsperada.min;
+    const tempEsperadaMax = tempEsperada.max;
+    const tempIdealMin = tempIdeal.min;
+    const tempIdealMax = tempIdeal.max;
+    
+    // Verificar se há sobreposição nas faixas de temperatura
+    const temSobreposicao = (tempEsperadaMin <= tempIdealMax) && (tempEsperadaMax >= tempIdealMin);
+    const sobreposicaoSignificativa = temSobreposicao && 
+        (Math.min(tempEsperadaMax, tempIdealMax) - Math.max(tempEsperadaMin, tempIdealMin) >= 5);
+    
+    const compativel = sobreposicaoSignificativa;
+    
+    console.log(`DEBUG: Verificando compatibilidade - Ideal: ${tempIdealMin}-${tempIdealMax}°C, Esperada: ${tempEsperadaMin}-${tempEsperadaMax}°C`);
+    console.log(`DEBUG: Tem sobreposição: ${temSobreposicao}, Sobreposição significativa: ${sobreposicaoSignificativa}, Compatível: ${compativel}`);
+    
+    if (compativel) {
+        alertaClasse = 'text-green-800';
+        alertaIcone = '✅';
+        alertaMensagem = 'Condições climáticas favoráveis para o plantio nesta época!';
+    } else if (temSobreposicao) {
+        alertaClasse = 'text-amber-800';
+        alertaIcone = '⚠️';
+        alertaMensagem = 'Condições climáticas parcialmente adequadas. Monitore as condições de perto.';
+    } else {
+        alertaClasse = 'text-red-800';
+        alertaIcone = '❌';
+        if (tempEsperadaMax < tempIdealMin) {
+            alertaMensagem = 'Temperaturas muito baixas. Considere estufa ou proteção térmica.';
+        } else if (tempEsperadaMin > tempIdealMax) {
+            alertaMensagem = 'Temperaturas muito altas. Considere sombreamento e irrigação frequente.';
+        } else {
+            alertaMensagem = 'Condições climáticas desafiadoras. Planeje medidas de proteção.';
+        }
+    }
+    
+    comparacaoDiv.innerHTML = `
+        <h4 class="font-medium ${alertaClasse} mb-3">${alertaIcone} Análise Climática</h4>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+            <div class="bg-white p-3 rounded border">
+                <div class="font-medium text-gray-900 mb-1">🎯 Temperatura Ideal (Cultura)</div>
+                <div class="text-gray-700">${tempIdealMin}°C - ${tempIdealMax}°C</div>
+                <div class="text-xs text-gray-500 mt-1">Condições ótimas para ${dadosCultura.nome || 'esta cultura'}</div>
+            </div>
+            <div class="bg-white p-3 rounded border">
+                <div class="font-medium text-gray-900 mb-1">🌡️ Temperatura Esperada (${estacao.charAt(0).toUpperCase() + estacao.slice(1)})</div>
+                <div class="text-gray-700">${tempEsperadaMin}°C - ${tempEsperadaMax}°C</div>
+                <div class="text-xs text-gray-500 mt-1">${tempEsperada.descricao}</div>
+            </div>
+        </div>
+        <div class="mt-3 p-2 bg-white rounded border-l-4 ${compativel ? 'border-green-400' : 'border-amber-400'}">
+            <div class="text-sm ${alertaClasse}">${alertaMensagem}</div>
+        </div>
+    `;
+    
+    console.log(`DEBUG: Comparação climática - Ideal: ${tempIdealMin}-${tempIdealMax}°C, Esperada (${estacao}): ${tempEsperadaMin}-${tempEsperadaMax}°C, Compatível: ${compativel}`);
+}
+
+function aplicarDadosEspecificosCultura() {
+    // Recuperar dados específicos da cultura armazenados no passo 1
+    const cicloEspecifico = sessionStorage.getItem('cultura_ciclo_dias');
+    
+    console.log('DEBUG: Verificando dados salvos no sessionStorage');
+    console.log('DEBUG: cultura_ciclo_dias =', cicloEspecifico);
+    
+    if (cicloEspecifico) {
+        // Extrair apenas o número dos dias
+        const cicloNumero = parseInt(cicloEspecifico.replace(/\D/g, ''));
+        console.log('DEBUG: Ciclo numérico extraído =', cicloNumero);
+        
+        if (cicloNumero > 0) {
+            document.getElementById('ciclo_dias').value = cicloNumero;
+            console.log(`Aplicando ciclo específico da cultura: ${cicloNumero} dias`);
+            return true;
+        }
+    } else {
+        console.log('DEBUG: Nenhum ciclo específico encontrado no sessionStorage');
+    }
+    return false;
+}
+
+async function aplicarDadosEspecificosCulturaAvancado(nomeCultura, tipoCultura) {
+    console.log('DEBUG: Iniciando busca avançada para:', nomeCultura);
+    
+    // Primeiro tentar sessionStorage
+    if (aplicarDadosEspecificosCultura()) {
+        console.log('DEBUG: Dados encontrados no sessionStorage');
+        mostrarSugestoesCiclo(tipoCultura);
+        return;
+    }
+    
+    // Se não tiver no sessionStorage, tentar buscar na API
+    if (nomeCultura) {
+        console.log('DEBUG: Tentando buscar dados via API para:', nomeCultura);
+        try {
+            const response = await fetch('/cultures/api/verificar', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ nome: nomeCultura })
+            });
+            
+            if (response.ok) {
+                const data = await response.json();
+                console.log('DEBUG: Resposta da API:', data);
+                console.log('DEBUG: data.dados_sugeridos:', data.dados_sugeridos);
+                
+                if (data.dados_sugeridos) {
+                    console.log('DEBUG: Campos disponíveis em dados_sugeridos:', Object.keys(data.dados_sugeridos));
+                    console.log('DEBUG: data.dados_sugeridos.ciclo_dias:', data.dados_sugeridos.ciclo_dias);
+                    console.log('DEBUG: data.dados_sugeridos.tempo_crescimento:', data.dados_sugeridos.tempo_crescimento);
+                }
+                
+                // Verificar se tem tempo_crescimento (que é o campo correto da API)
+                if (data.success && data.dados_sugeridos && data.dados_sugeridos.tempo_crescimento) {
+                    const tempoValor = data.dados_sugeridos.tempo_crescimento;
+                    console.log(`DEBUG: tempo_crescimento bruto:`, tempoValor, typeof tempoValor);
+                    
+                    let cicloNumero;
+                    if (typeof tempoValor === 'number') {
+                        cicloNumero = tempoValor;
+                    } else if (typeof tempoValor === 'string') {
+                        cicloNumero = parseInt(tempoValor.replace(/\D/g, ''));
+                    } else {
+                        cicloNumero = parseInt(tempoValor);
+                    }
+                    
+                    console.log(`DEBUG: tempo_crescimento processado: ${cicloNumero} dias`);
+                    
+                    if (cicloNumero > 0) {
+                        document.getElementById('ciclo_dias').value = cicloNumero;
+                        console.log(`Aplicando ciclo da API: ${cicloNumero} dias`);
+                        
+                        // Salvar no sessionStorage para próxima vez
+                        sessionStorage.setItem('cultura_ciclo_dias', `${cicloNumero} dias`);
+                        
+                        // IMPORTANTE: Chamar mostrarSugestoesCiclo APÓS salvar os dados
+                        console.log('DEBUG: Chamando mostrarSugestoesCiclo após salvar dados');
+                        mostrarSugestoesCiclo(tipoCultura);
+                        return;
+                    }
+                }
+            }
+        } catch (error) {
+            console.log('DEBUG: Erro ao buscar dados via API:', error);
+        }
+    }
+    
+    // Se chegou aqui, não encontrou dados específicos - usar fallback
+    console.log('DEBUG: Nenhum dado específico encontrado, usando fallback');
+    mostrarSugestoesCiclo(tipoCultura);
+}
+
+function mostrarSugestoesCiclo(tipo) {
+    console.log('🔍 mostrarSugestoesCiclo - tipo:', tipo);
+    
+    // Verificar dados específicos da cultura primeiro
+    const dadosEspecificos = sessionStorage.getItem('cultura_ciclo_dias');
+    console.log('📊 Dados específicos encontrados:', dadosEspecificos);
+    
+    const infoCicloDiv = document.getElementById('info-ciclo');
+    const cicloInfoTexto = document.getElementById('ciclo-info-texto');
+    
+    if (dadosEspecificos && dadosEspecificos !== 'null' && dadosEspecificos.trim() !== '') {
+        // MOSTRAR INFORMAÇÃO SOBRE O CICLO ESPECÍFICO
+        const dias = parseInt(dadosEspecificos.replace(/\D/g, ''));
+        console.log('✅ Usando ciclo específico:', dias, 'dias');
+        
+        if (dias > 0) {
+            // Aplicar o valor no campo
+            document.getElementById('ciclo_dias').value = dias;
+            
+            // Mostrar informação explicativa
+            if (cicloInfoTexto) {
+                cicloInfoTexto.textContent = `Ciclo específico de ${dias} dias baseado nas características do ${dadosCultura.nome || 'desta cultura'}`;
+            }
+            
+            // Mostrar a div de informação
+            if (infoCicloDiv) {
+                infoCicloDiv.classList.remove('hidden');
+            }
+            
+            console.log('✅ Ciclo específico aplicado e exibido');
+            return;
+        }
+    }
+    
+    // FALLBACK: Mostrar informação sobre sugestões genéricas
+    console.log('💡 Usando sugestões genéricas para tipo', tipo);
+    
+    // Aplicar um valor padrão baseado no tipo
+    const ciclosDefault = {
+        'hortalica': 75,
+        'arvore_frutifera': 365,
+        'erva_aromatica': 60,
+        'cereal': 120,
+        'leguminosa': 90,
+        'tuberculo': 120
+    };
+    
+    const cicloDefault = ciclosDefault[tipo] || 75;
+    document.getElementById('ciclo_dias').value = cicloDefault;
+    
+    if (cicloInfoTexto) {
+        cicloInfoTexto.textContent = `Ciclo estimado de ${cicloDefault} dias baseado no tipo de cultura (${tipo})`;
+    }
+    
+    // Mostrar a div de informação
+    if (infoCicloDiv) {
+        infoCicloDiv.classList.remove('hidden');
+    }
+    
+    console.log('💡 Ciclo genérico aplicado:', cicloDefault, 'dias');
+}
+
+function calcularDataColheita() {
+    const dataPlantio = document.getElementById('data_plantio').value;
+    const cicloDias = parseInt(document.getElementById('ciclo_dias').value);
+    
+    if (dataPlantio && cicloDias > 0) {
+        const plantio = new Date(dataPlantio);
+        const colheita = new Date(plantio);
+        colheita.setDate(colheita.getDate() + cicloDias);
+        
+        document.getElementById('data_colheita_prevista').value = colheita.toISOString().split('T')[0];
+        
+        // Calcular estação
+        const estacao = calcularEstacao(plantio);
+        
+        // Mostrar fases
+        mostrarFasesCultivo(plantio, colheita, cicloDias);
+        
+        // Mostrar cronograma visual
+        mostrarCronogramaVisual(plantio, colheita, cicloDias);
+        
+        // Verificar alertas
+        verificarAlertas(plantio, colheita);
+        
+        // NOVA FUNCIONALIDADE: Mostrar comparação climática híbrida
+        mostrarComparacaoClimatica(dataPlantio);
+    }
+}
+
+function calcularEstacao(data) {
+    const mes = data.getMonth() + 1; // Janeiro = 1
+    let estacao;
+    
+    // Estações para Portugal (Hemisfério Norte)
+    if (mes >= 12 || mes <= 2) {
+        estacao = 'inverno';  // Dezembro, Janeiro, Fevereiro
+    } else if (mes >= 3 && mes <= 5) {
+        estacao = 'primavera'; // Março, Abril, Maio
+    } else if (mes >= 6 && mes <= 8) {
+        estacao = 'verao';     // Junho, Julho, Agosto
+    } else {
+        estacao = 'outono';    // Setembro, Outubro, Novembro
+    }
+    
+    console.log(`DEBUG: Mês ${mes} -> Estação: ${estacao}`);
+    document.getElementById('estacao_plantio').value = estacao;
+    
+    return estacao; // Retornar para uso em outras funções
+}
+
+function mostrarFasesCultivo(plantio, colheita, cicloDias) {
+    const fasesDiv = document.getElementById('fases-cultivo');
+    
+    // Calcular fases aproximadas
+    const germinacao = new Date(plantio);
+    germinacao.setDate(germinacao.getDate() + Math.floor(cicloDias * 0.1));
+    
+    const crescimento = new Date(plantio);
+    crescimento.setDate(crescimento.getDate() + Math.floor(cicloDias * 0.4));
+    
+    const floracao = new Date(plantio);
+    floracao.setDate(floracao.getDate() + Math.floor(cicloDias * 0.7));
+    
+    fasesDiv.innerHTML = `
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+            <div class="bg-green-50 border border-green-200 rounded-lg p-3">
+                <div class="font-medium text-green-800 text-sm">🌱 Germinação</div>
+                <div class="text-xs text-green-600">${formatarData(germinacao)}</div>
+            </div>
+            <div class="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                <div class="font-medium text-blue-800 text-sm">🌿 Crescimento</div>
+                <div class="text-xs text-blue-600">${formatarData(crescimento)}</div>
+            </div>
+            <div class="bg-yellow-50 border border-blue-200 rounded-lg p-3">
+                <div class="font-medium text-yellow-800 text-sm">🌸 Floração</div>
+                <div class="text-xs text-yellow-600">${formatarData(floracao)}</div>
+            </div>
+            <div class="bg-orange-50 border border-orange-200 rounded-lg p-3">
+                <div class="font-medium text-orange-800 text-sm">🥕 Colheita</div>
+                <div class="text-xs text-orange-600">${formatarData(colheita)}</div>
+            </div>
+        </div>
+    `;
+}
+
+function mostrarCronogramaVisual(plantio, colheita, cicloDias) {
+    const cronogramaDiv = document.getElementById('cronograma-visual');
+    
+    const hoje = new Date();
+    const diasAteColheita = Math.ceil((colheita - hoje) / (1000 * 60 * 60 * 24));
+    
+    cronogramaDiv.innerHTML = `
+        <div class="flex items-center justify-between">
+            <div class="text-center">
+                <div class="font-medium">Plantio</div>
+                <div class="text-xs">${formatarData(plantio)}</div>
+            </div>
+            <div class="flex-1 mx-4">
+                <div class="bg-gradient-to-r from-green-200 via-blue-200 to-orange-200 h-2 rounded-full"></div>
+                <div class="text-center text-xs mt-1">${cicloDias} dias</div>
+            </div>
+            <div class="text-center">
+                <div class="font-medium">Colheita</div>
+                <div class="text-xs">${formatarData(colheita)}</div>
+            </div>
+        </div>
+        <div class="text-center mt-2 text-xs">
+            ${diasAteColheita > 0 ? `⏰ Faltam ${diasAteColheita} dias para a colheita` : '🎉 Período de colheita!'}
+        </div>
+    `;
+}
+
+function verificarAlertas(plantio, colheita) {
+    const alertas = [];
+    const hoje = new Date();
+    
+    // Verificar alertas por estação de plantio
+    const mesPlantio = plantio.getMonth() + 1;
+    const estacaoPlantio = calcularEstacao(plantio);
+    
+    // Alertas específicos por estação e tipo de cultura
+    if (estacaoPlantio === 'inverno' && dadosCultura.categoria === 'Hortícola') {
+        alertas.push('Plantio no inverno pode reduzir o crescimento de hortaliças');
+    } else if (estacaoPlantio === 'verao' && dadosCultura.categoria === 'Hortícola') {
+        alertas.push('Plantio no verão requer irrigação frequente e proteção contra calor excessivo');
+    } else if (estacaoPlantio === 'outono' && dadosCultura.categoria === 'Cereal') {
+        alertas.push('Plantio no outono é ideal para cereais de inverno');
+    }
+    
+    // Verificar se colheita é em período chuvoso (verão em Portugal)
+    const mesColheita = colheita.getMonth() + 1;
+    const estacaoColheita = calcularEstacao(colheita);
+    if (estacaoColheita === 'verao') {
+        alertas.push('Colheita no verão - atenção à conservação dos produtos e proteção contra calor');
+    } else if (estacaoColheita === 'inverno') {
+        alertas.push('Colheita no inverno - proteja contra geadas e excesso de humidade');
+    }
+    
+    if (alertas.length > 0) {
+        const alertasDiv = document.getElementById('alertas-calendario');
+        const conteudoDiv = document.getElementById('alertas-conteudo');
+        
+        conteudoDiv.innerHTML = alertas.map(alerta => 
+            `<p class="text-sm text-yellow-800">• ${alerta}</p>`
+        ).join('');
+        
+        alertasDiv.classList.remove('hidden');
+    }
+}
+
+function formatarData(data) {
+    return data.toLocaleDateString('pt-BR');
+}
+
+// Definir data mínima como hoje
+document.addEventListener('DOMContentLoaded', function() {
+    const hoje = new Date().toISOString().split('T')[0];
+    document.getElementById('data_plantio').min = hoje;
+    
+    // Adicionar event listeners para os campos
+    document.getElementById('data_plantio').addEventListener('change', calcularDataColheita);
+    document.getElementById('ciclo_dias').addEventListener('change', calcularDataColheita);
+    
+    carregarResumo();
+});
+
+// Submissão do formulário
+document.getElementById('wizardStep3Form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const formData = {
+        step: '3',
+        data_plantio: document.getElementById('data_plantio').value,
+        ciclo_dias: parseInt(document.getElementById('ciclo_dias').value) || null,
+        data_colheita_prevista: document.getElementById('data_colheita_prevista').value,
+        estacao_plantio: document.getElementById('estacao_plantio').value,
+        temp_min: parseInt(document.getElementById('temp_min').value) || null,
+        temp_max: parseInt(document.getElementById('temp_max').value) || null
+    };
+    
+    if (!formData.data_plantio) {
+        alert('Por favor, selecione uma data de plantio.');
+        return;
+    }
+    
+    try {
+        const response = await fetch('{{ url_for("culture.save_wizard_step") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData)
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            window.location.href = '{{ url_for("culture.culture_wizard", step="4") }}';
+        } else {
+            alert(result.error || 'Erro ao salvar dados');
+        }
+    } catch (error) {
+        alert('Erro de conexão: ' + error.message);
+    }
+});
+</script>
+{% endblock %}

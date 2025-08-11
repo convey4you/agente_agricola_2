@@ -1,0 +1,648 @@
+{% extends "base.html" %}
+
+{% block title %}Nova Cultura - Passo 4{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-green-50 to-green-100 flex items-center justify-center px-4">
+    <div class="max-w-2xl w-full">
+        <!-- Progress Bar -->
+        <div class="mb-8">
+            <div class="flex justify-between items-center mb-2">
+                <span class="text-sm font-medium text-green-600">Passo 4 de 5</span>
+                <span class="text-sm text-gray-500">80%</span>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-2">
+                <div class="bg-green-600 h-2 rounded-full" style="width: 80%"></div>
+            </div>
+        </div>
+
+        <!-- Resources Setup Card -->
+        <div class="bg-white rounded-lg shadow-xl p-8">
+            <!-- Header -->
+            <div class="text-center mb-6">
+                <div class="mx-auto h-16 w-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
+                    <svg class="h-8 w-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path>
+                    </svg>
+                </div>
+                <h1 class="text-2xl font-bold text-gray-900 mb-2">
+                    Recursos e Cuidados 🧑‍🌾
+                </h1>
+                <p class="text-gray-600">
+                    Configure as necessidades e cuidados específicos da sua cultura
+                </p>
+            </div>
+
+            <!-- Resumo das Etapas Anteriores -->
+            <div id="resumo-anterior" class="bg-gray-50 rounded-lg p-4 mb-6">
+                <h3 class="font-medium text-gray-900 mb-2">📋 Resumo do Planejamento:</h3>
+                <div id="resumo-conteudo" class="text-sm text-gray-600">
+                    Carregando...
+                </div>
+            </div>
+
+            <!-- Form -->
+            <form id="wizardStep4Form">
+                <div class="space-y-6">
+                    <!-- Necessidades de Irrigação -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-3">
+                            💧 Necessidades de Irrigação
+                        </label>
+                        <div class="space-y-4">
+                            <div>
+                                <label for="freq_irrigacao" class="block text-xs font-medium text-gray-600 mb-2">
+                                    Frequência de Irrigação
+                                </label>
+                                <select id="freq_irrigacao" name="freq_irrigacao"
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                                    <option value="">Selecione</option>
+                                    <option value="diaria">Diária</option>
+                                    <option value="dia_sim_dia_nao">Dia sim, dia não</option>
+                                    <option value="2_3_vezes_semana">2-3 vezes por semana</option>
+                                    <option value="semanal">Semanal</option>
+                                    <option value="conforme_necessidade">Conforme necessidade</option>
+                                </select>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label for="quantidade_agua" class="block text-xs font-medium text-gray-600 mb-2">
+                                        Quantidade por irrigação (litros/m²)
+                                    </label>
+                                    <input type="number" id="quantidade_agua" name="quantidade_agua" 
+                                           step="0.1" min="0"
+                                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                                           placeholder="Ex: 2.5">
+                                </div>
+                                
+                                <div>
+                                    <label for="horario_irrigacao" class="block text-xs font-medium text-gray-600 mb-2">
+                                        Melhor horário
+                                    </label>
+                                    <select id="horario_irrigacao" name="horario_irrigacao"
+                                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                                        <option value="">Selecione</option>
+                                        <option value="manha_cedo">Manhã cedo (6h-8h)</option>
+                                        <option value="manha">Manhã (8h-10h)</option>
+                                        <option value="tarde">Tarde (16h-18h)</option>
+                                        <option value="anoitecer">Anoitecer (18h-20h)</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sistema de Irrigação -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-3">
+                            🚿 Sistema de Irrigação
+                        </label>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                            <label class="flex items-center p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50">
+                                <input type="radio" name="sistema_irrigacao" value="gotejamento" class="mr-3">
+                                <div>
+                                    <div class="font-medium text-sm">Gotejamento</div>
+                                    <div class="text-xs text-gray-500">Mais eficiente</div>
+                                </div>
+                            </label>
+                            <label class="flex items-center p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50">
+                                <input type="radio" name="sistema_irrigacao" value="aspersao" class="mr-3">
+                                <div>
+                                    <div class="font-medium text-sm">Aspersão</div>
+                                    <div class="text-xs text-gray-500">Cobertura ampla</div>
+                                </div>
+                            </label>
+                            <label class="flex items-center p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50">
+                                <input type="radio" name="sistema_irrigacao" value="manual" class="mr-3">
+                                <div>
+                                    <div class="font-medium text-sm">Manual</div>
+                                    <div class="text-xs text-gray-500">Regador/mangueira</div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Necessidades de Fertilização -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-3">
+                            🌿 Fertilização e Nutrição
+                        </label>
+                        <div class="space-y-4">
+                            <div>
+                                <label for="tipo_fertilizante" class="block text-xs font-medium text-gray-600 mb-2">
+                                    Tipo de Fertilizante Preferido
+                                </label>
+                                <select id="tipo_fertilizante" name="tipo_fertilizante"
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                                    <option value="">Selecione</option>
+                                    <option value="organico">Orgânico (compostagem, esterco)</option>
+                                    <option value="mineral">Mineral (NPK, fertilizantes químicos)</option>
+                                    <option value="misto">Misto (orgânico + mineral)</option>
+                                    <option value="natural">Natural (apenas adubo verde)</option>
+                                </select>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label for="freq_fertilizacao" class="block text-xs font-medium text-gray-600 mb-2">
+                                        Frequência de Fertilização
+                                    </label>
+                                    <select id="freq_fertilizacao" name="freq_fertilizacao"
+                                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                                        <option value="">Selecione</option>
+                                        <option value="plantio">Apenas no plantio</option>
+                                        <option value="quinzenal">Quinzenal</option>
+                                        <option value="mensal">Mensal</option>
+                                        <option value="bimestral">Bimestral</option>
+                                    </select>
+                                </div>
+                                
+                                <div>
+                                    <label for="quantidade_fertilizante" class="block text-xs font-medium text-gray-600 mb-2">
+                                        Quantidade (g/m²)
+                                    </label>
+                                    <input type="number" id="quantidade_fertilizante" name="quantidade_fertilizante" 
+                                           min="0"
+                                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                                           placeholder="Ex: 50">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Controle de Pragas e Doenças -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-3">
+                            🐛 Controle de Pragas e Doenças
+                        </label>
+                        <div class="space-y-4">
+                            <div>
+                                <label for="metodo_controle" class="block text-xs font-medium text-gray-600 mb-2">
+                                    Método de Controle Preferido
+                                </label>
+                                <select id="metodo_controle" name="metodo_controle"
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                                    <option value="">Selecione</option>
+                                    <option value="organico">Orgânico (defensivos naturais)</option>
+                                    <option value="biologico">Biológico (controle com predadores)</option>
+                                    <option value="integrado">Manejo Integrado (MIP)</option>
+                                    <option value="convencional">Convencional (defensivos químicos)</option>
+                                    <option value="preventivo">Apenas preventivo</option>
+                                </select>
+                            </div>
+                            
+                            <div>
+                                <label for="freq_monitoramento" class="block text-xs font-medium text-gray-600 mb-2">
+                                    Frequência de Monitoramento
+                                </label>
+                                <select id="freq_monitoramento" name="freq_monitoramento"
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                                    <option value="">Selecione</option>
+                                    <option value="diario">Diário</option>
+                                    <option value="3_vezes_semana">3 vezes por semana</option>
+                                    <option value="semanal">Semanal</option>
+                                    <option value="quinzenal">Quinzenal</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Observações e Notas -->
+                    <div class="border-t pt-6">
+                        <label for="observacoes" class="block text-sm font-medium text-gray-700 mb-2">
+                            📝 Observações e Cuidados Especiais
+                        </label>
+                        <textarea id="observacoes" name="observacoes" rows="6"
+                                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                                  placeholder="Adicione observações específicas sobre esta cultura, cuidados especiais, experiências anteriores, etc."></textarea>
+                    </div>
+
+                    <!-- Estimativa de Recursos -->
+                    <div id="estimativa-recursos" class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                        <h4 class="font-medium text-blue-900 mb-3">📊 Estimativa de Recursos</h4>
+                        <div id="estimativa-conteudo" class="text-sm text-blue-800">
+                            <p>Configure as opções acima para ver uma estimativa de recursos necessários</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Navigation Buttons -->
+                <div class="flex justify-between mt-8">
+                    <a href="{{ url_for('culture.culture_wizard', step='3') }}" 
+                       class="px-6 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition duration-200">
+                        Voltar
+                    </a>
+                    <button type="submit"
+                            class="px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition duration-200">
+                        Próximo: Confirmação
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Tips -->
+        <div class="text-center mt-6">
+            <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                <h4 class="font-medium text-yellow-900 mb-2">💡 Dica de Eficiência</h4>
+                <p class="text-sm text-yellow-800">
+                    Um planejamento detalhado dos recursos ajuda a reduzir custos e aumentar a produtividade. 
+                    O sistema irá gerar lembretes automáticos baseados nas suas configurações.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script nonce="{{ g.csp_nonce }}">
+let dadosCultura = {};
+
+// Carregar dados das etapas anteriores
+async function carregarResumo() {
+    try {
+        const response = await fetch('{{ url_for("culture.get_wizard_data") }}');
+        const result = await response.json();
+        const data = result.data || {};
+        dadosCultura = data;
+        
+        if (data.nome) {
+            const resumoDiv = document.getElementById('resumo-conteudo');
+            resumoDiv.innerHTML = `
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <p><strong>Cultura:</strong> ${data.nome} ${data.variedade ? '(' + data.variedade + ')' : ''}</p>
+                        <p><strong>Tipo:</strong> ${data.tipo || 'Não especificado'}</p>
+                        <p><strong>Área:</strong> ${data.area_plantada ? data.area_plantada + ' m²' : 'Não especificada'}</p>
+                    </div>
+                    <div>
+                        <p><strong>Plantio:</strong> ${data.data_plantio ? formatarData(new Date(data.data_plantio)) : 'Não definido'}</p>
+                        <p><strong>Colheita:</strong> ${data.data_colheita_prevista ? formatarData(new Date(data.data_colheita_prevista)) : 'Não definida'}</p>
+                        <p><strong>Localização:</strong> ${data.localizacao || 'Não especificada'}</p>
+                    </div>
+                </div>
+            `;
+            
+            // Calcular estimativa inicial
+            calcularEstimativa();
+            
+            // Pré-preencher campos baseados na cultura
+            preencherCamposAutomaticos(data);
+        }
+    } catch (error) {
+        console.error('Erro ao carregar resumo:', error);
+    }
+}
+
+function preencherCamposAutomaticos(data) {
+    console.log('DEBUG: Preenchendo campos automáticos com dados:', data);
+    
+    // 1. FREQUÊNCIA DE IRRIGAÇÃO baseada em rega_frequencia
+    if (data.rega_frequencia) {
+        const freqMap = {
+            'Diária': 'diaria',
+            'Dia sim, dia não': 'dia_sim_dia_nao',
+            '2 vezes por semana': '2_3_vezes_semana',
+            '2-3 vezes por semana': '2_3_vezes_semana',
+            '3 vezes por semana': '2_3_vezes_semana',
+            'Semanal': 'semanal',
+            '1 vez por semana': 'semanal',
+            'Regular': 'dia_sim_dia_nao',
+            'Baixa': 'semanal',
+            'Pouca ou nenhuma': 'conforme_necessidade',
+            'Dispensável em sequeiro': 'conforme_necessidade',
+            'Eventual': 'conforme_necessidade'
+        };
+        
+        const freqValue = freqMap[data.rega_frequencia] || 'dia_sim_dia_nao';
+        document.getElementById('freq_irrigacao').value = freqValue;
+        console.log(`DEBUG: Frequência irrigação definida para: ${freqValue}`);
+    }
+    
+    // 2. QUANTIDADE DE ÁGUA baseada na categoria e clima
+    const quantidadeAguaMap = {
+        'Hortícola': 2.5,
+        'Aromática': 1.8,
+        'Cereal': 3.0,
+        'Leguminosa': 2.2,
+        'Frutífera': 3.5
+    };
+    
+    const climaMultiplier = {
+        'Quente e seco': 1.3,
+        'Quente e húmido': 1.1,
+        'Mediterrânico': 1.2,
+        'Temperado': 1.0,
+        'Fresco': 0.9,
+        'Húmido e fresco': 0.8
+    };
+    
+    let quantidadeBase = quantidadeAguaMap[data.categoria] || 2.0;
+    let multiplicador = climaMultiplier[data.clima_ideal] || 1.0;
+    let quantidadeAgua = Math.round((quantidadeBase * multiplicador) * 10) / 10;
+    
+    document.getElementById('quantidade_agua').value = quantidadeAgua;
+    console.log(`DEBUG: Quantidade água definida para: ${quantidadeAgua} L/m²`);
+    
+    // 3. HORÁRIO DE IRRIGAÇÃO baseado no clima
+    const horarioMap = {
+        'Quente e seco': 'manha_cedo',
+        'Quente e húmido': 'manha_cedo',
+        'Mediterrânico': 'manha',
+        'Temperado': 'manha',
+        'Fresco': 'manha',
+        'Húmido e fresco': 'tarde'
+    };
+    
+    const horario = horarioMap[data.clima_ideal] || 'manha';
+    document.getElementById('horario_irrigacao').value = horario;
+    console.log(`DEBUG: Horário irrigação definido para: ${horario}`);
+    
+    // 4. SISTEMA DE IRRIGAÇÃO baseado na área
+    const area = data.area_plantada || 0;
+    let sistemaRecomendado = 'manual';
+    
+    if (area > 10) {
+        sistemaRecomendado = 'gotejamento';
+    } else if (area > 5) {
+        sistemaRecomendado = 'aspersao';
+    }
+    
+    const sistemaRadio = document.querySelector(`input[name="sistema_irrigacao"][value="${sistemaRecomendado}"]`);
+    if (sistemaRadio) {
+        sistemaRadio.checked = true;
+        console.log(`DEBUG: Sistema irrigação definido para: ${sistemaRecomendado}`);
+    }
+    
+    // 5. TIPO DE FERTILIZANTE baseado na categoria
+    const fertilizerMap = {
+        'Aromática': 'organico',
+        'Hortícola': 'misto',
+        'Cereal': 'mineral',
+        'Leguminosa': 'organico'
+    };
+    
+    const tipoFert = fertilizerMap[data.categoria] || 'organico';
+    document.getElementById('tipo_fertilizante').value = tipoFert;
+    console.log(`DEBUG: Tipo fertilizante definido para: ${tipoFert}`);
+    
+    // 6. FREQUÊNCIA DE FERTILIZAÇÃO baseada no tempo de crescimento
+    const tempoCrescimento = data.tempo_crescimento || 90;
+    let freqFert = 'mensal';
+    
+    if (tempoCrescimento < 60) {
+        freqFert = 'quinzenal';
+    } else if (tempoCrescimento > 150) {
+        freqFert = 'bimestral';
+    }
+    
+    document.getElementById('freq_fertilizacao').value = freqFert;
+    console.log(`DEBUG: Frequência fertilização definida para: ${freqFert}`);
+    
+    // 7. QUANTIDADE DE FERTILIZANTE baseada na categoria
+    const quantidadeFertMap = {
+        'Hortícola': 60,
+        'Aromática': 40,
+        'Cereal': 80,
+        'Leguminosa': 30, // Leguminosas precisam menos N
+        'Frutífera': 100
+    };
+    
+    const quantFert = quantidadeFertMap[data.categoria] || 50;
+    document.getElementById('quantidade_fertilizante').value = quantFert;
+    console.log(`DEBUG: Quantidade fertilizante definida para: ${quantFert}g/m²`);
+    
+    // 8. MÉTODO DE CONTROLE baseado na dificuldade e tipo
+    const controleMap = {
+        'Fácil': 'organico',
+        'Média': 'integrado',
+        'Difícil': 'integrado'
+    };
+    
+    const metodoControle = controleMap[data.dificuldade] || 'organico';
+    document.getElementById('metodo_controle').value = metodoControle;
+    console.log(`DEBUG: Método controle definido para: ${metodoControle}`);
+    
+    // 9. FREQUÊNCIA DE MONITORAMENTO baseada na dificuldade
+    const monitoramentoMap = {
+        'Fácil': 'semanal',
+        'Média': '3_vezes_semana',
+        'Difícil': 'diario'
+    };
+    
+    const freqMonit = monitoramentoMap[data.dificuldade] || 'semanal';
+    document.getElementById('freq_monitoramento').value = freqMonit;
+    console.log(`DEBUG: Frequência monitoramento definida para: ${freqMonit}`);
+    
+    // 10. OBSERVAÇÕES baseadas nas informações da cultura
+    let observacoes = '';
+    
+    if (data.observacoes) {
+        observacoes += data.observacoes + '\n';
+    }
+    
+    // Adicionar informações específicas baseadas nos dados
+    if (data.pragas_comuns && data.pragas_comuns.length > 0) {
+        observacoes += `⚠️ Pragas comuns: ${data.pragas_comuns.join(', ')}\n`;
+    }
+    
+    if (data.solo_ph && Array.isArray(data.solo_ph)) {
+        observacoes += `🧪 pH ideal do solo: ${data.solo_ph[0]} - ${data.solo_ph[1]}\n`;
+    }
+    
+    if (data.sol_horas_min) {
+        observacoes += `☀️ Necessita mínimo ${data.sol_horas_min} horas de sol por dia\n`;
+    }
+    
+    if (data.epoca_plantio && Array.isArray(data.epoca_plantio)) {
+        observacoes += `📅 Melhores meses para plantio: ${data.epoca_plantio.join(', ')}\n`;
+    }
+    
+    document.getElementById('observacoes').value = observacoes.trim();
+    console.log('DEBUG: Observações preenchidas automaticamente');
+    
+    // Recalcular estimativas após preencher os campos
+    setTimeout(calcularEstimativa, 100);
+}
+
+function calcularEstimativa() {
+    // Escutar mudanças nos campos para recalcular
+    const campos = ['freq_irrigacao', 'quantidade_agua', 'sistema_irrigacao', 'tipo_fertilizante', 'freq_fertilizacao', 'quantidade_fertilizante'];
+    
+    campos.forEach(campo => {
+        const elemento = document.getElementById(campo);
+        if (elemento) {
+            elemento.addEventListener('change', atualizarEstimativa);
+        }
+    });
+    
+    // Calcular estimativa inicial
+    atualizarEstimativa();
+}
+
+function atualizarEstimativa() {
+    const area = dadosCultura.area_plantada || 0;
+    const estimativaDiv = document.getElementById('estimativa-conteudo');
+    
+    if (area === 0) {
+        estimativaDiv.innerHTML = '<p>Área não definida nas etapas anteriores</p>';
+        return;
+    }
+    
+    // Calcular água por semana
+    const freqIrrigacao = document.getElementById('freq_irrigacao').value;
+    const quantidadeAgua = parseFloat(document.getElementById('quantidade_agua').value) || 0;
+    
+    let aguaSemanal = 0;
+    switch (freqIrrigacao) {
+        case 'diaria':
+            aguaSemanal = quantidadeAgua * area * 7;
+            break;
+        case 'dia_sim_dia_nao':
+            aguaSemanal = quantidadeAgua * area * 3.5;
+            break;
+        case '2_3_vezes_semana':
+            aguaSemanal = quantidadeAgua * area * 2.5;
+            break;
+        case 'semanal':
+            aguaSemanal = quantidadeAgua * area * 1;
+            break;
+    }
+    
+    // Calcular fertilizante por mês
+    const freqFertilizacao = document.getElementById('freq_fertilizacao').value;
+    const quantidadeFertilizante = parseFloat(document.getElementById('quantidade_fertilizante').value) || 0;
+    
+    let fertilizanteMensal = 0;
+    switch (freqFertilizacao) {
+        case 'quinzenal':
+            fertilizanteMensal = quantidadeFertilizante * area * 2;
+            break;
+        case 'mensal':
+            fertilizanteMensal = quantidadeFertilizante * area * 1;
+            break;
+        case 'bimestral':
+            fertilizanteMensal = quantidadeFertilizante * area * 0.5;
+            break;
+    }
+    
+    let html = '<div class="grid grid-cols-1 md:grid-cols-2 gap-4">';
+    
+    if (aguaSemanal > 0) {
+        html += `
+            <div>
+                <div class="font-medium">💧 Água por semana:</div>
+                <div>${aguaSemanal.toFixed(1)} litros</div>
+            </div>
+        `;
+    }
+    
+    if (fertilizanteMensal > 0) {
+        html += `
+            <div>
+                <div class="font-medium">🌿 Fertilizante por mês:</div>
+                <div>${fertilizanteMensal.toFixed(0)} gramas</div>
+            </div>
+        `;
+    }
+    
+    // Estimativa de tempo de cuidado diário
+    const tempoEstimado = calcularTempoCuidado();
+    if (tempoEstimado > 0) {
+        html += `
+            <div>
+                <div class="font-medium">⏰ Tempo diário estimado:</div>
+                <div>${tempoEstimado} minutos</div>
+            </div>
+        `;
+    }
+    
+    html += '</div>';
+    
+    if (html === '<div class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>') {
+        html = '<p>Configure as opções acima para ver estimativas detalhadas</p>';
+    }
+    
+    estimativaDiv.innerHTML = html;
+}
+
+function calcularTempoCuidado() {
+    const area = dadosCultura.area_plantada || 0;
+    const sistema = document.querySelector('input[name="sistema_irrigacao"]:checked')?.value;
+    const freqMonitoramento = document.getElementById('freq_monitoramento').value;
+    
+    let tempo = 0;
+    
+    // Tempo de irrigação por m²
+    if (sistema === 'manual') {
+        tempo += area * 1; // 1 minuto por m² para irrigação manual
+    } else if (sistema === 'aspersao') {
+        tempo += area * 0.5; // Tempo para configurar aspersão
+    } else if (sistema === 'gotejamento') {
+        tempo += area * 0.2; // Tempo para verificar gotejamento
+    }
+    
+    // Tempo de monitoramento
+    switch (freqMonitoramento) {
+        case 'diario':
+            tempo += area * 0.5; // 30 segundos por m² de monitoramento
+            break;
+        case '3_vezes_semana':
+            tempo += (area * 0.5) * (3/7); // Proporcional
+            break;
+        case 'semanal':
+            tempo += (area * 0.5) * (1/7);
+            break;
+    }
+    
+    return Math.ceil(tempo);
+}
+
+function formatarData(data) {
+    return data.toLocaleDateString('pt-BR');
+}
+
+// Carregar resumo ao inicializar
+document.addEventListener('DOMContentLoaded', carregarResumo);
+
+// Submissão do formulário
+document.getElementById('wizardStep4Form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const formData = {
+        step: '4',
+        freq_irrigacao: document.getElementById('freq_irrigacao').value,
+        quantidade_agua: parseFloat(document.getElementById('quantidade_agua').value) || null,
+        horario_irrigacao: document.getElementById('horario_irrigacao').value,
+        sistema_irrigacao: document.querySelector('input[name="sistema_irrigacao"]:checked')?.value || null,
+        tipo_fertilizante: document.getElementById('tipo_fertilizante').value,
+        freq_fertilizacao: document.getElementById('freq_fertilizacao').value,
+        quantidade_fertilizante: parseFloat(document.getElementById('quantidade_fertilizante').value) || null,
+        metodo_controle: document.getElementById('metodo_controle').value,
+        freq_monitoramento: document.getElementById('freq_monitoramento').value,
+        observacoes: document.getElementById('observacoes').value.trim()
+    };
+    
+    try {
+        const response = await fetch('{{ url_for("culture.save_wizard_step") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData)
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            window.location.href = '{{ url_for("culture.culture_wizard", step="5") }}';
+        } else {
+            alert(result.error || 'Erro ao salvar dados');
+        }
+    } catch (error) {
+        alert('Erro de conexão: ' + error.message);
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block title %}Bem-vindo ao Agente Agrícola - Passo 1{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-green-50 to-green-100 flex items-center justify-center px-4">
+    <div class="max-w-md w-full">
+        <!-- Progress Bar -->
+        <div class="mb-8">
+            <div class="flex justify-between items-center mb-2">
+                <span class="text-sm font-medium text-green-600">Passo 1 de 5</span>
+                <span class="text-sm text-gray-500">20%</span>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-2">
+                <div class="bg-green-600 h-2 rounded-full" style="width: 20%"></div>
+            </div>
+        </div>
+
+        <!-- Welcome Card -->
+        <div class="bg-white rounded-lg shadow-xl p-8">
+            <!-- Logo/Icon -->
+            <div class="text-center mb-6">
+                <div class="mx-auto h-16 w-16 bg-green-100 rounded-full flex items-center justify-center">
+                    <svg class="h-8 w-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13c-1.5 0-3.5 1-4.5 2.5m4.5-2.5c1.5 0 3.5 1 4.5 2.5M9 10l3 3 3-3"></path>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Welcome Message -->
+            <div class="text-center mb-8">
+                <h1 class="text-2xl font-bold text-gray-900 mb-4">
+                    Bem-vindo ao Agente Agrícola! 🌱
+                </h1>
+                <p class="text-gray-600 mb-6">
+                    Estamos muito felizes em tê-lo conosco! Vamos configurar sua conta em apenas 5 passos simples para que você possa aproveitar ao máximo nossa plataforma.
+                </p>
+            </div>
+
+            <!-- Features List -->
+            <div class="space-y-4 mb-8">
+                <div class="flex items-start">
+                    <svg class="h-5 w-5 text-green-500 mt-1 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                    </svg>
+                    <div>
+                        <h3 class="font-semibold text-gray-900">Gestão Inteligente</h3>
+                        <p class="text-sm text-gray-600">Monitore suas culturas com tecnologia avançada</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-start">
+                    <svg class="h-5 w-5 text-green-500 mt-1 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                    </svg>
+                    <div>
+                        <h3 class="font-semibold text-gray-900">Assistente IA</h3>
+                        <p class="text-sm text-gray-600">Receba dicas personalizadas para sua propriedade</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-start">
+                    <svg class="h-5 w-5 text-green-500 mt-1 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                    </svg>
+                    <div>
+                        <h3 class="font-semibold text-gray-900">Monitoramento Climático</h3>
+                        <p class="text-sm text-gray-600">Alertas meteorológicos em tempo real</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex flex-col space-y-3">
+                <a href="{{ url_for('auth.onboarding', step='2') }}" 
+                   class="w-full bg-green-600 text-white py-3 px-4 rounded-md hover:bg-green-700 transition duration-200 text-center font-medium">
+                    Vamos Começar!
+                </a>
+                <a href="{{ url_for('dashboard.index') }}" 
+                   class="w-full bg-gray-100 text-gray-700 py-3 px-4 rounded-md hover:bg-gray-200 transition duration-200 text-center font-medium">
+                    Pular Configuração
+                </a>
+            </div>
+        </div>
+
+        <!-- Help Text -->
+        <div class="text-center mt-6">
+            <p class="text-sm text-gray-600">
+                Precisa de ajuda? <a href="#" class="text-green-600 hover:underline">Entre em contato conosco</a>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script nonce="{{ g.csp_nonce }}">
+    // Adicionar qualquer JavaScript específico para este passo
+    console.log('Onboarding Step 1 loaded');
+</script>
+{% endblock %}

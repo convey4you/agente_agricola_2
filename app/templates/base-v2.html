@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="color-scheme" content="light dark">
+    <meta name="theme-color" content="#ffffff">
+    <title>{% block title %}AgTech Portugal{% endblock %}</title>
+    
+    <!-- Preload Critical Resources -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" as="style">
+    <link rel="preload" href="{{ url_for('static', filename='css/design-system-v2.css') }}" as="style">
+    
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts - Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Custom CSS - Ordem otimizada -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/design-system-v2.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/components.css') }}">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
+    
+    <!-- Favicon -->
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+    <link rel="apple-touch-icon" href="{{ url_for('static', filename='icons/icon-192.png') }}">
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Sistema de gestão agrícola inteligente para Portugal">
+    <meta name="keywords" content="agricultura, gestão, culturas, portugal, agtech">
+    <meta name="author" content="AgTech Portugal">
+    
+    {% block head %}{% endblock %}
+</head>
+<body>
+    <!-- Skip Link para Acessibilidade -->
+    <a href="#main-content" class="skip-link">Pular para o conteúdo principal</a>
+    
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header" role="banner">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center">
+                    <button id="sidebar-toggle" 
+                            class="nav-icon mr-4 lg:hidden"
+                            aria-label="Abrir menu de navegação"
+                            aria-expanded="false">
+                        <i class="fas fa-bars" aria-hidden="true"></i>
+                    </button>
+                    <a href="{{ url_for('dashboard.index') if current_user.is_authenticated else url_for('auth.login') }}" 
+                       class="text-xl font-bold text-white flex items-center gap-2">
+                        <span role="img" aria-label="Planta">🌱</span>
+                        AgTech Portugal
+                    </a>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    {% if current_user.is_authenticated %}
+                        <!-- Theme Toggle será inserido aqui pelo JavaScript -->
+                        <div class="relative">
+                            <button class="flex items-center text-white hover:text-green-200 transition-colors"
+                                    aria-label="Menu do usuário">
+                                <span class="mr-2">{{ current_user.nome_completo or current_user.email }}</span>
+                                <i class="fas fa-chevron-down text-sm" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                    {% else %}
+                        <div class="flex space-x-2">
+                            <a href="{{ url_for('auth.login') }}" 
+                               class="btn btn-secondary">
+                                Entrar
+                            </a>
+                            <a href="{{ url_for('auth.register') }}" 
+                               class="btn btn-primary">
+                                Registar
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </header>
+
+        <div class="app-main">
+            {% if current_user.is_authenticated %}
+            <!-- Sidebar -->
+            <aside class="app-sidebar" id="sidebar" role="navigation" aria-label="Navegação principal">
+                <nav class="nav-menu">
+                    <ul role="list">
+                        <li class="nav-item" role="listitem">
+                            <a href="{{ url_for('dashboard.index') }}" 
+                               class="nav-link {{ 'active' if request.endpoint == 'dashboard.index' }}"
+                               aria-current="{{ 'page' if request.endpoint == 'dashboard.index' else 'false' }}">
+                                <i class="nav-icon fas fa-tachometer-alt" aria-hidden="true"></i>
+                                Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item" role="listitem">
+                            <a href="{{ url_for('culture.list_cultures') }}" 
+                               class="nav-link {{ 'active' if request.endpoint and request.endpoint.startswith('culture') }}"
+                               aria-current="{{ 'page' if request.endpoint and request.endpoint.startswith('culture') else 'false' }}">
+                                <i class="nav-icon fas fa-seedling" aria-hidden="true"></i>
+                                Culturas
+                            </a>
+                        </li>
+                        <li class="nav-item" role="listitem">
+                            <a href="{{ url_for('agent.index') }}" 
+                               class="nav-link {{ 'active' if request.endpoint and request.endpoint.startswith('agent') }}"
+                               aria-current="{{ 'page' if request.endpoint and request.endpoint.startswith('agent') else 'false' }}">
+                                <i class="nav-icon fas fa-robot" aria-hidden="true"></i>
+                                Agente IA
+                            </a>
+                        </li>
+                        <li class="nav-item" role="listitem">
+                            <a href="{{ url_for('reports.index') }}" 
+                               class="nav-link {{ 'active' if request.endpoint and request.endpoint.startswith('reports') }}"
+                               aria-current="{{ 'page' if request.endpoint and request.endpoint.startswith('reports') else 'false' }}">
+                                <i class="nav-icon fas fa-chart-bar" aria-hidden="true"></i>
+                                Relatórios
+                            </a>
+                        </li>
+                        <li class="nav-item mt-8" role="listitem">
+                            <a href="#" class="nav-link" id="logout-btn">
+                                <i class="nav-icon fas fa-sign-out-alt" aria-hidden="true"></i>
+                                Sair
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </aside>
+            {% endif %}
+
+            <!-- Main Content -->
+            <main class="app-content" id="main-content" role="main">
+                <!-- Flash Messages -->
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        <div class="mb-6" role="alert" aria-live="polite">
+                            {% for category, message in messages %}
+                                <div class="alert alert-{{ 'error' if category == 'error' else 'info' if category == 'info' else 'success' if category == 'success' else 'warning' }}">
+                                    <i class="alert-icon fas {{ 'fa-exclamation-triangle' if category == 'error' else 'fa-info-circle' if category == 'info' else 'fa-check-circle' if category == 'success' else 'fa-exclamation-circle' }}" aria-hidden="true"></i>
+                                    <div class="alert-content">
+                                        <div class="alert-title">{{ message }}</div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                {% endwith %}
+
+                <!-- Page Content -->
+                {% block content %}{% endblock %}
+            </main>
+        </div>
+    </div>
+
+    <!-- Modal de Logout -->
+    <div id="logoutModal" class="modal" role="dialog" aria-labelledby="logout-title" aria-hidden="true">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="logout-title" class="modal-title">Confirmar Saída</h3>
+                <button class="modal-close" aria-label="Fechar modal">
+                    <i class="fas fa-times" aria-hidden="true"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="flex items-center justify-center w-16 h-16 mx-auto mb-4 bg-red-100 rounded-full">
+                    <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                    </svg>
+                </div>
+                <p class="text-center mb-4">
+                    Tem certeza que deseja sair da sua conta? 
+                    <br><span class="text-sm">Será redirecionado para a página de login.</span>
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="modal-cancel-btn" class="btn btn-secondary">
+                    Cancelar
+                </button>
+                <a href="{{ url_for('auth.logout') }}" 
+                   class="btn btn-primary">
+                    <i class="fas fa-sign-out-alt mr-2" aria-hidden="true"></i>
+                    Sair
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript - Ordem otimizada -->
+    <script src="{{ url_for('static', filename='js/theme-manager.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/loading-manager.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/notification-system.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    
+    {% block scripts %}{% endblock %}
+
+    <!-- Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/static/sw.js')
+                    .then(registration => {
+                        console.log('SW registered: ', registration);
+                    })
+                    .catch(registrationError => {
+                        console.log('SW registration failed: ', registrationError);
+                    });
+            });
+        }
+    </script>
+
+    <!-- Enhanced Main App Script -->
+    <script>
+        // Enhanced App Initialization
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize enhanced features
+            initializeEnhancedApp();
+            
+            // Setup enhanced navigation
+            setupEnhancedNavigation();
+            
+            // Setup modal interactions
+            setupModalInteractions();
+            
+            // Setup form enhancements
+            setupFormEnhancements();
+        });
+
+        function initializeEnhancedApp() {
+            // Add loading states to all forms
+            document.querySelectorAll('form').forEach(form => {
+                form.addEventListener('submit', function(e) {
+                    const submitBtn = form.querySelector('button[type="submit"]');
+                    if (submitBtn) {
+                        LoadingManager.setButtonLoading(submitBtn, true);
+                    }
+                });
+            });
+
+            // Add ripple effect to buttons
+            document.addEventListener('click', function(e) {
+                if (e.target.closest('.btn')) {
+                    const button = e.target.closest('.btn');
+                    createRippleEffect(button, e);
+                }
+            });
+        }
+
+        function setupEnhancedNavigation() {
+            const sidebarToggle = document.getElementById('sidebar-toggle');
+            const sidebar = document.getElementById('sidebar');
+            
+            if (sidebarToggle && sidebar) {
+                sidebarToggle.addEventListener('click', () => {
+                    const isOpen = sidebar.classList.toggle('open');
+                    sidebarToggle.setAttribute('aria-expanded', isOpen);
+                });
+                
+                // Close sidebar when clicking outside (mobile)
+                document.addEventListener('click', (e) => {
+                    if (window.innerWidth <= 768 && 
+                        !sidebar.contains(e.target) && 
+                        !sidebarToggle.contains(e.target)) {
+                        sidebar.classList.remove('open');
+                        sidebarToggle.setAttribute('aria-expanded', 'false');
+                    }
+                });
+            }
+        }
+
+        function setupModalInteractions() {
+            const logoutBtn = document.getElementById('logout-btn');
+            const logoutModal = document.getElementById('logoutModal');
+            const cancelBtn = document.getElementById('modal-cancel-btn');
+            const closeBtn = logoutModal?.querySelector('.modal-close');
+
+            if (logoutBtn && logoutModal) {
+                logoutBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    logoutModal.classList.add('show');
+                    logoutModal.setAttribute('aria-hidden', 'false');
+                });
+
+                [cancelBtn, closeBtn].forEach(btn => {
+                    if (btn) {
+                        btn.addEventListener('click', () => {
+                            logoutModal.classList.remove('show');
+                            logoutModal.setAttribute('aria-hidden', 'true');
+                        });
+                    }
+                });
+
+                // Close on backdrop click
+                logoutModal.addEventListener('click', (e) => {
+                    if (e.target === logoutModal) {
+                        logoutModal.classList.remove('show');
+                        logoutModal.setAttribute('aria-hidden', 'true');
+                    }
+                });
+            }
+        }
+
+        function setupFormEnhancements() {
+            // Enhanced form validation
+            document.querySelectorAll('input, select, textarea').forEach(field => {
+                field.addEventListener('blur', function() {
+                    validateField(this);
+                });
+
+                field.addEventListener('input', function() {
+                    if (this.classList.contains('error')) {
+                        validateField(this);
+                    }
+                });
+            });
+        }
+
+        function validateField(field) {
+            const value = field.value.trim();
+            let isValid = true;
+            let message = '';
+
+            // Required validation
+            if (field.hasAttribute('required') && !value) {
+                isValid = false;
+                message = 'Este campo é obrigatório';
+            }
+
+            // Email validation
+            if (field.type === 'email' && value && !isValidEmail(value)) {
+                isValid = false;
+                message = 'Email inválido';
+            }
+
+            showFieldValidation(field, isValid, message);
+            return isValid;
+        }
+
+        function showFieldValidation(field, isValid, message) {
+            const errorEl = field.parentNode.querySelector('.field-error');
+            
+            if (errorEl) {
+                errorEl.remove();
+            }
+
+            field.classList.toggle('error', !isValid);
+
+            if (!isValid && message) {
+                const error = document.createElement('div');
+                error.className = 'field-error text-red-500 text-sm mt-1';
+                error.textContent = message;
+                field.parentNode.appendChild(error);
+            }
+        }
+
+        function isValidEmail(email) {
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        }
+
+        function createRippleEffect(button, event) {
+            if (button.querySelector('.ripple')) {
+                button.querySelector('.ripple').remove();
+            }
+
+            const ripple = document.createElement('span');
+            ripple.classList.add('ripple');
+            
+            const rect = button.getBoundingClientRect();
+            const size = Math.max(rect.width, rect.height);
+            const x = event.clientX - rect.left - size / 2;
+            const y = event.clientY - rect.top - size / 2;
+            
+            ripple.style.cssText = `
+                position: absolute;
+                border-radius: 50%;
+                background: rgba(255, 255, 255, 0.3);
+                transform: scale(0);
+                animation: ripple 0.6s linear;
+                width: ${size}px;
+                height: ${size}px;
+                left: ${x}px;
+                top: ${y}px;
+                pointer-events: none;
+            `;
+            
+            button.style.position = 'relative';
+            button.style.overflow = 'hidden';
+            button.appendChild(ripple);
+            
+            setTimeout(() => {
+                ripple.remove();
+            }, 600);
+        }
+
+        // Global error handling
+        window.addEventListener('error', (event) => {
+            console.error('Global error:', event.error);
+        });
+
+        // Performance monitoring
+        window.addEventListener('load', () => {
+            if ('performance' in window) {
+                const perfData = performance.getEntriesByType('navigation')[0];
+                console.log('Page load time:', perfData.loadEventEnd - perfData.loadEventStart, 'ms');
+            }
+        });
+    </script>
+</body>
+</html>
+

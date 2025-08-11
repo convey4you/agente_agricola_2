@@ -1,0 +1,594 @@
+{% extends "base.html" %}
+
+{% block title %}Configuração do Perfil - Passo 2{% endblock %}
+
+{% block head %}
+<style>
+/* === MODAIS === */
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(5px);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal.show {
+  display: flex;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 16px;
+  padding: 40px;
+  max-width: 500px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  transform: scale(0.8);
+  opacity: 0;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.modal.show .modal-content {
+  transform: scale(1);
+  opacity: 1;
+}
+
+.modal-content h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #2d3436;
+  margin-bottom: 15px;
+}
+
+.modal-content p {
+  color: #636e72;
+  line-height: 1.6;
+  margin-bottom: 30px;
+}
+
+.modal-buttons {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+}
+
+/* Estilo específico para o modal de interesse */
+#interestLimitModal .modal-content {
+  max-width: 420px;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-green-50 to-green-100 flex items-center justify-center px-4">
+    <div class="max-w-md w-full">
+        <!-- Progress Bar -->
+        <div class="mb-8">
+            <div class="flex justify-between items-center mb-2">
+                <span class="text-sm font-medium text-green-600">Passo 2 de 5</span>
+                <span class="text-sm text-gray-500">40%</span>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-2">
+                <div class="bg-green-600 h-2 rounded-full" style="width: 40%"></div>
+            </div>
+        </div>
+
+        <!-- Profile Form Card -->
+        <div class="bg-white rounded-lg shadow-xl p-8">
+            <div class="text-center mb-6">
+                <h1 class="text-2xl font-bold text-gray-900 mb-2">
+                    Conte-nos sobre você
+                </h1>
+                <p class="text-gray-600">
+                    Essas informações nos ajudam a personalizar sua experiência
+                </p>
+            </div>
+
+            <form id="onboardingStep2Form">
+                <input type="hidden" name="step" value="2">
+                
+                <div class="space-y-4">
+                    <!-- Nome Completo -->
+                    <div>
+                        <label for="full_name" class="block text-sm font-medium text-gray-700 mb-1">
+                            Nome Completo
+                        </label>
+                        <input type="text" id="full_name" name="full_name" required
+                               value="{{ onboarding_data.get('step_2', {}).get('full_name', current_user.nome_completo or '') }}"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                               placeholder="Seu nome completo">
+                    </div>
+
+                    <!-- Telefone -->
+                    <div>
+                        <label for="telefone" class="block text-sm font-medium text-gray-700 mb-1">Telefone</label>
+                        <div class="mt-1 flex">
+                            <!-- Dropdown customizado para países -->
+                            <div class="relative flex-shrink-0">
+                                <button type="button" id="country-dropdown-button" 
+                                        class="flex items-center justify-between w-24 px-3 py-2 bg-gray-50 border border-gray-300 rounded-l-md text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm">
+                                    <span id="selected-country" class="flex items-center">
+                                        <span class="fi fi-pt mr-1" style="width: 20px; height: 15px;"></span>
+                                        <span class="text-xs">+351</span>
+                                    </span>
+                                    <svg class="w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                    </svg>
+                                </button>
+                                
+                                <!-- Dropdown menu -->
+                                <div id="country-dropdown-menu" class="hidden absolute z-20 w-64 mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-y-auto">
+                                    <div class="py-1">
+                                        <!-- Países mais comuns primeiro -->
+                                        <div class="px-3 py-1 text-xs font-semibold text-gray-500 bg-gray-50">Mais utilizados</div>
+                                        <button type="button" class="country-option w-full text-left px-3 py-2 hover:bg-gray-100 flex items-center" data-code="+351" data-flag="fi fi-pt" data-country="PT">
+                                            <span class="fi fi-pt mr-3" style="width: 24px; height: 18px;"></span>
+                                            <span class="flex-1">Portugal</span>
+                                            <span class="text-sm text-gray-500">+351</span>
+                                        </button>
+                                        <button type="button" class="country-option w-full text-left px-3 py-2 hover:bg-gray-100 flex items-center" data-code="+34" data-flag="fi fi-es" data-country="ES">
+                                            <span class="fi fi-es mr-3" style="width: 24px; height: 18px;"></span>
+                                            <span class="flex-1">Espanha</span>
+                                            <span class="text-sm text-gray-500">+34</span>
+                                        </button>
+                                        <button type="button" class="country-option w-full text-left px-3 py-2 hover:bg-gray-100 flex items-center" data-code="+33" data-flag="fi fi-fr" data-country="FR">
+                                            <span class="fi fi-fr mr-3" style="width: 24px; height: 18px;"></span>
+                                            <span class="flex-1">França</span>
+                                            <span class="text-sm text-gray-500">+33</span>
+                                        </button>
+                                        <button type="button" class="country-option w-full text-left px-3 py-2 hover:bg-gray-100 flex items-center" data-code="+55" data-flag="fi fi-br" data-country="BR">
+                                            <span class="fi fi-br mr-3" style="width: 24px; height: 18px;"></span>
+                                            <span class="flex-1">Brasil</span>
+                                            <span class="text-sm text-gray-500">+55</span>
+                                        </button>
+                                        <button type="button" class="country-option w-full text-left px-3 py-2 hover:bg-gray-100 flex items-center" data-code="+1" data-flag="fi fi-us" data-country="US">
+                                            <span class="fi fi-us mr-3" style="width: 24px; height: 18px;"></span>
+                                            <span class="flex-1">EUA</span>
+                                            <span class="text-sm text-gray-500">+1</span>
+                                        </button>
+                                        
+                                        <div class="border-t border-gray-200 my-1"></div>
+                                        <div class="px-3 py-1 text-xs font-semibold text-gray-500 bg-gray-50">Outros países</div>
+                                        
+                                        <button type="button" class="country-option w-full text-left px-3 py-2 hover:bg-gray-100 flex items-center" data-code="+49" data-flag="fi fi-de" data-country="DE">
+                                            <span class="fi fi-de mr-3" style="width: 24px; height: 18px;"></span>
+                                            <span class="flex-1">Alemanha</span>
+                                            <span class="text-sm text-gray-500">+49</span>
+                                        </button>
+                                        <button type="button" class="country-option w-full text-left px-3 py-2 hover:bg-gray-100 flex items-center" data-code="+39" data-flag="fi fi-it" data-country="IT">
+                                            <span class="fi fi-it mr-3" style="width: 24px; height: 18px;"></span>
+                                            <span class="flex-1">Itália</span>
+                                            <span class="text-sm text-gray-500">+39</span>
+                                        </button>
+                                        <button type="button" class="country-option w-full text-left px-3 py-2 hover:bg-gray-100 flex items-center" data-code="+44" data-flag="fi fi-gb" data-country="GB">
+                                            <span class="fi fi-gb mr-3" style="width: 24px; height: 18px;"></span>
+                                            <span class="flex-1">Reino Unido</span>
+                                            <span class="text-sm text-gray-500">+44</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Campo do número (oculto para usar no envio) -->
+                            <input type="hidden" id="country-code" name="country_code" value="+351">
+                            <!-- Campo do número -->
+                            <input id="phone" name="phone" type="tel"
+                                   value="{{ onboarding_data.get('step_2', {}).get('phone', '') }}"
+                                   data-full-phone="{{ current_user.telefone or '' }}"
+                                   class="flex-1 border border-l-0 border-gray-300 rounded-r-md px-3 py-2 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm"
+                                   placeholder="912 345 678">
+                        </div>
+                        <p class="mt-1 text-xs text-gray-500">
+                            Selecione o país e digite o número sem o código internacional (opcional)
+                        </p>
+                    </div>
+
+                    <!-- Experiência -->
+                    <div>
+                        <label for="farm_experience" class="block text-sm font-medium text-gray-700 mb-1">
+                            Experiência na Agricultura
+                        </label>
+                        <select id="farm_experience" name="farm_experience" required
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                            <option value="">Selecione sua experiência</option>
+                            <option value="iniciante">Iniciante (menos de 1 ano)</option>
+                            <option value="basico">Básico (1-3 anos)</option>
+                            <option value="intermediario">Intermediário (3-10 anos)</option>
+                            <option value="avancado">Avançado (10+ anos)</option>
+                            <option value="profissional">Profissional/Técnico</option>
+                        </select>
+                    </div>
+
+                    <!-- Tipo de Produtor -->
+                    <div>
+                        <label for="producer_type" class="block text-sm font-medium text-gray-700 mb-1">
+                            Tipo de Produtor
+                        </label>
+                        <select id="producer_type" name="producer_type" required
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                            <option value="">Selecione o tipo</option>
+                            <option value="hobby">Horta Doméstica/Hobby</option>
+                            <option value="pequeno">Pequeno Produtor</option>
+                            <option value="medio">Médio Produtor</option>
+                            <option value="grande">Grande Produtor</option>
+                            <option value="comercial">Produtor Comercial</option>
+                        </select>
+                    </div>
+
+                    <!-- Interesses -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Principais Interesses (selecione até 3)
+                        </label>
+                        <div class="space-y-2">
+                            <label class="flex items-center">
+                                <input type="checkbox" name="interests" value="vegetables" class="mr-2">
+                                <span class="text-sm">Hortaliças e Verduras</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="checkbox" name="interests" value="fruits" class="mr-2">
+                                <span class="text-sm">Frutas e Fruticultura</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="checkbox" name="interests" value="grains" class="mr-2">
+                                <span class="text-sm">Grãos e Cereais</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="checkbox" name="interests" value="herbs" class="mr-2">
+                                <span class="text-sm">Ervas e Plantas Medicinais</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="checkbox" name="interests" value="flowers" class="mr-2">
+                                <span class="text-sm">Flores e Ornamentais</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Navigation Buttons -->
+                <div class="flex justify-between mt-8">
+                    <a href="{{ url_for('auth.onboarding', step='1') }}" 
+                       class="px-6 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition duration-200">
+                        Voltar
+                    </a>
+                    <button type="submit"
+                            class="px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition duration-200">
+                        Próximo
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Limite de Interesses -->
+<div id="interestLimitModal" class="modal">
+    <div class="modal-content">
+        <div class="flex items-center justify-center w-16 h-16 mx-auto mb-4 bg-orange-100 rounded-full">
+            <svg class="w-8 h-8 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.314 16.5c-.77.833.192 2.5 1.732 2.5z"/>
+            </svg>
+        </div>
+        <h3 class="text-xl font-semibold text-gray-900 mb-3">Limite de Interesses Atingido</h3>
+        <p class="text-gray-600 mb-6">
+            Você pode selecionar no máximo <strong>3 interesses</strong> para personalizar melhor sua experiência. 
+            Por favor, desmarque algum interesse antes de selecionar outro.
+        </p>
+        <div class="modal-buttons">
+            <button type="button" id="closeInterestModalBtn" class="px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition duration-200 focus:outline-none focus:ring-2 focus:ring-green-500">
+                Entendi
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/onboarding.js') }}"></script>
+<script nonce="{{ g.csp_nonce }}">
+    // Limitar seleção de interesses a 3 - CORREÇÃO SPRINT 1
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('🎯 Template Step 2 carregado');
+        
+        // Disponibilizar token CSRF para JavaScript
+        window.csrfToken = '{{ csrf_token() }}';
+        console.log('🔒 Token CSRF definido:', window.csrfToken ? 'SIM' : 'NÃO');
+        
+        // Dados salvos do onboarding
+        const onboardingDataRaw = '{{ onboarding_data | tojson | safe }}';
+        const onboardingData = onboardingDataRaw ? JSON.parse(onboardingDataRaw) : {};
+        const step2Data = onboardingData.step_2 || {};
+        
+        // Pré-selecionar campos salvos
+        if (step2Data.farm_experience) {
+            document.getElementById('farm_experience').value = step2Data.farm_experience;
+        }
+        
+        if (step2Data.producer_type) {
+            document.getElementById('producer_type').value = step2Data.producer_type;
+        }
+        
+        if (step2Data.country_code) {
+            document.getElementById('country-code').value = step2Data.country_code;
+        }
+        
+        // Pré-selecionar interesses salvos
+        if (step2Data.interests) {
+            step2Data.interests.forEach(interest => {
+                const checkbox = document.querySelector(`input[name="interests"][value="${interest}"]`);
+                if (checkbox) {
+                    checkbox.checked = true;
+                }
+            });
+        }
+        
+        const checkboxes = document.querySelectorAll('input[name="interests"]');
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                const checked = document.querySelectorAll('input[name="interests"]:checked');
+                if (checked.length > 3) {
+                    this.checked = false;
+                    showInterestLimitModal();
+                }
+            });
+        });
+        
+        console.log(`✅ Configurado limite de interesses para ${checkboxes.length} checkboxes`);
+        
+        // Sistema de telefone com código de país
+        initPhoneSystem();
+        
+        // CORREÇÃO: Separar código do país do número se o usuário já tem telefone salvo
+        initExistingPhoneData();
+    });
+    
+    // NOVA FUNÇÃO: Separar código do país do número existente
+    function initExistingPhoneData() {
+        const phoneInput = document.getElementById('phone');
+        const countryCodeInput = document.getElementById('country-code');
+        const selectedCountrySpan = document.getElementById('selected-country');
+        
+        if (!phoneInput || !countryCodeInput || !selectedCountrySpan) return;
+        
+        const fullPhone = phoneInput.dataset.fullPhone;
+        if (fullPhone && fullPhone.startsWith('+')) {
+            console.log('📞 Processando telefone existente:', fullPhone);
+            
+            // Detectar código do país
+            const countryCodes = [
+                { code: '+351', flag: 'fi fi-pt', country: 'PT' },
+                { code: '+55', flag: 'fi fi-br', country: 'BR' },
+                { code: '+34', flag: 'fi fi-es', country: 'ES' },
+                { code: '+33', flag: 'fi fi-fr', country: 'FR' },
+                { code: '+49', flag: 'fi fi-de', country: 'DE' },
+                { code: '+39', flag: 'fi fi-it', country: 'IT' },
+                { code: '+44', flag: 'fi fi-gb', country: 'GB' },
+                { code: '+1', flag: 'fi fi-us', country: 'US' }
+            ];
+            
+            let detectedCountry = null;
+            for (const country of countryCodes) {
+                if (fullPhone.startsWith(country.code)) {
+                    detectedCountry = country;
+                    break;
+                }
+            }
+            
+            if (detectedCountry) {
+                // Extrair número sem código do país
+                const numberWithoutCode = fullPhone.substring(detectedCountry.code.length).trim();
+                
+                // Atualizar seletor de país
+                selectedCountrySpan.innerHTML = `
+                    <span class="${detectedCountry.flag} mr-1" style="width: 20px; height: 15px;"></span>
+                    <span class="text-xs">${detectedCountry.code}</span>
+                `;
+                countryCodeInput.value = detectedCountry.code;
+                
+                // Atualizar campo do número (apenas o número sem código)
+                phoneInput.value = numberWithoutCode;
+                
+                console.log('✅ Telefone separado:', {
+                    code: detectedCountry.code,
+                    number: numberWithoutCode
+                });
+            }
+        }
+    }
+    
+    // Sistema de telefone com código de país
+    function initPhoneSystem() {
+        const countryDropdownButton = document.getElementById('country-dropdown-button');
+        const countryDropdownMenu = document.getElementById('country-dropdown-menu');
+        const selectedCountrySpan = document.getElementById('selected-country');
+        const countryCodeInput = document.getElementById('country-code');
+        const phoneInput = document.getElementById('phone');
+        
+        if (!countryDropdownButton || !countryDropdownMenu || !selectedCountrySpan || !countryCodeInput || !phoneInput) {
+            console.log('⚠️ Elementos do sistema de telefone não encontrados');
+            return;
+        }
+        
+        // Toggle dropdown
+        countryDropdownButton.addEventListener('click', function(e) {
+            e.preventDefault();
+            countryDropdownMenu.classList.toggle('hidden');
+        });
+        
+        // Fechar dropdown ao clicar fora
+        document.addEventListener('click', function(e) {
+            if (!countryDropdownButton.contains(e.target) && !countryDropdownMenu.contains(e.target)) {
+                countryDropdownMenu.classList.add('hidden');
+            }
+        });
+        
+        // Selecionar país
+        const countryOptions = document.querySelectorAll('.country-option');
+        countryOptions.forEach(option => {
+            option.addEventListener('click', function() {
+                const code = this.dataset.code;
+                const flag = this.dataset.flag;
+                const country = this.dataset.country;
+                
+                // Atualizar display
+                selectedCountrySpan.innerHTML = `
+                    <span class="${flag} mr-1" style="width: 20px; height: 15px;"></span>
+                    <span class="text-xs">${code}</span>
+                `;
+                
+                // Atualizar valor oculto
+                countryCodeInput.value = code;
+                
+                // Fechar dropdown
+                countryDropdownMenu.classList.add('hidden');
+                
+                // Atualizar placeholder e reformatar número
+                updatePhonePlaceholder(code);
+                
+                // Reformatar número existente
+                if (phoneInput.value) {
+                    const cleanValue = phoneInput.value.replace(/\D/g, '');
+                    phoneInput.value = cleanValue;
+                    phoneInput.dispatchEvent(new Event('input'));
+                }
+            });
+        });
+        
+        // Formatação automática do número de telefone
+        phoneInput.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, ''); // Remove não dígitos
+            const countryCode = countryCodeInput.value;
+            
+            // Formatação específica por país
+            if (countryCode === '+351') { // Portugal
+                // Formato: 912 345 678 ou 212 345 678
+                if (value.length >= 6) {
+                    value = value.replace(/(\d{3})(\d{3})(\d{3})/, '$1 $2 $3');
+                } else if (value.length >= 3) {
+                    value = value.replace(/(\d{3})(\d{3})/, '$1 $2');
+                }
+            } else if (countryCode === '+55') { // Brasil
+                // Formato: (11) 99999-9999
+                if (value.length >= 11) {
+                    value = value.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+                } else if (value.length >= 7) {
+                    value = value.replace(/(\d{2})(\d{4})(\d{4})/, '($1) $2-$3');
+                } else if (value.length >= 3) {
+                    value = value.replace(/(\d{2})(\d{4})/, '($1) $2');
+                }
+            } else if (countryCode === '+1') { // EUA/Canadá
+                // Formato: (555) 123-4567
+                if (value.length >= 10) {
+                    value = value.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3');
+                } else if (value.length >= 6) {
+                    value = value.replace(/(\d{3})(\d{3})/, '($1) $2');
+                }
+            } else if (countryCode === '+34') { // Espanha
+                // Formato: 612 34 56 78
+                if (value.length >= 9) {
+                    value = value.replace(/(\d{3})(\d{2})(\d{2})(\d{2})/, '$1 $2 $3 $4');
+                } else if (value.length >= 6) {
+                    value = value.replace(/(\d{3})(\d{2})(\d{2})/, '$1 $2 $3');
+                }
+            } else if (countryCode === '+33') { // França
+                // Formato: 06 12 34 56 78
+                if (value.length >= 10) {
+                    value = value.replace(/(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/, '$1 $2 $3 $4 $5');
+                } else if (value.length >= 6) {
+                    value = value.replace(/(\d{2})(\d{2})(\d{2})/, '$1 $2 $3');
+                }
+            } else {
+                // Formatação genérica para outros países
+                if (value.length >= 6) {
+                    value = value.replace(/(\d{3})(\d{3})(\d+)/, '$1 $2 $3');
+                }
+            }
+            
+            e.target.value = value;
+        });
+        
+        // Função para atualizar placeholder
+        function updatePhonePlaceholder(countryCode) {
+            const placeholders = {
+                '+351': '912 345 678',
+                '+34': '612 34 56 78',
+                '+33': '06 12 34 56 78',
+                '+49': '0151 23456789',
+                '+39': '312 345 6789',
+                '+44': '07123 456789',
+                '+1': '(555) 123-4567',
+                '+55': '(11) 99999-9999',
+                '+54': '11 1234-5678'
+            };
+            phoneInput.placeholder = placeholders[countryCode] || '123 456 789';
+        }
+        
+        console.log('✅ Sistema de telefone inicializado no onboarding');
+    }
+    
+    // Funções para controle do modal de limite de interesses
+    function showInterestLimitModal() {
+        console.log('🔔 Mostrando modal de limite de interesses');
+        const modal = document.getElementById('interestLimitModal');
+        if (modal) {
+            modal.classList.add('show');
+            document.body.style.overflow = 'hidden'; // Impedir scroll
+            console.log('✅ Modal exibido com sucesso');
+        } else {
+            console.error('❌ Modal não encontrado');
+        }
+    }
+    
+    function closeInterestModal() {
+        console.log('🔄 Fechando modal de limite de interesses');
+        const modal = document.getElementById('interestLimitModal');
+        if (modal) {
+            modal.classList.remove('show');
+            document.body.style.overflow = ''; // Restaurar scroll
+            console.log('✅ Modal fechado com sucesso');
+        } else {
+            console.error('❌ Modal não encontrado');
+        }
+    }
+    
+    // Fechar modal ao clicar no fundo
+    document.addEventListener('DOMContentLoaded', function() {
+        const modal = document.getElementById('interestLimitModal');
+        const closeBtn = document.getElementById('closeInterestModalBtn');
+        
+        if (modal) {
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    closeInterestModal();
+                }
+            });
+        }
+        
+        // Event listener para o botão "Entendi"
+        if (closeBtn) {
+            closeBtn.addEventListener('click', function() {
+                console.log('🖱️ Botão "Entendi" clicado');
+                closeInterestModal();
+            });
+            console.log('✅ Event listener adicionado ao botão "Entendi"');
+        } else {
+            console.error('❌ Botão "Entendi" não encontrado');
+        }
+    });
+    
+    // Fechar modal com tecla ESC
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeInterestModal();
+        }
+    });
+</script>
+{% endblock %}

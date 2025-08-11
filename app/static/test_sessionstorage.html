@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste - Verificação de Dados do SessionStorage</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-8">
+    <div class="max-w-4xl mx-auto bg-white rounded-lg shadow-lg p-6">
+        <h1 class="text-2xl font-bold mb-6">🔧 Teste - Verificação de Dados do SessionStorage</h1>
+        
+        <div class="space-y-4">
+            <div>
+                <h2 class="text-lg font-semibold text-blue-600">1. Simular salvamento de dados (Passo 1)</h2>
+                <button onclick="simularDadosTomate()" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                    Simular dados do Tomate
+                </button>
+                <button onclick="limparDados()" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 ml-2">
+                    Limpar dados
+                </button>
+            </div>
+
+            <div>
+                <h2 class="text-lg font-semibold text-green-600">2. Verificar dados salvos</h2>
+                <button onclick="verificarSessionStorage()" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
+                    Verificar SessionStorage
+                </button>
+            </div>
+
+            <div>
+                <h2 class="text-lg font-semibold text-purple-600">3. Simular função do Passo 3</h2>
+                <button onclick="testarFuncaoPasso3()" class="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600">
+                    Testar mostrarSugestoesCiclo()
+                </button>
+            </div>
+
+            <div id="resultados" class="bg-gray-50 border rounded-lg p-4 min-h-32">
+                <h3 class="font-semibold mb-2">📊 Resultados:</h3>
+                <div id="output">Clique nos botões acima para testar...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function log(message) {
+            const output = document.getElementById('output');
+            const timestamp = new Date().toLocaleTimeString();
+            output.innerHTML += `<div class="mb-1"><span class="text-gray-500">[${timestamp}]</span> ${message}</div>`;
+            output.scrollTop = output.scrollHeight;
+        }
+
+        function simularDadosTomate() {
+            // Simular os dados que seriam salvos para o tomate
+            const dadosTomate = {
+                ciclo_dias: "90 dias",
+                epoca_plantio: "Março a Maio",
+                espacamento: "30-40 cm entre plantas",
+                profundidade_plantio: "1-2 cm",
+                temperatura_ideal: "18-25°C",
+                ph_solo: "6.0-7.0",
+                irrigacao: "Regular, evitar encharcamento"
+            };
+
+            // Salvar no sessionStorage
+            for (const [key, value] of Object.entries(dadosTomate)) {
+                sessionStorage.setItem(`cultura_${key}`, value);
+            }
+
+            log('✅ <strong>Dados do tomate salvos no sessionStorage:</strong>');
+            log(`&nbsp;&nbsp;&nbsp;&nbsp;🔄 Ciclo: ${dadosTomate.ciclo_dias}`);
+            log(`&nbsp;&nbsp;&nbsp;&nbsp;📅 Época: ${dadosTomate.epoca_plantio}`);
+            log(`&nbsp;&nbsp;&nbsp;&nbsp;📏 Espaçamento: ${dadosTomate.espacamento}`);
+        }
+
+        function limparDados() {
+            const keys = ['cultura_ciclo_dias', 'cultura_epoca_plantio', 'cultura_espacamento', 
+                         'cultura_profundidade', 'cultura_temperatura', 'cultura_ph_solo', 'cultura_irrigacao'];
+            
+            keys.forEach(key => sessionStorage.removeItem(key));
+            log('🧹 <strong>Todos os dados foram limpos do sessionStorage</strong>');
+        }
+
+        function verificarSessionStorage() {
+            const keys = ['cultura_ciclo_dias', 'cultura_epoca_plantio', 'cultura_espacamento', 
+                         'cultura_profundidade', 'cultura_temperatura', 'cultura_ph_solo', 'cultura_irrigacao'];
+            
+            log('🔍 <strong>Verificando dados no sessionStorage:</strong>');
+            
+            let encontrou = false;
+            keys.forEach(key => {
+                const value = sessionStorage.getItem(key);
+                if (value) {
+                    log(`&nbsp;&nbsp;&nbsp;&nbsp;✅ ${key}: ${value}`);
+                    encontrou = true;
+                } else {
+                    log(`&nbsp;&nbsp;&nbsp;&nbsp;❌ ${key}: <em>não encontrado</em>`);
+                }
+            });
+
+            if (!encontrou) {
+                log('⚠️ <strong>Nenhum dado encontrado! Execute "Simular dados do Tomate" primeiro.</strong>');
+            }
+        }
+
+        function testarFuncaoPasso3() {
+            // Simular a função mostrarSugestoesCiclo do passo 3
+            const cicloEspecifico = sessionStorage.getItem('cultura_ciclo_dias');
+            
+            log('🧪 <strong>Testando lógica do Passo 3:</strong>');
+            log(`&nbsp;&nbsp;&nbsp;&nbsp;🔍 Valor recuperado: "${cicloEspecifico}"`);
+            
+            if (cicloEspecifico) {
+                const cicloNumero = parseInt(cicloEspecifico.replace(/\D/g, ''));
+                log(`&nbsp;&nbsp;&nbsp;&nbsp;🔢 Número extraído: ${cicloNumero}`);
+                
+                if (cicloNumero > 0) {
+                    log(`&nbsp;&nbsp;&nbsp;&nbsp;✅ <strong style="color: green;">SUCESSO!</strong> Mostraria sugestão específica: <strong>${cicloNumero} dias</strong>`);
+                    log(`&nbsp;&nbsp;&nbsp;&nbsp;🎯 Interface mostraria: "Ciclo específico desta cultura: ${cicloNumero} dias"`);
+                } else {
+                    log(`&nbsp;&nbsp;&nbsp;&nbsp;❌ Erro: Não foi possível extrair número válido`);
+                }
+            } else {
+                log(`&nbsp;&nbsp;&nbsp;&nbsp;❌ <strong style="color: red;">PROBLEMA!</strong> Nenhum dado encontrado - mostraria sugestões genéricas`);
+                log(`&nbsp;&nbsp;&nbsp;&nbsp;💡 Interface mostraria: "Sugestões baseadas no tipo de cultura: 30, 45, 60, 75, 90 dias"`);
+            }
+        }
+
+        // Limpar resultados ao carregar
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('output').innerHTML = 'Pronto para testar! 🚀';
+        });
+    </script>
+</body>
+</html>

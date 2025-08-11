@@ -1,0 +1,338 @@
+{% extends "base.html" %}
+
+{% block title %}Agente IA - AgTech Portugal{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto">
+    <div class="mb-6">
+        <h1 class="text-2xl font-bold text-gray-900">Agente Inteligente</h1>
+        <p class="text-gray-600">Converse com o seu assistente agrícola personalizado</p>
+    </div>
+    
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        <!-- Sidebar com conversas -->
+        <div class="lg:col-span-1">
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <h3 class="card-title">Conversas</h3>
+                    <button id="new-conversation" class="btn btn-primary btn-sm">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </div>
+                <div class="card-content">
+                    <div id="conversations-list">
+                        {% for conversation in conversations %}
+                        <div class="conversation-item p-3 rounded hover:bg-gray-50 cursor-pointer"
+                             data-conversation-id="{{ conversation.id }}">
+                            <div class="font-medium text-sm truncate">{{ conversation.title }}</div>
+                            <div class="text-xs text-gray-500">
+                                {{ conversation.updated_at.strftime('%d/%m %H:%M') }}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Chat principal -->
+        <div class="lg:col-span-3">
+            <div class="dashboard-card h-96">
+                <div class="card-header">
+                    <h3 class="card-title">Chat</h3>
+                    <div class="flex space-x-2">
+                        <button id="upload-image" class="btn btn-secondary btn-sm">
+                            <i class="fas fa-camera"></i>
+                        </button>
+                        <button id="clear-chat" class="btn btn-secondary btn-sm">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="flex flex-col h-full">
+                    <!-- Área de mensagens -->
+                    <div id="chat-messages" class="flex-1 overflow-y-auto p-4 space-y-4">
+                        <div class="message agent-message">
+                            <div class="message-avatar">
+                                <i class="fas fa-robot text-green-600"></i>
+                            </div>
+                            <div class="message-content">
+                                <p>Olá! Sou o seu assistente agrícola. Como posso ajudá-lo hoje?</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Input de mensagem -->
+                    <div class="border-t p-4">
+                        <form id="chat-form" class="flex space-x-3">
+                            <input type="file" id="image-input" accept="image/*" class="hidden">
+                            <input type="text" id="message-input" 
+                                   class="form-input flex-1" 
+                                   placeholder="Digite sua mensagem..."
+                                   autocomplete="off">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Sugestões contextuais -->
+    <div class="mt-6">
+        <div class="dashboard-card">
+            <div class="card-header">
+                <h3 class="card-title">Sugestões para si</h3>
+            </div>
+            <div class="card-content">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {% for suggestion in suggestions %}
+                    <button class="suggestion-btn text-left p-3 border border-gray-200 rounded-lg hover:border-green-500 hover:bg-green-50 transition-colors">
+                        {{ suggestion }}
+                    </button>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.message {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.message-avatar {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background-color: #f3f4f6;
+    flex-shrink: 0;
+}
+
+.user-message .message-avatar {
+    background-color: #10b981;
+    color: white;
+}
+
+.message-content {
+    flex: 1;
+    background-color: #f9fafb;
+    padding: 12px 16px;
+    border-radius: 12px;
+    max-width: 80%;
+}
+
+.user-message .message-content {
+    background-color: #10b981;
+    color: white;
+    margin-left: auto;
+    margin-right: 0;
+}
+
+.user-message {
+    flex-direction: row-reverse;
+}
+
+.conversation-item:hover {
+    background-color: #f3f4f6;
+}
+
+.conversation-item.active {
+    background-color: #10b981;
+    color: white;
+}
+
+.suggestion-btn:hover {
+    border-color: #10b981;
+    background-color: #f0fdf4;
+}
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script nonce="{{ g.csp_nonce }}">
+class AgentChat {
+    constructor() {
+        this.currentConversationId = null;
+        this.init();
+    }
+    
+    init() {
+        this.setupEventListeners();
+    }
+    
+    setupEventListeners() {
+        // Formulário de chat
+        document.getElementById('chat-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            this.sendMessage();
+        });
+        
+        // Upload de imagem
+        document.getElementById('upload-image').addEventListener('click', () => {
+            document.getElementById('image-input').click();
+        });
+        
+        // Sugestões
+        document.querySelectorAll('.suggestion-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const messageInput = document.getElementById('message-input');
+                messageInput.value = e.target.textContent.trim();
+                messageInput.focus();
+            });
+        });
+        
+        // Conversas
+        document.querySelectorAll('.conversation-item').forEach(item => {
+            item.addEventListener('click', (e) => {
+                const conversationId = e.currentTarget.dataset.conversationId;
+                this.loadConversation(conversationId);
+            });
+        });
+        
+        // Nova conversa
+        document.getElementById('new-conversation').addEventListener('click', () => {
+            this.newConversation();
+        });
+        
+        // Limpar chat
+        document.getElementById('clear-chat').addEventListener('click', () => {
+            this.clearChat();
+        });
+    }
+    
+    async sendMessage() {
+        const messageInput = document.getElementById('message-input');
+        const message = messageInput.value.trim();
+        
+        if (!message) return;
+        
+        // Adicionar mensagem do usuário
+        this.addMessage('user', message);
+        messageInput.value = '';
+        
+        // Mostrar loading
+        const loadingId = this.addMessage('agent', 'A pensar...', true);
+        
+        try {
+            const response = await fetch('/agent/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    message: message,
+                    conversation_id: this.currentConversationId
+                })
+            });
+            
+            const data = await response.json();
+            
+            // Remover loading
+            document.getElementById(loadingId).remove();
+            
+            if (data.success) {
+                this.addMessage('agent', data.response.text);
+                this.currentConversationId = data.conversation_id;
+            } else {
+                this.addMessage('agent', 'Desculpe, ocorreu um erro. Tente novamente.');
+            }
+            
+        } catch (error) {
+            document.getElementById(loadingId).remove();
+            this.addMessage('agent', 'Erro de conexão. Verifique sua internet.');
+        }
+    }
+    
+    addMessage(role, content, isLoading = false) {
+        const messagesContainer = document.getElementById('chat-messages');
+        const messageId = 'msg-' + Date.now();
+        
+        const messageDiv = document.createElement('div');
+        messageDiv.id = messageId;
+        messageDiv.className = `message ${role}-message`;
+        
+        const avatarIcon = role === 'user' ? 'fa-user' : 'fa-robot';
+        
+        messageDiv.innerHTML = `
+            <div class="message-avatar">
+                <i class="fas ${avatarIcon}"></i>
+            </div>
+            <div class="message-content">
+                <p>${content}${isLoading ? ' <div class="loading"></div>' : ''}</p>
+            </div>
+        `;
+        
+        messagesContainer.appendChild(messageDiv);
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        
+        return messageId;
+    }
+    
+    async loadConversation(conversationId) {
+        try {
+            const response = await fetch(`/agent/conversations/${conversationId}`);
+            const data = await response.json();
+            
+            // Limpar mensagens atuais
+            document.getElementById('chat-messages').innerHTML = '';
+            
+            // Carregar mensagens da conversa
+            data.messages.forEach(msg => {
+                this.addMessage(msg.role, msg.content);
+            });
+            
+            this.currentConversationId = conversationId;
+            
+            // Atualizar UI
+            document.querySelectorAll('.conversation-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            document.querySelector(`[data-conversation-id="${conversationId}"]`).classList.add('active');
+            
+        } catch (error) {
+            console.error('Erro ao carregar conversa:', error);
+        }
+    }
+    
+    newConversation() {
+        this.currentConversationId = null;
+        document.getElementById('chat-messages').innerHTML = `
+            <div class="message agent-message">
+                <div class="message-avatar">
+                    <i class="fas fa-robot text-green-600"></i>
+                </div>
+                <div class="message-content">
+                    <p>Olá! Sou o seu assistente agrícola. Como posso ajudá-lo hoje?</p>
+                </div>
+            </div>
+        `;
+        
+        // Remover seleção ativa
+        document.querySelectorAll('.conversation-item').forEach(item => {
+            item.classList.remove('active');
+        });
+    }
+    
+    clearChat() {
+        if (confirm('Tem certeza que deseja limpar o chat?')) {
+            this.newConversation();
+        }
+    }
+}
+
+// Inicializar quando DOM estiver pronto
+document.addEventListener('DOMContentLoaded', () => {
+    new AgentChat();
+});
+</script>
+{% endblock %}

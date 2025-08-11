@@ -1,0 +1,191 @@
+{% extends "base.html" %}
+
+{% block title %}Pronto para Começar! - Passo 5{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-green-50 to-green-100 flex items-center justify-center px-4">
+    <div class="max-w-md w-full">
+        <!-- Progress Bar -->
+        <div class="mb-8">
+            <div class="flex justify-between items-center mb-2">
+                <span class="text-sm font-medium text-green-600">Passo 5 de 5</span>
+                <span class="text-sm text-gray-500">100%</span>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-2">
+                <div class="bg-green-600 h-2 rounded-full" style="width: 100%"></div>
+            </div>
+        </div>
+
+        <!-- Completion Card -->
+        <div class="bg-white rounded-lg shadow-xl p-8">
+            <!-- Success Icon -->
+            <div class="text-center mb-6">
+                <div class="mx-auto h-16 w-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
+                    <svg class="h-8 w-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                </div>
+                <h1 class="text-2xl font-bold text-gray-900 mb-2">
+                    Parabéns! 🎉
+                </h1>
+                <p class="text-gray-600 mb-6">
+                    Sua conta foi configurada com sucesso! Agora você está pronto para aproveitar todos os recursos do Agente Agrícola.
+                </p>
+            </div>
+
+            <!-- Next Steps -->
+            <div class="mb-8">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Próximos Passos:</h3>
+                <div class="space-y-3">
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0 h-5 w-5 bg-green-100 rounded-full flex items-center justify-center mt-1">
+                            <span class="text-xs font-bold text-green-600">1</span>
+                        </div>
+                        <div class="ml-3">
+                            <h4 class="font-medium text-gray-900">Explore o Dashboard</h4>
+                            <p class="text-sm text-gray-600">Familiarize-se com a interface principal</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0 h-5 w-5 bg-green-100 rounded-full flex items-center justify-center mt-1">
+                            <span class="text-xs font-bold text-green-600">2</span>
+                        </div>
+                        <div class="ml-3">
+                            <h4 class="font-medium text-gray-900">Adicione suas Culturas</h4>
+                            <p class="text-sm text-gray-600">Registre as plantas que você cultiva</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0 h-5 w-5 bg-green-100 rounded-full flex items-center justify-center mt-1">
+                            <span class="text-xs font-bold text-green-600">3</span>
+                        </div>
+                        <div class="ml-3">
+                            <h4 class="font-medium text-gray-900">Fale com o Agente IA</h4>
+                            <p class="text-sm text-gray-600">Receba dicas personalizadas para sua propriedade</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Tips -->
+            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+                <h4 class="font-medium text-blue-900 mb-2">💡 Dica Rápida</h4>
+                <p class="text-sm text-blue-800">
+                    Comece adicionando uma cultura simples como alface ou tomate para se familiarizar com o sistema. 
+                    O Agente IA poderá dar dicas específicas assim que você tiver dados suficientes!
+                </p>
+            </div>
+
+            <!-- Final Form -->
+            <form action="{{ url_for('auth.save_onboarding') }}" method="POST">
+                <input type="hidden" name="step" value="5">
+                <input type="hidden" name="complete_onboarding" value="true">
+                
+                <!-- Terms Agreement -->
+                <div class="mb-6">
+                    <label class="flex items-start">
+                        <input type="checkbox" name="accept_terms" required class="mr-3 mt-1">
+                        <span class="text-sm text-gray-700">
+                            Eu li e concordo com os 
+                            <a href="#" class="text-green-600 hover:underline">Termos de Uso</a> 
+                            e a 
+                            <a href="#" class="text-green-600 hover:underline">Política de Privacidade</a>
+                        </span>
+                    </label>
+                </div>
+
+                <!-- Newsletter Opt-in -->
+                <div class="mb-6">
+                    <label class="flex items-start">
+                        <input type="checkbox" name="newsletter" checked class="mr-3 mt-1">
+                        <span class="text-sm text-gray-700">
+                            Quero receber dicas de agricultura e novidades por email (opcional)
+                        </span>
+                    </label>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex flex-col space-y-3">
+                    <button type="submit"
+                            class="w-full bg-green-600 text-white py-3 px-4 rounded-md hover:bg-green-700 transition duration-200 font-medium">
+                        Finalizar e Ir para o Dashboard
+                    </button>
+                    
+                    <a href="{{ url_for('auth.onboarding', step='4') }}" 
+                       class="w-full bg-gray-100 text-gray-700 py-3 px-4 rounded-md hover:bg-gray-200 transition duration-200 text-center font-medium">
+                        Voltar
+                    </a>
+                </div>
+            </form>
+        </div>
+
+        <!-- Support Info -->
+        <div class="text-center mt-6">
+            <p class="text-sm text-gray-600">
+                Precisa de ajuda? Confira nosso 
+                <a href="#" class="text-green-600 hover:underline">Guia de Primeiros Passos</a>
+                ou <a href="#" class="text-green-600 hover:underline">entre em contato</a>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script nonce="{{ g.csp_nonce }}">
+    // Exponha o token CSRF para JavaScript
+    window.csrfToken = "{{ csrf_token() }}";
+    console.log('CSRF Token no step 5:', window.csrfToken);
+
+    // Adicionar animação de confetti ou celebração
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('Onboarding completed! 🎉');
+        
+        // Você pode adicionar uma animação de celebração aqui
+        // Por exemplo, usando uma biblioteca como confetti-js
+    });
+
+    document.querySelector("form[action='{{ url_for('auth.save_onboarding') }}']").addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const step = 5;
+        const completeOnboarding = true;
+        const acceptTerms = document.querySelector('input[name="accept_terms"]').checked;
+        const newsletter = document.querySelector('input[name="newsletter"]').checked;
+
+        if (!acceptTerms) {
+            alert('Você deve aceitar os Termos de Uso e a Política de Privacidade.');
+            return;
+        }
+
+        try {
+            const headers = {
+                'Content-Type': 'application/json',
+            };
+            
+            // Adicione o token CSRF se disponível
+            if (window.csrfToken) {
+                headers['X-CSRF-Token'] = window.csrfToken;
+                console.log('Enviando token CSRF:', window.csrfToken);
+            }
+
+            const response = await fetch("{{ url_for('auth.save_onboarding') }}", {
+                method: 'POST',
+                headers: headers,
+                body: JSON.stringify({ step, complete_onboarding: completeOnboarding, newsletter })
+            });
+
+            if (response.ok) {
+                window.location.href = "{{ url_for('dashboard.index') }}";
+            } else {
+                const errorData = await response.json();
+                alert(errorData.error || 'Erro ao salvar dados');
+            }
+        } catch (error) {
+            alert('Erro de conexão');
+        }
+    });
+</script>
+{% endblock %}

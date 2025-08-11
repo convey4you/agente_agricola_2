@@ -1,0 +1,280 @@
+<!-- Progress Bar -->
+<div class="mb-6">
+    <div class="flex justify-between items-center mb-2">
+        <span class="text-sm font-medium text-green-600">Passo 2 de 5</span>
+        <span class="text-sm text-gray-500">40%</span>
+    </div>
+    <div class="w-full bg-gray-200 rounded-full h-2">
+        <div class="bg-green-600 h-2 rounded-full" style="width: 40%"></div>
+    </div>
+</div>
+
+<!-- Header -->
+<div class="text-center mb-6">
+    <div class="mx-auto h-16 w-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
+        <svg class="h-8 w-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path>
+        </svg>
+    </div>
+    <h1 class="text-2xl font-bold text-gray-900 mb-2">
+        Defina a Área de Cultivo 📍
+    </h1>
+    <p class="text-gray-600">
+        Configure o espaço onde sua cultura será plantada
+    </p>
+</div>
+
+<!-- Resumo da Etapa Anterior -->
+<div id="resumo-anterior" class="bg-gray-50 rounded-lg p-4 mb-6">
+    <h3 class="font-medium text-gray-900 mb-2">📋 Cultura Selecionada:</h3>
+    <div id="resumo-conteudo" class="text-sm text-gray-600">
+        Carregando...
+    </div>
+</div>
+
+<!-- Form -->
+<form id="wizardStep2Form">
+    <div class="space-y-6">
+        <!-- Área Plantada -->
+        <div>
+            <label for="area_plantada" class="block text-sm font-medium text-gray-700 mb-2">
+                Área de Plantio *
+            </label>
+            <div class="flex space-x-2">
+                <input 
+                    type="number" 
+                    id="area_plantada" 
+                    name="area_plantada" 
+                    class="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    placeholder="Ex: 1000"
+                    min="0.1"
+                    step="0.1"
+                    required
+                >
+                <select 
+                    id="unidade_area" 
+                    name="unidade_area" 
+                    class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                >
+                    <option value="m²">m²</option>
+                    <option value="hectares" selected>hectares</option>
+                    <option value="acres">acres</option>
+                </select>
+            </div>
+            <p class="text-xs text-gray-500 mt-1">
+                Especifique a área total da plantação
+            </p>
+        </div>
+
+        <!-- Data de Plantio -->
+        <div>
+            <label for="data_plantio" class="block text-sm font-medium text-gray-700 mb-2">
+                Data de Plantio *
+            </label>
+            <input 
+                type="date" 
+                id="data_plantio" 
+                name="data_plantio" 
+                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                required
+            >
+            <p class="text-xs text-gray-500 mt-1">
+                Data em que o plantio foi ou será realizado
+            </p>
+        </div>
+
+        <!-- Método de Plantio -->
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-3">
+                Método de Plantio *
+            </label>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <label class="relative flex items-center p-3 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
+                    <input type="radio" name="metodo_plantio" value="direto" class="sr-only">
+                    <div class="w-4 h-4 border-2 border-gray-300 rounded-full mr-3 flex items-center justify-center">
+                        <div class="w-2 h-2 bg-green-600 rounded-full hidden"></div>
+                    </div>
+                    <div>
+                        <div class="font-medium text-gray-900">Semeadura Direta</div>
+                        <div class="text-sm text-gray-500">Sementes plantadas diretamente no campo</div>
+                    </div>
+                </label>
+                
+                <label class="relative flex items-center p-3 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
+                    <input type="radio" name="metodo_plantio" value="mudas" class="sr-only">
+                    <div class="w-4 h-4 border-2 border-gray-300 rounded-full mr-3 flex items-center justify-center">
+                        <div class="w-2 h-2 bg-green-600 rounded-full hidden"></div>
+                    </div>
+                    <div>
+                        <div class="font-medium text-gray-900">Transplantio de Mudas</div>
+                        <div class="text-sm text-gray-500">Mudas cultivadas em estufa ou viveiro</div>
+                    </div>
+                </label>
+            </div>
+        </div>
+
+        <!-- Localização -->
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-3">
+                Localização do Cultivo
+            </label>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label for="latitude" class="block text-xs text-gray-600 mb-1">Latitude (opcional)</label>
+                    <input 
+                        type="number" 
+                        id="latitude" 
+                        name="latitude" 
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                        placeholder="Ex: -23.5505"
+                        step="any"
+                    >
+                </div>
+                <div>
+                    <label for="longitude" class="block text-xs text-gray-600 mb-1">Longitude (opcional)</label>
+                    <input 
+                        type="number" 
+                        id="longitude" 
+                        name="longitude" 
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                        placeholder="Ex: -46.6333"
+                        step="any"
+                    >
+                </div>
+            </div>
+            <div class="mt-2">
+                <button type="button" id="detectLocation" class="text-sm text-green-600 hover:text-green-700 flex items-center">
+                    📍 Detectar localização automática
+                </button>
+            </div>
+        </div>
+
+        <!-- Observações -->
+        <div>
+            <label for="observacoes_area" class="block text-sm font-medium text-gray-700 mb-2">
+                Observações sobre a Área (opcional)
+            </label>
+            <textarea 
+                id="observacoes_area" 
+                name="observacoes_area" 
+                rows="4" 
+                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent resize-none"
+                placeholder="Ex: Área próxima a fonte de água, terreno levemente inclinado..."
+            ></textarea>
+        </div>
+    </div>
+
+    <!-- Navigation Buttons -->
+    <div class="flex justify-between pt-6 border-t border-gray-200 mt-8">
+        <button 
+            type="button" 
+            id="voltarPasso1"
+            class="px-6 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-colors"
+        >
+            ← Voltar
+        </button>
+        
+        <button 
+            type="submit" 
+            class="px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 transition-colors"
+        >
+            Próximo Passo →
+        </button>
+    </div>
+</form>
+
+<script>
+// Radio button styling
+document.querySelectorAll('input[type="radio"]').forEach(radio => {
+    radio.addEventListener('change', function() {
+        // Reset all radio buttons in the same group
+        document.querySelectorAll(`input[name="${this.name}"]`).forEach(r => {
+            r.closest('label').classList.remove('bg-green-50', 'border-green-500');
+            r.parentNode.querySelector('.w-2.h-2').classList.add('hidden');
+        });
+        
+        // Style the selected radio button
+        if (this.checked) {
+            this.closest('label').classList.add('bg-green-50', 'border-green-500');
+            this.parentNode.querySelector('.w-2.h-2').classList.remove('hidden');
+        }
+    });
+});
+
+// Form handling
+document.getElementById('wizardStep2Form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    const data = {
+        step: '2',
+        area_plantada: formData.get('area_plantada'),
+        unidade_area: formData.get('unidade_area'),
+        data_plantio: formData.get('data_plantio'),
+        metodo_plantio: formData.get('metodo_plantio'),
+        latitude: formData.get('latitude') || null,
+        longitude: formData.get('longitude') || null,
+        observacoes_area: formData.get('observacoes_area') || null
+    };
+    
+    // Salvar dados
+    fetch('/cultures/wizard/save', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(result => {
+        if (result.success) {
+            // Ir para próximo passo
+            window.location.href = '/cultures/wizard?step=3&modal=true';
+        } else {
+            alert('Erro ao salvar dados: ' + (result.message || 'Erro desconhecido'));
+        }
+    })
+    .catch(error => {
+        console.error('Erro:', error);
+        alert('Erro ao processar solicitação.');
+    });
+});
+
+// Voltar para passo anterior
+document.getElementById('voltarPasso1').addEventListener('click', function() {
+    window.location.href = '/cultures/wizard?step=1&modal=true';
+});
+
+// Geolocation
+document.getElementById('detectLocation').addEventListener('click', function() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+            document.getElementById('latitude').value = position.coords.latitude.toFixed(6);
+            document.getElementById('longitude').value = position.coords.longitude.toFixed(6);
+        }, function(error) {
+            alert('Erro ao detectar localização: ' + error.message);
+        });
+    } else {
+        alert('Geolocalização não é suportada neste navegador.');
+    }
+});
+
+// Carregar resumo da etapa anterior
+document.addEventListener('DOMContentLoaded', function() {
+    fetch('/cultures/wizard/get-session-data')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success && data.data) {
+                const resumo = document.getElementById('resumo-conteudo');
+                if (data.data.tipo_cultura) {
+                    resumo.innerHTML = `
+                        <strong>Tipo:</strong> ${data.data.tipo_cultura}<br>
+                        <strong>Variedade:</strong> ${data.data.variedade || 'Não especificada'}
+                    `;
+                }
+            }
+        })
+        .catch(error => console.error('Erro ao carregar resumo:', error));
+});
+</script>

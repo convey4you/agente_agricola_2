@@ -1,0 +1,427 @@
+<!-- Progress Bar -->
+<div class="mb-6">
+    <div class="flex justify-between items-center mb-2">
+        <span class="text-sm font-medium text-green-600">Passo 4 de 5</span>
+        <span class="text-sm text-gray-500">80%</span>
+    </div>
+    <div class="w-full bg-gray-200 rounded-full h-2">
+        <div class="bg-green-600 h-2 rounded-full" style="width: 80%"></div>
+    </div>
+</div>
+
+<!-- Header -->
+<div class="text-center mb-6">
+    <div class="mx-auto h-16 w-16 bg-green-100 rounded-ful flex items-center justify-center mb-4">
+        <svg class="h-8 w-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+        </svg>
+    </div>
+    <h1 class="text-2xl font-bold text-gray-900 mb-2">
+        Configure Recursos e Cuidados 🌱
+    </h1>
+    <p class="text-gray-600">
+        Defina os recursos necessários e práticas de manejo
+    </p>
+</div>
+
+<!-- Resumo das Etapas Anteriores -->
+<div id="resumo-anterior" class="bg-gray-50 rounded-lg p-4 mb-6">
+    <h3 class="font-medium text-gray-900 mb-2">📋 Resumo do Projeto:</h3>
+    <div id="resumo-conteudo" class="text-sm text-gray-600">
+        Carregando...
+    </div>
+</div>
+
+<!-- Form -->
+<form id="wizardStep4Form">
+    <div class="space-y-6">
+        <!-- Sistema de Irrigação -->
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-3">
+                Sistema de Irrigação *
+            </label>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <label class="relative flex items-center p-3 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
+                    <input type="radio" name="sistema_irrigacao" value="gotejamento" class="sr-only">
+                    <div class="w-4 h-4 border-2 border-gray-300 rounded-full mr-3 flex items-center justify-center">
+                        <div class="w-2 h-2 bg-green-600 rounded-full hidden"></div>
+                    </div>
+                    <div>
+                        <div class="font-medium text-gray-900">💧 Gotejamento</div>
+                        <div class="text-sm text-gray-500">Irrigação localizada e eficiente</div>
+                    </div>
+                </label>
+                
+                <label class="relative flex items-center p-3 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
+                    <input type="radio" name="sistema_irrigacao" value="aspersao" class="sr-only">
+                    <div class="w-4 h-4 border-2 border-gray-300 rounded-full mr-3 flex items-center justify-center">
+                        <div class="w-2 h-2 bg-green-600 rounded-full hidden"></div>
+                    </div>
+                    <div>
+                        <div class="font-medium text-gray-900">🌧️ Aspersão</div>
+                        <div class="text-sm text-gray-500">Irrigação por borrifamento</div>
+                    </div>
+                </label>
+                
+                <label class="relative flex items-center p-3 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
+                    <input type="radio" name="sistema_irrigacao" value="sulcos" class="sr-only">
+                    <div class="w-4 h-4 border-2 border-gray-300 rounded-full mr-3 flex items-center justify-center">
+                        <div class="w-2 h-2 bg-green-600 rounded-full hidden"></div>
+                    </div>
+                    <div>
+                        <div class="font-medium text-gray-900">🌊 Sulcos</div>
+                        <div class="text-sm text-gray-500">Irrigação por inundação</div>
+                    </div>
+                </label>
+                
+                <label class="relative flex items-center p-3 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
+                    <input type="radio" name="sistema_irrigacao" value="chuva" class="sr-only">
+                    <div class="w-4 h-4 border-2 border-gray-300 rounded-full mr-3 flex items-center justify-center">
+                        <div class="w-2 h-2 bg-green-600 rounded-full hidden"></div>
+                    </div>
+                    <div>
+                        <div class="font-medium text-gray-900">☔ Chuva Natural</div>
+                        <div class="text-sm text-gray-500">Dependente de precipitação</div>
+                    </div>
+                </label>
+            </div>
+        </div>
+
+        <!-- Frequência de Irrigação -->
+        <div id="irrigacao-details">
+            <label for="frequencia_irrigacao" class="block text-sm font-medium text-gray-700 mb-2">
+                Frequência de Irrigação
+            </label>
+            <select 
+                id="frequencia_irrigacao" 
+                name="frequencia_irrigacao" 
+                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+            >
+                <option value="">Selecione a frequência</option>
+                <option value="diaria">Diária</option>
+                <option value="dia_alternado">Dia alternado</option>
+                <option value="2_vezes_semana">2 vezes por semana</option>
+                <option value="semanal">Semanal</option>
+                <option value="conforme_necessidade">Conforme necessidade</option>
+            </select>
+        </div>
+
+        <!-- Fertilização -->
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-3">
+                Tipo de Fertilização *
+            </label>
+            <div class="space-y-3">
+                <label class="flex items-start p-3 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
+                    <input type="checkbox" name="fertilizacao[]" value="organica" class="mt-1 mr-3 text-green-600">
+                    <div>
+                        <div class="font-medium text-gray-900">🌿 Orgânica</div>
+                        <div class="text-sm text-gray-500">Compostagem, esterco, adubos verdes</div>
+                    </div>
+                </label>
+                
+                <label class="flex items-start p-3 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
+                    <input type="checkbox" name="fertilizacao[]" value="quimica" class="mt-1 mr-3 text-green-600">
+                    <div>
+                        <div class="font-medium text-gray-900">⚗️ Química</div>
+                        <div class="text-sm text-gray-500">NPK, fertilizantes minerais</div>
+                    </div>
+                </label>
+                
+                <label class="flex items-start p-3 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
+                    <input type="checkbox" name="fertilizacao[]" value="mista" class="mt-1 mr-3 text-green-600">
+                    <div>
+                        <div class="font-medium text-gray-900">🔄 Mista</div>
+                        <div class="text-sm text-gray-500">Combinação de orgânica e química</div>
+                    </div>
+                </label>
+            </div>
+        </div>
+
+        <!-- Controle de Pragas -->
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-3">
+                Controle de Pragas e Doenças
+            </label>
+            <div class="space-y-3">
+                <label class="flex items-start p-3 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
+                    <input type="checkbox" name="controle_pragas[]" value="biologico" class="mt-1 mr-3 text-green-600">
+                    <div>
+                        <div class="font-medium text-gray-900">🐛 Controle Biológico</div>
+                        <div class="text-sm text-gray-500">Predadores naturais, microorganismos</div>
+                    </div>
+                </label>
+                
+                <label class="flex items-start p-3 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
+                    <input type="checkbox" name="controle_pragas[]" value="quimico" class="mt-1 mr-3 text-green-600">
+                    <div>
+                        <div class="font-medium text-gray-900">🧪 Controle Químico</div>
+                        <div class="text-sm text-gray-500">Pesticidas, fungicidas</div>
+                    </div>
+                </label>
+                
+                <label class="flex items-start p-3 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
+                    <input type="checkbox" name="controle_pragas[]" value="preventivo" class="mt-1 mr-3 text-green-600">
+                    <div>
+                        <div class="font-medium text-gray-900">🛡️ Preventivo</div>
+                        <div class="text-sm text-gray-500">Rotação de culturas, plantas companheiras</div>
+                    </div>
+                </label>
+            </div>
+        </div>
+
+        <!-- Equipamentos Necessários -->
+        <div>
+            <label for="equipamentos" class="block text-sm font-medium text-gray-700 mb-2">
+                Equipamentos e Ferramentas Necessários
+            </label>
+            <textarea 
+                id="equipamentos" 
+                name="equipamentos" 
+                rows="4" 
+                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent resize-none"
+                placeholder="Ex: Pulverizador, enxada, regador, trator..."
+            ></textarea>
+        </div>
+
+        <!-- Estimativa de Custos -->
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-4">
+                Estimativa de Custos (€)
+            </label>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label for="custo_sementes" class="block text-xs text-gray-600 mb-1">Sementes/Mudas</label>
+                    <input 
+                        type="number" 
+                        id="custo_sementes" 
+                        name="custo_sementes" 
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                        placeholder="0.00"
+                        min="0"
+                        step="0.01"
+                    >
+                </div>
+                <div>
+                    <label for="custo_fertilizantes" class="block text-xs text-gray-600 mb-1">Fertilizantes</label>
+                    <input 
+                        type="number" 
+                        id="custo_fertilizantes" 
+                        name="custo_fertilizantes" 
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                        placeholder="0.00"
+                        min="0"
+                        step="0.01"
+                    >
+                </div>
+                <div>
+                    <label for="custo_defensivos" class="block text-xs text-gray-600 mb-1">Defensivos</label>
+                    <input 
+                        type="number" 
+                        id="custo_defensivos" 
+                        name="custo_defensivos" 
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                        placeholder="0.00"
+                        min="0"
+                        step="0.01"
+                    >
+                </div>
+                <div>
+                    <label for="custo_outros" class="block text-xs text-gray-600 mb-1">Outros</label>
+                    <input 
+                        type="number" 
+                        id="custo_outros" 
+                        name="custo_outros" 
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                        placeholder="0.00"
+                        min="0"
+                        step="0.01"
+                    >
+                </div>
+            </div>
+            <div class="mt-3 p-3 bg-green-50 rounded-lg">
+                <div class="text-sm font-medium text-green-800">
+                    Total Estimado: €<span id="custo-total">0.00</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Observações sobre Recursos -->
+        <div>
+            <label for="observacoes_recursos" class="block text-sm font-medium text-gray-700 mb-2">
+                Observações sobre Recursos e Manejo (opcional)
+            </label>
+            <textarea 
+                id="observacoes_recursos" 
+                name="observacoes_recursos" 
+                rows="4" 
+                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent resize-none"
+                placeholder="Ex: Necessita proteção contra vento, solo bem drenado..."
+            ></textarea>
+        </div>
+    </div>
+
+    <!-- Navigation Buttons -->
+    <div class="flex justify-between pt-6 border-t border-gray-200 mt-8">
+        <button 
+            type="button" 
+            id="voltarPasso3"
+            class="px-6 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-colors"
+        >
+            ← Voltar
+        </button>
+        
+        <button 
+            type="submit" 
+            class="px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 transition-colors"
+        >
+            Finalizar →
+        </button>
+    </div>
+</form>
+
+<script>
+// Radio button styling
+document.querySelectorAll('input[type="radio"]').forEach(radio => {
+    radio.addEventListener('change', function() {
+        // Reset all radio buttons in the same group
+        document.querySelectorAll(`input[name="${this.name}"]`).forEach(r => {
+            r.closest('label').classList.remove('bg-green-50', 'border-green-500');
+            r.parentNode.querySelector('.w-2.h-2').classList.add('hidden');
+        });
+        
+        // Style the selected radio button
+        if (this.checked) {
+            this.closest('label').classList.add('bg-green-50', 'border-green-500');
+            this.parentNode.querySelector('.w-2.h-2').classList.remove('hidden');
+        }
+    });
+});
+
+// Show/hide irrigation details based on system selection
+document.querySelectorAll('input[name="sistema_irrigacao"]').forEach(radio => {
+    radio.addEventListener('change', function() {
+        const details = document.getElementById('irrigacao-details');
+        if (this.value === 'chuva') {
+            details.style.display = 'none';
+        } else {
+            details.style.display = 'block';
+        }
+    });
+});
+
+// Calculate total cost
+function calculateTotalCost() {
+    const sementes = parseFloat(document.getElementById('custo_sementes').value) || 0;
+    const fertilizantes = parseFloat(document.getElementById('custo_fertilizantes').value) || 0;
+    const defensivos = parseFloat(document.getElementById('custo_defensivos').value) || 0;
+    const outros = parseFloat(document.getElementById('custo_outros').value) || 0;
+    
+    const total = sementes + fertilizantes + defensivos + outros;
+    document.getElementById('custo-total').textContent = total.toFixed(2);
+}
+
+// Event listeners for cost calculation
+['custo_sementes', 'custo_fertilizantes', 'custo_defensivos', 'custo_outros'].forEach(id => {
+    document.getElementById(id).addEventListener('input', calculateTotalCost);
+});
+
+// Form handling
+document.getElementById('wizardStep4Form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    
+    // Handle multiple selections
+    const fertilizacao = Array.from(document.querySelectorAll('input[name="fertilizacao[]"]:checked'))
+        .map(cb => cb.value);
+    const controlePragas = Array.from(document.querySelectorAll('input[name="controle_pragas[]"]:checked'))
+        .map(cb => cb.value);
+    
+    const data = {
+        step: '4',
+        sistema_irrigacao: formData.get('sistema_irrigacao'),
+        frequencia_irrigacao: formData.get('frequencia_irrigacao'),
+        fertilizacao: fertilizacao,
+        controle_pragas: controlePragas,
+        equipamentos: formData.get('equipamentos') || null,
+        custo_sementes: formData.get('custo_sementes') || null,
+        custo_fertilizantes: formData.get('custo_fertilizantes') || null,
+        custo_defensivos: formData.get('custo_defensivos') || null,
+        custo_outros: formData.get('custo_outros') || null,
+        observacoes_recursos: formData.get('observacoes_recursos') || null
+    };
+    
+    // Salvar dados
+    fetch('/cultures/wizard/save', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(result => {
+        if (result.success) {
+            // Ir para último passo
+            window.location.href = '/cultures/wizard?step=5&modal=true';
+        } else {
+            alert('Erro ao salvar dados: ' + (result.message || 'Erro desconhecido'));
+        }
+    })
+    .catch(error => {
+        console.error('Erro:', error);
+        alert('Erro ao processar solicitação.');
+    });
+});
+
+// Voltar para passo anterior
+document.getElementById('voltarPasso3').addEventListener('click', function() {
+    window.location.href = '/cultures/wizard?step=3&modal=true';
+});
+
+// Load summary from previous steps
+document.addEventListener('DOMContentLoaded', function() {
+    fetch('/cultures/wizard/get-session-data')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success && data.data) {
+                const resumo = document.getElementById('resumo-conteudo');
+                let html = '';
+                
+                if (data.data.tipo_cultura) {
+                    html += `<strong>Cultura:</strong> ${data.data.tipo_cultura}`;
+                    if (data.data.variedade) html += ` (${data.data.variedade})`;
+                    html += '<br>';
+                }
+                
+                if (data.data.area_plantada) {
+                    html += `<strong>Área:</strong> ${data.data.area_plantada} ${data.data.unidade_area || 'hectares'}<br>`;
+                }
+                
+                if (data.data.data_plantio) {
+                    const plantio = new Date(data.data.data_plantio).toLocaleDateString('pt-BR');
+                    html += `<strong>Plantio:</strong> ${plantio}<br>`;
+                }
+                
+                if (data.data.ciclo_dias) {
+                    html += `<strong>Ciclo:</strong> ${data.data.ciclo_dias} dias<br>`;
+                }
+                
+                if (data.data.estacao_plantio) {
+                    const estacoes = {
+                        'primavera': 'Primavera 🌸',
+                        'verao': 'Verão ☀️',
+                        'outono': 'Outono 🍂',
+                        'inverno': 'Inverno ❄️'
+                    };
+                    html += `<strong>Estação:</strong> ${estacoes[data.data.estacao_plantio] || data.data.estacao_plantio}`;
+                }
+                
+                resumo.innerHTML = html || 'Carregando...';
+            }
+        })
+        .catch(error => console.error('Erro ao carregar resumo:', error));
+});
+</script>

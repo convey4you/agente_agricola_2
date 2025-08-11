@@ -1,0 +1,114 @@
+# Banco de dados - INCLUIR SQLite durante desenvolvimento
+# *.db - COMENTADO: incluir bancos SQLite nos commits durante desenvolvimento
+# *.sqlite - COMENTADO: incluir durante desenvolvimento  
+# *.sqlite3 - COMENTADO: incluir durante desenvolvimento
+# instance/ - COMENTADO: incluir pasta instance com bancos durante desenvolvimento
+backup_databases_*/
+
+# Arquivos de ambiente - INCLUIR .env durante desenvolvimento
+# .env - COMENTADO: incluir durante desenvolvimento para sincronizar configurações
+.env.local
+.env.production
+
+# Cache Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+
+# Logs
+logs/
+*.log
+
+# Virtual environment
+venv/
+env/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+temp/
+tmp/
+
+# Flask
+.webassets-cache
+
+# Coverage reports
+htmlcov/
+.coverage
+.pytest_cache/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Backups
+backups/
+archive/
+*.backup
+*.bkp
+
+# Test files output
+tests/output/
+tests/temp/
+
+# Migrations (se necessário manter localmente)
+# migrations/
+
+# Cache e arquivos temporários
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Tokens e arquivos sensíveis
+tools/tokens
+backup_microsservicos_*/
+
+# Desenvolvimento
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+*.egg-info/
+dist/
+build/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# Arquivos de teste e debug (não commitar)
+test_*.py
+debug_*.py
+*_test.py
+*_debug.py
+analyze_*.py
+check_*.py
+verify_*.py
+
+# Backups temporários
+*.backup
+*.backup_*
+backup_*/
+
+# Arquivos de configuração local
+.vscode/settings.json
+.env

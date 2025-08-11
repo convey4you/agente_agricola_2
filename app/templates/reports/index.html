@@ -1,0 +1,743 @@
+{% extends "base.html" %}
+
+{% block title %}Relatórios{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4 py-6">
+    <!-- Header -->
+    <div class="flex justify-between items-center mb-6">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900">📊 Relatórios Agrícolas</h1>
+            <p class="text-gray-600 mt-1">Análise completa da sua atividade agrícola e performance das culturas</p>
+        </div>
+        <div class="flex space-x-3">
+            <button data-action="export-report" 
+                    class="btn btn-primary flex items-center">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                </svg>
+                Exportar PDF
+            </button>
+            <button data-action="generate-report" 
+                    class="btn btn-secondary flex items-center">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                </svg>
+                Atualizar
+            </button>
+        </div>
+    </div>
+
+    <!-- Filtros de Período -->
+    <div class="bg-white rounded-lg shadow-sm border p-6 mb-6">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <!-- Período Predefinido -->
+            <div>
+                <label for="period" class="block text-sm font-medium text-gray-700 mb-2">Período</label>
+                <select id="period" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" data-action="update-period">>
+                    <option value="7d">Últimos 7 dias</option>
+                    <option value="30d" selected>Últimos 30 dias</option>
+                    <option value="90d">Últimos 3 meses</option>
+                    <option value="1y">Último ano</option>
+                    <option value="custom">Personalizado</option>
+                </select>
+            </div>
+            
+            <!-- Data Início -->
+            <div id="custom-dates" style="display: none;" class="md:col-span-2">
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label for="start-date" class="block text-sm font-medium text-gray-700 mb-2">Data Início</label>
+                        <input type="date" id="start-date" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
+                    </div>
+                    <div>
+                        <label for="end-date" class="block text-sm font-medium text-gray-700 mb-2">Data Fim</label>
+                        <input type="date" id="end-date" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Cultura Específica -->
+            <div>
+                <label for="culture-filter" class="block text-sm font-medium text-gray-700 mb-2">Cultura</label>
+                <select id="culture-filter" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
+                    <option value="">Todas as culturas</option>
+                    <option value="tomate">Tomate</option>
+                    <option value="alface">Alface</option>
+                    <option value="cenoura">Cenoura</option>
+                    <option value="milho">Milho</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cards de Resumo -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <!-- Total de Culturas -->
+        <div class="bg-white rounded-lg shadow-sm border p-6">
+            <div class="flex items-center">
+                <div class="flex-shrink-0">
+                    <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+                        <span class="text-green-600 text-xl">🌱</span>
+                    </div>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-600">Culturas Ativas</p>
+                    <p id="total-cultures" class="text-2xl font-bold text-gray-900">12</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Área Total -->
+        <div class="bg-white rounded-lg shadow-sm border p-6">
+            <div class="flex items-center">
+                <div class="flex-shrink-0">
+                    <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                        <span class="text-blue-600 text-xl">📏</span>
+                    </div>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-600">Área Total</p>
+                    <p id="total-area" class="text-2xl font-bold text-gray-900">2.4 ha</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Produção Estimada -->
+        <div class="bg-white rounded-lg shadow-sm border p-6">
+            <div class="flex items-center">
+                <div class="flex-shrink-0">
+                    <div class="w-8 h-8 bg-yellow-100 rounded-lg flex items-center justify-center">
+                        <span class="text-yellow-600 text-xl">⚖️</span>
+                    </div>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-600">Produção Estimada</p>
+                    <p id="estimated-production" class="text-2xl font-bold text-gray-900">1.2 ton</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Receita Estimada -->
+        <div class="bg-white rounded-lg shadow-sm border p-6">
+            <div class="flex items-center">
+                <div class="flex-shrink-0">
+                    <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+                        <span class="text-green-600 text-xl">💰</span>
+                    </div>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-600">Receita Estimada</p>
+                    <p id="estimated-revenue" class="text-2xl font-bold text-gray-900">€4.2k</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gráficos e Relatórios -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <!-- Gráfico de Produção por Cultura -->
+        <div class="bg-white rounded-lg shadow-sm border p-6">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-semibold text-gray-900">📊 Produção por Cultura</h3>
+                <button data-action="toggle-chart" data-chart="production" class="text-sm text-gray-500 hover:text-gray-700">
+                    Alternar visualização
+                </button>
+            </div>
+            <div id="production-chart" class="h-64">
+                <canvas id="productionCanvas" width="100%" height="100%"></canvas>
+            </div>
+        </div>
+
+        <!-- Gráfico de Custos vs Receitas -->
+        <div class="bg-white rounded-lg shadow-sm border p-6">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-semibold text-gray-900">💹 Custos vs Receitas</h3>
+                <button data-action="toggle-chart" data-chart="financial" class="text-sm text-gray-500 hover:text-gray-700">
+                    Alternar visualização
+                </button>
+            </div>
+            <div id="financial-chart" class="h-64">
+                <canvas id="financialCanvas" width="100%" height="100%"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Timeline de Atividades -->
+    <div class="bg-white rounded-lg shadow-sm border p-6 mb-8">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-semibold text-gray-900">⏱️ Timeline de Atividades</h3>
+            <div class="flex space-x-2">
+                <button data-action="filter-timeline" data-filter="all" class="timeline-filter active">Todas</button>
+                <button data-action="filter-timeline" data-filter="planting" class="timeline-filter">Plantio</button>
+                <button data-action="filter-timeline" data-filter="harvest" class="timeline-filter">Colheita</button>
+                <button data-action="filter-timeline" data-filter="maintenance" class="timeline-filter">Manutenção</button>
+            </div>
+        </div>
+        <div id="activity-timeline" class="space-y-4">
+            <!-- Timeline items will be inserted here -->
+        </div>
+    </div>
+
+    <!-- Relatórios Detalhados -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Performance por Cultura -->
+        <div class="bg-white rounded-lg shadow-sm border p-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">🎯 Performance por Cultura</h3>
+            <div id="culture-performance" class="space-y-3">
+                <!-- Performance items will be inserted here -->
+            </div>
+        </div>
+
+        <!-- Alertas e Recomendações -->
+        <div class="bg-white rounded-lg shadow-sm border p-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">⚠️ Alertas e Recomendações</h3>
+            <div id="alerts-recommendations" class="space-y-3">
+                <!-- Alerts will be inserted here -->
+            </div>
+        </div>
+
+        <!-- Próximas Ações -->
+        <div class="bg-white rounded-lg shadow-sm border p-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">📋 Próximas Ações</h3>
+            <div id="next-actions" class="space-y-3">
+                <!-- Next actions will be inserted here -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Loading Overlay -->
+<div id="loading-overlay" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50">
+    <div class="flex items-center justify-center min-h-screen">
+        <div class="bg-white rounded-lg p-6 shadow-xl">
+            <div class="flex items-center space-x-3">
+                <div class="animate-spin rounded-full h-6 w-6 border-2 border-green-500 border-t-transparent"></div>
+                <span class="text-gray-700">Gerando relatório...</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.btn {
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-weight: 500;
+    transition: all 0.2s;
+    border: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+}
+
+.btn-primary {
+    background-color: #059669;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #047857;
+}
+
+.btn-secondary {
+    background-color: #e5e7eb;
+    color: #374151;
+}
+
+.btn-secondary:hover {
+    background-color: #d1d5db;
+}
+
+.timeline-filter {
+    padding: 4px 12px;
+    border-radius: 16px;
+    background-color: #f3f4f6;
+    border: 1px solid #d1d5db;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 14px;
+}
+
+.timeline-filter:hover {
+    background-color: #e5e7eb;
+}
+
+.timeline-filter.active {
+    background-color: #dcfce7;
+    border-color: #059669;
+    color: #047857;
+}
+
+.timeline-item {
+    display: flex;
+    align-items: flex-start;
+    padding: 12px;
+    border-radius: 8px;
+    border-left: 4px solid #e5e7eb;
+    background-color: #f9fafb;
+    margin-bottom: 8px;
+}
+
+.timeline-item.planting {
+    border-left-color: #10b981;
+}
+
+.timeline-item.harvest {
+    border-left-color: #f59e0b;
+}
+
+.timeline-item.maintenance {
+    border-left-color: #3b82f6;
+}
+
+.performance-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px;
+    border-radius: 6px;
+    background-color: #f9fafb;
+    margin-bottom: 8px;
+}
+
+.performance-score {
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.score-excellent {
+    background-color: #dcfce7;
+    color: #047857;
+}
+
+.score-good {
+    background-color: #fef3c7;
+    color: #d97706;
+}
+
+.score-warning {
+    background-color: #fee2e2;
+    color: #dc2626;
+}
+
+.alert-item {
+    display: flex;
+    align-items: flex-start;
+    padding: 8px;
+    border-radius: 6px;
+    background-color: #f9fafb;
+    margin-bottom: 8px;
+}
+
+.alert-icon {
+    flex-shrink: 0;
+    margin-right: 8px;
+}
+
+.action-item {
+    display: flex;
+    align-items: center;
+    padding: 8px;
+    border-radius: 6px;
+    background-color: #f9fafb;
+    margin-bottom: 8px;
+}
+
+.action-checkbox {
+    margin-right: 8px;
+}
+</style>
+
+<script nonce="{{ g.csp_nonce if g.csp_nonce else 'default' }}">
+// Dados demo para os relatórios
+let reportData = {
+    cultures: [
+        { name: 'Tomate', area: 0.8, production: 450, revenue: 1800, performance: 92 },
+        { name: 'Alface', area: 0.6, production: 320, revenue: 960, performance: 88 },
+        { name: 'Cenoura', area: 0.5, production: 280, revenue: 840, performance: 85 },
+        { name: 'Milho', area: 0.5, production: 150, revenue: 600, performance: 78 }
+    ],
+    activities: [
+        { date: '2024-01-30', type: 'harvest', culture: 'Tomate', description: 'Colheita de tomates - lote A' },
+        { date: '2024-01-28', type: 'maintenance', culture: 'Alface', description: 'Irrigação e controle de pragas' },
+        { date: '2024-01-25', type: 'planting', culture: 'Cenoura', description: 'Plantio de cenouras - área B' },
+        { date: '2024-01-23', type: 'harvest', culture: 'Milho', description: 'Colheita final de milho' },
+        { date: '2024-01-20', type: 'maintenance', culture: 'Tomate', description: 'Poda e tutoramento' }
+    ],
+    alerts: [
+        { type: 'warning', message: 'Previsão de chuva forte nos próximos 3 dias', culture: 'Todas' },
+        { type: 'info', message: 'Período ideal para colheita de alface', culture: 'Alface' },
+        { type: 'danger', message: 'Detectada praga em plantação de tomate', culture: 'Tomate' }
+    ],
+    nextActions: [
+        { task: 'Aplicar fungicida nas plantas de tomate', priority: 'high', deadline: '2024-02-02' },
+        { task: 'Preparar solo para próximo plantio', priority: 'medium', deadline: '2024-02-05' },
+        { task: 'Colher alface quando atingir tamanho ideal', priority: 'low', deadline: '2024-02-08' }
+    ]
+};
+
+// Load report data on page load
+document.addEventListener('DOMContentLoaded', function() {
+    generateReport();
+    setupEventListeners();
+});
+
+function setupEventListeners() {
+    // Period selector
+    document.getElementById('period').addEventListener('change', updatePeriod);
+    
+    // Culture filter
+    document.getElementById('culture-filter').addEventListener('change', filterByCulture);
+}
+
+function updatePeriod() {
+    const period = document.getElementById('period').value;
+    const customDates = document.getElementById('custom-dates');
+    
+    if (period === 'custom') {
+        customDates.style.display = 'block';
+    } else {
+        customDates.style.display = 'none';
+        generateReport();
+    }
+}
+
+function generateReport() {
+    showLoading();
+    
+    setTimeout(() => {
+        updateSummaryCards();
+        renderProductionChart();
+        renderFinancialChart();
+        renderActivityTimeline();
+        renderCulturePerformance();
+        renderAlertsRecommendations();
+        renderNextActions();
+        hideLoading();
+    }, 1000);
+}
+
+function updateSummaryCards() {
+    const totalCultures = reportData.cultures.length;
+    const totalArea = reportData.cultures.reduce((sum, c) => sum + c.area, 0);
+    const totalProduction = reportData.cultures.reduce((sum, c) => sum + c.production, 0);
+    const totalRevenue = reportData.cultures.reduce((sum, c) => sum + c.revenue, 0);
+    
+    document.getElementById('total-cultures').textContent = totalCultures;
+    document.getElementById('total-area').textContent = `${totalArea.toFixed(1)} ha`;
+    document.getElementById('estimated-production').textContent = `${(totalProduction/1000).toFixed(1)} ton`;
+    document.getElementById('estimated-revenue').textContent = `€${(totalRevenue/1000).toFixed(1)}k`;
+}
+
+function renderProductionChart() {
+    const canvas = document.getElementById('productionCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    // Simple bar chart simulation
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    const data = reportData.cultures.map(c => c.production);
+    const labels = reportData.cultures.map(c => c.name);
+    const maxValue = Math.max(...data);
+    
+    const barWidth = canvas.width / (data.length * 2);
+    const maxHeight = canvas.height - 40;
+    
+    data.forEach((value, index) => {
+        const barHeight = (value / maxValue) * maxHeight;
+        const x = (index * 2 + 1) * barWidth;
+        const y = canvas.height - barHeight - 20;
+        
+        // Bar
+        ctx.fillStyle = '#10b981';
+        ctx.fillRect(x - barWidth/2, y, barWidth, barHeight);
+        
+        // Label
+        ctx.fillStyle = '#374151';
+        ctx.font = '12px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText(labels[index], x, canvas.height - 5);
+        
+        // Value
+        ctx.fillStyle = '#6b7280';
+        ctx.font = '10px Arial';
+        ctx.fillText(`${value}kg`, x, y - 5);
+    });
+}
+
+function renderFinancialChart() {
+    const canvas = document.getElementById('financialCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    // Simple line chart simulation for costs vs revenue
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    const months = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai'];
+    const revenue = [800, 1200, 1500, 1800, 2200];
+    const costs = [600, 800, 1000, 1100, 1300];
+    
+    const maxValue = Math.max(...revenue, ...costs);
+    const stepX = canvas.width / (months.length - 1);
+    const maxHeight = canvas.height - 40;
+    
+    // Revenue line
+    ctx.strokeStyle = '#10b981';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    revenue.forEach((value, index) => {
+        const x = index * stepX;
+        const y = canvas.height - 20 - (value / maxValue) * maxHeight;
+        if (index === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+    });
+    ctx.stroke();
+    
+    // Costs line
+    ctx.strokeStyle = '#f59e0b';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    costs.forEach((value, index) => {
+        const x = index * stepX;
+        const y = canvas.height - 20 - (value / maxValue) * maxHeight;
+        if (index === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+    });
+    ctx.stroke();
+    
+    // Labels
+    ctx.fillStyle = '#374151';
+    ctx.font = '12px Arial';
+    ctx.textAlign = 'center';
+    months.forEach((month, index) => {
+        const x = index * stepX;
+        ctx.fillText(month, x, canvas.height - 5);
+    });
+    
+    // Legend
+    ctx.fillStyle = '#10b981';
+    ctx.fillRect(20, 20, 15, 3);
+    ctx.fillStyle = '#374151';
+    ctx.font = '12px Arial';
+    ctx.textAlign = 'left';
+    ctx.fillText('Receita', 40, 25);
+    
+    ctx.fillStyle = '#f59e0b';
+    ctx.fillRect(20, 35, 15, 3);
+    ctx.fillStyle = '#374151';
+    ctx.fillText('Custos', 40, 40);
+}
+
+function renderActivityTimeline() {
+    const timeline = document.getElementById('activity-timeline');
+    
+    timeline.innerHTML = reportData.activities.map(activity => `
+        <div class="timeline-item ${activity.type}" data-type="${activity.type}">
+            <div class="timeline-icon mr-3">
+                ${getActivityIcon(activity.type)}
+            </div>
+            <div class="flex-1">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <p class="font-medium text-gray-900">${activity.description}</p>
+                        <p class="text-sm text-gray-600">${activity.culture}</p>
+                    </div>
+                    <span class="text-xs text-gray-500">${formatDate(activity.date)}</span>
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+function renderCulturePerformance() {
+    const container = document.getElementById('culture-performance');
+    
+    container.innerHTML = reportData.cultures.map(culture => `
+        <div class="performance-item">
+            <div class="flex-1">
+                <p class="font-medium text-gray-900">${culture.name}</p>
+                <p class="text-sm text-gray-600">${culture.area} ha • ${culture.production}kg</p>
+            </div>
+            <span class="performance-score ${getPerformanceClass(culture.performance)}">
+                ${culture.performance}%
+            </span>
+        </div>
+    `).join('');
+}
+
+function renderAlertsRecommendations() {
+    const container = document.getElementById('alerts-recommendations');
+    
+    container.innerHTML = reportData.alerts.map(alert => `
+        <div class="alert-item">
+            <div class="alert-icon">
+                ${getAlertIcon(alert.type)}
+            </div>
+            <div class="flex-1">
+                <p class="text-sm text-gray-900">${alert.message}</p>
+                <p class="text-xs text-gray-600">${alert.culture}</p>
+            </div>
+        </div>
+    `).join('');
+}
+
+function renderNextActions() {
+    const container = document.getElementById('next-actions');
+    
+    container.innerHTML = reportData.nextActions.map((action, index) => `
+        <div class="action-item">
+            <input type="checkbox" class="action-checkbox" id="action-${index}">
+            <div class="flex-1">
+                <label for="action-${index}" class="text-sm text-gray-900 cursor-pointer">${action.task}</label>
+                <p class="text-xs text-gray-600">Prazo: ${formatDate(action.deadline)}</p>
+            </div>
+            <span class="priority-badge priority-${action.priority}">
+                ${getPriorityText(action.priority)}
+            </span>
+        </div>
+    `).join('');
+}
+
+// Utility functions
+function getActivityIcon(type) {
+    const icons = {
+        'planting': '🌱',
+        'harvest': '🌾',
+        'maintenance': '🔧'
+    };
+    return icons[type] || '📝';
+}
+
+function getAlertIcon(type) {
+    const icons = {
+        'warning': '⚠️',
+        'info': 'ℹ️',
+        'danger': '🚨'
+    };
+    return icons[type] || 'ℹ️';
+}
+
+function getPerformanceClass(score) {
+    if (score >= 90) return 'score-excellent';
+    if (score >= 80) return 'score-good';
+    return 'score-warning';
+}
+
+function getPriorityText(priority) {
+    const texts = {
+        'high': 'Alta',
+        'medium': 'Média',
+        'low': 'Baixa'
+    };
+    return texts[priority] || 'Média';
+}
+
+function formatDate(dateString) {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('pt-PT');
+}
+
+function filterTimeline(filterType) {
+    // Update active filter button
+    document.querySelectorAll('.timeline-filter').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    document.querySelector(`[data-filter="${filterType}"]`).classList.add('active');
+    
+    // Filter timeline items
+    document.querySelectorAll('.timeline-item').forEach(item => {
+        if (filterType === 'all' || item.dataset.type === filterType) {
+            item.style.display = 'flex';
+        } else {
+            item.style.display = 'none';
+        }
+    });
+}
+
+function filterByCulture() {
+    const selectedCulture = document.getElementById('culture-filter').value;
+    generateReport(); // Regenerate with filter
+}
+
+function toggleChart(chartType) {
+    // Simple implementation - could expand with different chart types
+    if (chartType === 'production') {
+        renderProductionChart();
+    } else if (chartType === 'financial') {
+        renderFinancialChart();
+    }
+}
+
+function exportReport() {
+    showLoading();
+    
+    // Simulate export
+    setTimeout(() => {
+        hideLoading();
+        alert('📋 Relatório exportado com sucesso!\n\nO arquivo PDF foi salvo na pasta de Downloads.');
+    }, 2000);
+}
+
+function showLoading() {
+    document.getElementById('loading-overlay').classList.remove('hidden');
+}
+
+function hideLoading() {
+    document.getElementById('loading-overlay').classList.add('hidden');
+}
+
+// Configurar event listeners quando DOM estiver carregado
+document.addEventListener('DOMContentLoaded', function() {
+    // Event listener para botão de exportar relatório
+    const exportButton = document.querySelector('[data-action="export-report"]');
+    if (exportButton) {
+        exportButton.addEventListener('click', function(e) {
+            e.preventDefault();
+            exportReport();
+        });
+    }
+
+    // Event listener para botão de gerar relatório
+    const generateButton = document.querySelector('[data-action="generate-report"]');
+    if (generateButton) {
+        generateButton.addEventListener('click', function(e) {
+            e.preventDefault();
+            generateReport();
+        });
+    }
+
+    // Event listener para seletor de período
+    const periodSelect = document.querySelector('[data-action="update-period"]');
+    if (periodSelect) {
+        periodSelect.addEventListener('change', function() {
+            updatePeriod();
+        });
+    }
+
+    // Event listeners para botões de alternar gráficos
+    const toggleButtons = document.querySelectorAll('[data-action="toggle-chart"]');
+    toggleButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            const chartType = this.getAttribute('data-chart');
+            toggleChart(chartType);
+        });
+    });
+
+    // Event listeners para filtros da timeline
+    const filterButtons = document.querySelectorAll('[data-action="filter-timeline"]');
+    filterButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            const filter = this.getAttribute('data-filter');
+            filterTimeline(filter);
+        });
+    });
+
+    console.log('✅ Event listeners do template de reports configurados');
+});
+</script>
+{% endblock %}

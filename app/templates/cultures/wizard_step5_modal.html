@@ -1,0 +1,418 @@
+<!-- Progress Bar -->
+<div class="mb-6">
+    <div class="flex justify-between items-center mb-2">
+        <span class="text-sm font-medium text-green-600">Passo 5 de 5</span>
+        <span class="text-sm text-gray-500">100%</span>
+    </div>
+    <div class="w-full bg-gray-200 rounded-full h-2">
+        <div class="bg-green-600 h-2 rounded-full" style="width: 100%"></div>
+    </div>
+</div>
+
+<!-- Header -->
+<div class="text-center mb-6">
+    <div class="mx-auto h-16 w-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
+        <svg class="h-8 w-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+    </div>
+    <h1 class="text-2xl font-bold text-gray-900 mb-2">
+        Revisão e Finalização 🎯
+    </h1>
+    <p class="text-gray-600">
+        Revise todas as informações e finalize sua cultura
+    </p>
+</div>
+
+<!-- Resumo Completo -->
+<div class="bg-gray-50 rounded-lg p-6 mb-6">
+    <h3 class="font-medium text-gray-900 mb-4">📋 Resumo Completo do Projeto:</h3>
+    <div id="resumo-completo" class="space-y-4">
+        <!-- Will be populated by JavaScript -->
+    </div>
+</div>
+
+<!-- Form -->
+<form id="wizardStep5Form">
+    <div class="space-y-6">
+        <!-- Nome da Cultura -->
+        <div>
+            <label for="nome_cultura" class="block text-sm font-medium text-gray-700 mb-2">
+                Nome Identificador da Cultura *
+            </label>
+            <input 
+                type="text" 
+                id="nome_cultura" 
+                name="nome_cultura" 
+                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                placeholder="Ex: Tomate Estufa 2025, Milho Verão Lote A..."
+                required
+            >
+            <p class="text-xs text-gray-500 mt-1">
+                Nome para identificar facilmente esta cultura no sistema
+            </p>
+        </div>
+
+        <!-- Produtividade Esperada -->
+        <div>
+            <label for="produtividade_esperada" class="block text-sm font-medium text-gray-700 mb-2">
+                Produtividade Esperada
+            </label>
+            <div class="flex space-x-2">
+                <input 
+                    type="number" 
+                    id="produtividade_esperada" 
+                    name="produtividade_esperada" 
+                    class="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    placeholder="Ex: 30"
+                    min="0.1"
+                    step="0.1"
+                >
+                <select 
+                    id="unidade_produtividade" 
+                    name="unidade_produtividade" 
+                    class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                >
+                    <option value="toneladas/ha">ton/ha</option>
+                    <option value="kg/m²">kg/m²</option>
+                    <option value="unidades/m²">un/m²</option>
+                    <option value="kg">kg total</option>
+                    <option value="toneladas">ton total</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Prioridade -->
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-3">
+                Prioridade desta Cultura
+            </label>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <label class="relative flex items-center p-3 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
+                    <input type="radio" name="prioridade" value="alta" class="sr-only">
+                    <div class="w-4 h-4 border-2 border-gray-300 rounded-full mr-3 flex items-center justify-center">
+                        <div class="w-2 h-2 bg-red-600 rounded-full hidden"></div>
+                    </div>
+                    <div>
+                        <div class="font-medium text-gray-900">🔴 Alta</div>
+                        <div class="text-sm text-gray-500">Cultura principal</div>
+                    </div>
+                </label>
+                
+                <label class="relative flex items-center p-3 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
+                    <input type="radio" name="prioridade" value="media" class="sr-only">
+                    <div class="w-4 h-4 border-2 border-gray-300 rounded-full mr-3 flex items-center justify-center">
+                        <div class="w-2 h-2 bg-yellow-600 rounded-full hidden"></div>
+                    </div>
+                    <div>
+                        <div class="font-medium text-gray-900">🟡 Média</div>
+                        <div class="text-sm text-gray-500">Cultura secundária</div>
+                    </div>
+                </label>
+                
+                <label class="relative flex items-center p-3 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
+                    <input type="radio" name="prioridade" value="baixa" class="sr-only">
+                    <div class="w-4 h-4 border-2 border-gray-300 rounded-full mr-3 flex items-center justify-center">
+                        <div class="w-2 h-2 bg-green-600 rounded-full hidden"></div>
+                    </div>
+                    <div>
+                        <div class="font-medium text-gray-900">🟢 Baixa</div>
+                        <div class="text-sm text-gray-500">Cultura experimental</div>
+                    </div>
+                </label>
+            </div>
+        </div>
+
+        <!-- Alertas Desejados -->
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-3">
+                Tipos de Alertas Desejados
+            </label>
+            <div class="space-y-3">
+                <label class="flex items-start p-3 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
+                    <input type="checkbox" name="alertas[]" value="irrigacao" class="mt-1 mr-3 text-green-600" checked>
+                    <div>
+                        <div class="font-medium text-gray-900">💧 Irrigação</div>
+                        <div class="text-sm text-gray-500">Alertas sobre necessidade de rega</div>
+                    </div>
+                </label>
+                
+                <label class="flex items-start p-3 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
+                    <input type="checkbox" name="alertas[]" value="clima" class="mt-1 mr-3 text-green-600" checked>
+                    <div>
+                        <div class="font-medium text-gray-900">🌤️ Clima</div>
+                        <div class="text-sm text-gray-500">Alertas meteorológicos e mudanças climáticas</div>
+                    </div>
+                </label>
+                
+                <label class="flex items-start p-3 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
+                    <input type="checkbox" name="alertas[]" value="pragas" class="mt-1 mr-3 text-green-600">
+                    <div>
+                        <div class="font-medium text-gray-900">🐛 Pragas</div>
+                        <div class="text-sm text-gray-500">Alertas sobre pragas e doenças</div>
+                    </div>
+                </label>
+                
+                <label class="flex items-start p-3 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
+                    <input type="checkbox" name="alertas[]" value="fertilizacao" class="mt-1 mr-3 text-green-600">
+                    <div>
+                        <div class="font-medium text-gray-900">🌱 Fertilização</div>
+                        <div class="text-sm text-gray-500">Lembretes de adubação e nutrição</div>
+                    </div>
+                </label>
+                
+                <label class="flex items-start p-3 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
+                    <input type="checkbox" name="alertas[]" value="colheita" class="mt-1 mr-3 text-green-600" checked>
+                    <div>
+                        <div class="font-medium text-gray-900">🚜 Colheita</div>
+                        <div class="text-sm text-gray-500">Alertas sobre datas de colheita</div>
+                    </div>
+                </label>
+            </div>
+        </div>
+
+        <!-- Status Inicial -->
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-3">
+                Status Inicial da Cultura *
+            </label>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <label class="relative flex items-center p-3 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
+                    <input type="radio" name="status" value="planejada" class="sr-only" checked>
+                    <div class="w-4 h-4 border-2 border-gray-300 rounded-full mr-3 flex items-center justify-center">
+                        <div class="w-2 h-2 bg-blue-600 rounded-full"></div>
+                    </div>
+                    <div>
+                        <div class="font-medium text-gray-900">📋 Planejada</div>
+                        <div class="text-sm text-gray-500">Ainda não foi plantada</div>
+                    </div>
+                </label>
+                
+                <label class="relative flex items-center p-3 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
+                    <input type="radio" name="status" value="plantada" class="sr-only">
+                    <div class="w-4 h-4 border-2 border-gray-300 rounded-full mr-3 flex items-center justify-center">
+                        <div class="w-2 h-2 bg-green-600 rounded-full hidden"></div>
+                    </div>
+                    <div>
+                        <div class="font-medium text-gray-900">🌱 Já Plantada</div>
+                        <div class="text-sm text-gray-500">Plantio já foi realizado</div>
+                    </div>
+                </label>
+            </div>
+        </div>
+
+        <!-- Observações Finais -->
+        <div>
+            <label for="observacoes_finais" class="block text-sm font-medium text-gray-700 mb-2">
+                Observações Finais (opcional)
+            </label>
+            <textarea 
+                id="observacoes_finais" 
+                name="observacoes_finais" 
+                rows="4" 
+                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent resize-none"
+                placeholder="Observações adicionais sobre esta cultura, objetivos específicos, particularidades..."
+            ></textarea>
+        </div>
+    </div>
+
+    <!-- Navigation Buttons -->
+    <div class="flex justify-between pt-6 border-t border-gray-200 mt-8">
+        <button 
+            type="button" 
+            id="voltarPasso4"
+            class="px-6 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-colors"
+        >
+            ← Voltar
+        </button>
+        
+        <button 
+            type="submit" 
+            class="px-8 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 transition-colors font-medium"
+            id="criarCultura"
+        >
+            🎯 Criar Cultura
+        </button>
+    </div>
+</form>
+
+<script>
+// Radio button styling
+document.querySelectorAll('input[type="radio"]').forEach(radio => {
+    radio.addEventListener('change', function() {
+        // Reset all radio buttons in the same group
+        document.querySelectorAll(`input[name="${this.name}"]`).forEach(r => {
+            r.closest('label').classList.remove('bg-green-50', 'border-green-500');
+            const dot = r.parentNode.querySelector('.w-2.h-2');
+            if (dot) dot.classList.add('hidden');
+        });
+        
+        // Style the selected radio button
+        if (this.checked) {
+            this.closest('label').classList.add('bg-green-50', 'border-green-500');
+            const dot = this.parentNode.querySelector('.w-2.h-2');
+            if (dot) dot.classList.remove('hidden');
+        }
+    });
+});
+
+// Initialize radio button states
+document.addEventListener('DOMContentLoaded', function() {
+    // Set initial state for already checked radio buttons
+    document.querySelectorAll('input[type="radio"]:checked').forEach(radio => {
+        radio.closest('label').classList.add('bg-green-50', 'border-green-500');
+        const dot = radio.parentNode.querySelector('.w-2.h-2');
+        if (dot) dot.classList.remove('hidden');
+    });
+});
+
+// Form handling
+document.getElementById('wizardStep5Form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const submitButton = document.getElementById('criarCultura');
+    submitButton.disabled = true;
+    submitButton.innerHTML = '⏳ Criando...';
+    
+    const formData = new FormData(this);
+    
+    // Handle multiple selections
+    const alertas = Array.from(document.querySelectorAll('input[name="alertas[]"]:checked'))
+        .map(cb => cb.value);
+    
+    const data = {
+        step: '5',
+        nome_cultura: formData.get('nome_cultura'),
+        produtividade_esperada: formData.get('produtividade_esperada') || null,
+        unidade_produtividade: formData.get('unidade_produtividade'),
+        prioridade: formData.get('prioridade') || 'media',
+        alertas: alertas,
+        status: formData.get('status'),
+        observacoes_finais: formData.get('observacoes_finais') || null
+    };
+    
+    // Salvar dados finais e criar cultura
+    fetch('/cultures/wizard/save', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(result => {
+        if (result.success) {
+            // Cultura criada com sucesso
+            alert('✅ Cultura criada com sucesso!');
+            // Fechar modal e recarregar lista
+            if (window.parent && window.parent.location) {
+                window.parent.location.href = '/cultures/';
+            } else {
+                window.location.href = '/cultures/';
+            }
+        } else {
+            alert('Erro ao criar cultura: ' + (result.message || 'Erro desconhecido'));
+            submitButton.disabled = false;
+            submitButton.innerHTML = '🎯 Criar Cultura';
+        }
+    })
+    .catch(error => {
+        console.error('Erro:', error);
+        alert('Erro ao processar solicitação.');
+        submitButton.disabled = false;
+        submitButton.innerHTML = '🎯 Criar Cultura';
+    });
+});
+
+// Voltar para passo anterior
+document.getElementById('voltarPasso4').addEventListener('click', function() {
+    window.location.href = '/cultures/wizard?step=4&modal=true';
+});
+
+// Load complete summary from all previous steps
+document.addEventListener('DOMContentLoaded', function() {
+    fetch('/cultures/wizard/get-session-data')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success && data.data) {
+                const resumo = document.getElementById('resumo-completo');
+                const sessionData = data.data;
+                
+                let html = '<div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">';
+                
+                // Cultura
+                if (sessionData.tipo_cultura) {
+                    html += '<div class="bg-white p-3 rounded border"><strong>🌾 Cultura:</strong><br>';
+                    html += `${sessionData.tipo_cultura}`;
+                    if (sessionData.variedade) html += ` (${sessionData.variedade})`;
+                    html += '</div>';
+                }
+                
+                // Área
+                if (sessionData.area_plantada) {
+                    html += '<div class="bg-white p-3 rounded border"><strong>📏 Área:</strong><br>';
+                    html += `${sessionData.area_plantada} ${sessionData.unidade_area || 'hectares'}`;
+                    if (sessionData.metodo_plantio) {
+                        const metodo = sessionData.metodo_plantio === 'direto' ? 'Semeadura Direta' : 'Transplantio';
+                        html += `<br><em>${metodo}</em>`;
+                    }
+                    html += '</div>';
+                }
+                
+                // Calendário
+                if (sessionData.data_plantio || sessionData.ciclo_dias) {
+                    html += '<div class="bg-white p-3 rounded border"><strong>📅 Calendário:</strong><br>';
+                    if (sessionData.data_plantio) {
+                        const plantio = new Date(sessionData.data_plantio).toLocaleDateString('pt-BR');
+                        html += `Plantio: ${plantio}<br>`;
+                    }
+                    if (sessionData.ciclo_dias) {
+                        html += `Ciclo: ${sessionData.ciclo_dias} dias<br>`;
+                    }
+                    if (sessionData.estacao_plantio) {
+                        const estacoes = {
+                            'primavera': 'Primavera 🌸',
+                            'verao': 'Verão ☀️',
+                            'outono': 'Outono 🍂',
+                            'inverno': 'Inverno ❄️'
+                        };
+                        html += `${estacoes[sessionData.estacao_plantio] || sessionData.estacao_plantio}`;
+                    }
+                    html += '</div>';
+                }
+                
+                // Recursos
+                if (sessionData.sistema_irrigacao) {
+                    html += '<div class="bg-white p-3 rounded border"><strong>🚰 Recursos:</strong><br>';
+                    const sistemas = {
+                        'gotejamento': 'Gotejamento 💧',
+                        'aspersao': 'Aspersão 🌧️',
+                        'sulcos': 'Sulcos 🌊',
+                        'chuva': 'Chuva Natural ☔'
+                    };
+                    html += `${sistemas[sessionData.sistema_irrigacao] || sessionData.sistema_irrigacao}<br>`;
+                    
+                    if (sessionData.fertilizacao && sessionData.fertilizacao.length > 0) {
+                        html += `Fertilização: ${sessionData.fertilizacao.join(', ')}`;
+                    }
+                    html += '</div>';
+                }
+                
+                html += '</div>';
+                
+                resumo.innerHTML = html;
+                
+                // Auto-generate culture name if not provided
+                if (sessionData.tipo_cultura && !document.getElementById('nome_cultura').value) {
+                    const now = new Date();
+                    const year = now.getFullYear();
+                    const month = now.toLocaleDateString('pt-BR', { month: 'short' });
+                    const suggested = `${sessionData.tipo_cultura} ${month} ${year}`;
+                    document.getElementById('nome_cultura').value = suggested;
+                }
+            }
+        })
+        .catch(error => console.error('Erro ao carregar resumo:', error));
+});
+</script>

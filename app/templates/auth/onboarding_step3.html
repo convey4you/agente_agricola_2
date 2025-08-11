@@ -1,0 +1,1221 @@
+{% extends "base.html" %}
+
+{% block title %}Configuração da Propriedade - Passo 3{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-green-50 to-green-100 flex items-center justify-center px-4">
+    <div class="max-w-md w-full">
+        <!-- Progress Bar -->
+        <div class="mb-8">
+            <div class="flex justify-between items-center mb-2">
+                <span class="text-sm font-medium text-green-600">Passo 3 de 5</span>
+                <span class="text-sm text-gray-500">60%</span>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-2">
+                <div class="bg-green-600 h-2 rounded-full" style="width: 60%"></div>
+            </div>
+        </div>
+
+        <!-- Farm Setup Card -->
+        <div class="bg-white rounded-lg shadow-xl p-8">
+            <div class="text-center mb-6">
+                <h1 class="text-2xl font-bold text-gray-900 mb-2">
+                    Sua Propriedade
+                </h1>
+                <p class="text-gray-600">
+                    Vamos configurar as informações básicas da sua propriedade
+                </p>
+            </div>
+
+            <form id="onboardingStep3Form">
+                <input type="hidden" name="step" value="3">
+                
+                <div class="space-y-4">
+                    <!-- Nome da Propriedade -->
+                    <div>
+                        <label for="farm_name" class="block text-sm font-medium text-gray-700 mb-1">
+                            Nome da Propriedade *
+                        </label>
+                        <input type="text" id="farm_name" name="farm_name" required
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                               value="{{ onboarding_data.get('step_3', {}).get('farm_name', '') }}"
+                               placeholder="Ex: Fazenda São João">
+                    </div>
+
+                    <!-- Localização com Sistema de Geolocalização -->
+                    <div>
+                        <label for="location" class="block text-sm font-medium text-gray-700">
+                            Localização da Propriedade <span class="text-red-500">*</span>
+                        </label>
+                        <div class="relative mt-1">
+                            <input id="location" name="location" type="text" required
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent placeholder-gray-500 text-gray-900"
+                                   placeholder="{% if user_location %}Altere se necessário{% else %}Ex: Lisboa ou Porto, Distrito do Porto{% endif %}"
+                                   value="{{ onboarding_data.get('step_3', {}).get('location', user_location) }}"
+                                   autocomplete="off">
+                            <!-- Lista de sugestões -->
+                            <div id="location-suggestions" class="absolute z-10 w-full bg-white border border-gray-300 rounded-md shadow-lg hidden max-h-60 overflow-y-auto">
+                            </div>
+                            <!-- Indicador de status -->
+                            <div id="location-status" class="mt-1 text-sm hidden">
+                                <div id="location-loading" class="text-blue-600 hidden">
+                                    <i class="fas fa-spinner fa-spin"></i> Buscando localização...
+                                </div>
+                                <div id="location-success" class="text-green-600 hidden">
+                                    <i class="fas fa-check-circle"></i> <span id="location-success-text"></span>
+                                </div>
+                                <div id="location-error" class="text-red-600 hidden">
+                                    <i class="fas fa-exclamation-circle"></i> <span id="location-error-text"></span>
+                                </div>
+                            </div>
+                            <!-- Informações de coordenadas (ocultas) -->
+                            <input type="hidden" id="latitude" name="latitude" value="{{ onboarding_data.get('step_3', {}).get('latitude', user_latitude or '') }}">
+                            <input type="hidden" id="longitude" name="longitude" value="{{ onboarding_data.get('step_3', {}).get('longitude', user_longitude or '') }}">
+                            <input type="hidden" id="formatted-address" name="formatted_address" value="{{ onboarding_data.get('step_3', {}).get('formatted_address', user_location) }}">
+                        </div>
+                        <p class="mt-1 text-xs text-gray-500">
+                            {% if user_location %}
+                                💡 Localização preenchida automaticamente do seu cadastro. Altere se a propriedade fica em local diferente.
+                            {% else %}
+                                Digite sua cidade e distrito para informações climáticas precisas.
+                                Ex: "Lisboa" ou "Porto, Distrito do Porto"
+                            {% endif %}
+                        </p>
+                    </div>
+
+                    <!-- Área Total -->
+                    <div>
+                        <label for="farm_area" class="block text-sm font-medium text-gray-700 mb-1">
+                            Área Total (metros quadrados)
+                        </label>
+                        <input type="number" id="farm_area" name="farm_area" step="1" min="0"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                               placeholder="Ex: 2500">
+                        <p class="text-xs text-gray-500 mt-1">Deixe em branco se não souber ou não se aplicar</p>
+                    </div>
+
+                    <!-- Tipo de Solo -->
+                    <div>
+                        <label for="soil_type" class="block text-sm font-medium text-gray-700 mb-1">
+                            Tipo de Solo (se conhecido)
+                        </label>
+                        <div class="relative">
+                            <select id="soil_type" name="soil_type"
+                                    class="w-full px-3 py-2 pr-12 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                                <option value="">Não sei/Não se aplica</option>
+                                <option value="argiloso">Argiloso</option>
+                                <option value="arenoso">Arenoso</option>
+                                <option value="siltoso">Siltoso</option>
+                                <option value="humifero">Humífero</option>
+                                <option value="calcario">Calcário</option>
+                                <option value="misto">Misto</option>
+                                <option value="vulcanico">Vulcânico (Ilhas)</option>
+                            </select>
+                            <button type="button" 
+                                    id="refresh-soil-btn"
+                                    class="absolute right-2 top-1/2 transform -translate-y-1/2 p-1 text-gray-400 hover:text-green-600 transition-colors duration-200"
+                                    title="Detectar tipo de solo automaticamente usando IA baseada na localização">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                          d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                                </svg>
+                            </button>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-1">
+                            🤖 O tipo de solo pode ser detectado automaticamente usando IA baseada na localização. 
+                            Clique em <span class="inline-flex items-center">
+                                <svg class="w-3 h-3 mx-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                          d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                                </svg>
+                            </span> para tentar a detecção inteligente.
+                        </p>
+                    </div>
+
+                    <!-- Fonte de Água -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Fontes de Água Disponíveis
+                        </label>
+                        <div class="space-y-2">
+                            <label class="flex items-center">
+                                <input type="checkbox" name="water_sources" value="tap" class="mr-2">
+                                <span class="text-sm">Água Encanada</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="checkbox" name="water_sources" value="well" class="mr-2">
+                                <span class="text-sm">Poço Artesiano</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="checkbox" name="water_sources" value="river" class="mr-2">
+                                <span class="text-sm">Rio/Córrego</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="checkbox" name="water_sources" value="rain" class="mr-2">
+                                <span class="text-sm">Captação de Chuva</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="checkbox" name="water_sources" value="other" class="mr-2">
+                                <span class="text-sm">Outros</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Clima Regional -->
+                    <div>
+                        <label for="climate" class="block text-sm font-medium text-gray-700 mb-1">
+                            Clima Regional
+                        </label>
+                        <div class="relative">
+                            <select id="climate" name="climate"
+                                    class="w-full px-3 py-2 pr-12 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                                <option value="">Selecione se souber</option>
+                                <option value="tropical">Tropical</option>
+                                <option value="subtropical">Subtropical</option>
+                                <option value="temperado">Temperado</option>
+                                <option value="semiarido">Semiárido</option>
+                                <option value="equatorial">Equatorial</option>
+                            </select>
+                            <button type="button" 
+                                    id="refresh-climate-btn"
+                                    class="absolute right-2 top-1/2 transform -translate-y-1/2 p-1 text-gray-400 hover:text-green-600 transition-colors duration-200"
+                                    title="Detectar clima automaticamente baseado na localização">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                          d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                                </svg>
+                            </button>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-1">
+                            💡 O clima é detectado automaticamente baseado na localização. 
+                            Clique em <span class="inline-flex items-center">
+                                <svg class="w-3 h-3 mx-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                          d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                                </svg>
+                            </span> para tentar novamente.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Navigation Buttons -->
+                <div class="flex justify-between mt-8">
+                    <a href="{{ url_for('auth.onboarding', step='2') }}" 
+                       class="px-6 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition duration-200">
+                        Voltar
+                    </a>
+                    <button type="submit"
+                            class="px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition duration-200">
+                        Próximo
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script nonce="{{ g.csp_nonce }}">
+    // Exponha o token CSRF para JavaScript
+    window.csrfToken = "{{ csrf_token() }}";
+    console.log('CSRF Token no step 3:', window.csrfToken);
+
+    // Estado global para geocoding
+    let locationTimeout = null;
+    let selectedLocation = null;
+
+    // Sistema de autocomplete para localização
+    function initLocationAutocomplete() {
+        const locationInput = document.getElementById('location');
+        const suggestionsDiv = document.getElementById('location-suggestions');
+        const statusDiv = document.getElementById('location-status');
+        const loadingDiv = document.getElementById('location-loading');
+        const successDiv = document.getElementById('location-success');
+        const errorDiv = document.getElementById('location-error');
+        const successText = document.getElementById('location-success-text');
+        const errorText = document.getElementById('location-error-text');
+
+        // Campo de localização - busca com debounce
+        locationInput.addEventListener('input', function(e) {
+            const query = e.target.value.trim();
+            
+            // Limpar timeout anterior
+            if (locationTimeout) {
+                clearTimeout(locationTimeout);
+            }
+            
+            // Limpar estado anterior
+            clearLocationStatus();
+            selectedLocation = null;
+            
+            // Só limpar coordenadas se o usuário alterou significativamente o texto
+            // (mais de 3 caracteres de diferença da localização original)
+            const originalLocation = "{{ user_location }}";
+            if (originalLocation && Math.abs(query.length - originalLocation.length) > 3) {
+                document.getElementById('latitude').value = '';
+                document.getElementById('longitude').value = '';
+                document.getElementById('formatted-address').value = '';
+            }
+            
+            if (query.length < 3) {
+                hideSuggestions();
+                return;
+            }
+            
+            // Mostrar loading
+            showLocationStatus('loading');
+            
+            // Debounce de 500ms
+            locationTimeout = setTimeout(() => {
+                searchLocations(query);
+            }, 500);
+        });
+
+        // Fechar sugestões ao clicar fora
+        document.addEventListener('click', function(e) {
+            if (!locationInput.contains(e.target) && !suggestionsDiv.contains(e.target)) {
+                hideSuggestions();
+            }
+        });
+
+        // Navegação por teclado nas sugestões
+        locationInput.addEventListener('keydown', function(e) {
+            const suggestions = suggestionsDiv.querySelectorAll('.suggestion-item');
+            const activeSuggestion = suggestionsDiv.querySelector('.suggestion-item.active');
+            
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                if (activeSuggestion) {
+                    activeSuggestion.classList.remove('active');
+                    const next = activeSuggestion.nextElementSibling || suggestions[0];
+                    next.classList.add('active');
+                } else if (suggestions.length > 0) {
+                    suggestions[0].classList.add('active');
+                }
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                if (activeSuggestion) {
+                    activeSuggestion.classList.remove('active');
+                    const prev = activeSuggestion.previousElementSibling || suggestions[suggestions.length - 1];
+                    prev.classList.add('active');
+                } else if (suggestions.length > 0) {
+                    suggestions[suggestions.length - 1].classList.add('active');
+                }
+            } else if (e.key === 'Enter') {
+                e.preventDefault();
+                if (activeSuggestion) {
+                    selectLocation(JSON.parse(activeSuggestion.dataset.location));
+                }
+            } else if (e.key === 'Escape') {
+                hideSuggestions();
+            }
+        });
+    }
+
+    // Buscar localizações
+    async function searchLocations(query) {
+        try {
+            const response = await fetch(`/api/geocoding/search?q=${encodeURIComponent(query)}&limit=5`);
+            const data = await response.json();
+            
+            clearLocationStatus();
+            
+            if (data.success && data.suggestions && data.suggestions.length > 0) {
+                showSuggestions(data.suggestions);
+            } else {
+                hideSuggestions();
+                showLocationStatus('error', 'Nenhuma localização encontrada. Tente ser mais específico.');
+            }
+        } catch (error) {
+            clearLocationStatus();
+            showLocationStatus('error', 'Erro ao buscar localizações. Verifique sua conexão.');
+            hideSuggestions();
+        }
+    }
+
+    // Mostrar sugestões
+    function showSuggestions(suggestions) {
+        const suggestionsDiv = document.getElementById('location-suggestions');
+        suggestionsDiv.innerHTML = '';
+        
+        suggestions.forEach(suggestion => {
+            const item = document.createElement('div');
+            item.className = 'suggestion-item px-3 py-2 cursor-pointer hover:bg-gray-100 border-b border-gray-200 last:border-b-0';
+            item.dataset.location = JSON.stringify(suggestion);
+            item.innerHTML = `
+                <div class="font-medium text-gray-900">${suggestion.display_name}</div>
+                <div class="text-sm text-gray-500">${suggestion.full_address}</div>
+            `;
+            item.addEventListener('click', () => selectLocation(suggestion));
+            suggestionsDiv.appendChild(item);
+        });
+        
+        suggestionsDiv.classList.remove('hidden');
+    }
+
+    // Esconder sugestões
+    function hideSuggestions() {
+        const suggestionsDiv = document.getElementById('location-suggestions');
+        suggestionsDiv.classList.add('hidden');
+        suggestionsDiv.innerHTML = '';
+    }
+
+    // Selecionar localização
+    function selectLocation(location) {
+        selectedLocation = location;
+        
+        // Preencher campos
+        document.getElementById('location').value = location.full_address;
+        document.getElementById('latitude').value = location.latitude;
+        document.getElementById('longitude').value = location.longitude;
+        document.getElementById('formatted-address').value = location.full_address;
+        
+        // Mostrar sucesso
+        showLocationStatus('success', `Localização confirmada: ${location.full_address}`);
+        hideSuggestions();
+        
+        // Detectar clima automaticamente após selecionar localização
+        setTimeout(() => {
+            detectClimateAutomatically();
+        }, 100);
+        
+        // Detectar solo automaticamente após selecionar localização (usando IA)
+        setTimeout(() => {
+            detectSoilAutomatically();
+        }, 300);
+    }
+
+    // Gerenciar status da localização
+    function showLocationStatus(type, message = '') {
+        const statusDiv = document.getElementById('location-status');
+        const loadingDiv = document.getElementById('location-loading');
+        const successDiv = document.getElementById('location-success');
+        const errorDiv = document.getElementById('location-error');
+        const successText = document.getElementById('location-success-text');
+        const errorText = document.getElementById('location-error-text');
+        
+        statusDiv.classList.remove('hidden');
+        
+        // Esconder todos
+        loadingDiv.classList.add('hidden');
+        successDiv.classList.add('hidden');
+        errorDiv.classList.add('hidden');
+        
+        // Mostrar específico
+        if (type === 'loading') {
+            loadingDiv.classList.remove('hidden');
+        } else if (type === 'success') {
+            successDiv.classList.remove('hidden');
+            successText.textContent = message;
+        } else if (type === 'error') {
+            errorDiv.classList.remove('hidden');
+            errorText.textContent = message;
+        }
+    }
+
+    function clearLocationStatus() {
+        const statusDiv = document.getElementById('location-status');
+        statusDiv.classList.add('hidden');
+    }
+
+    // Verificar se é uma cidade principal portuguesa que não precisa de distrito
+    function isMainCity(city) {
+        const mainCities = [
+            'lisboa', 'porto', 'braga', 'coimbra', 'faro', 'aveiro',
+            'viseu', 'setúbal', 'leiria', 'vila nova de gaia', 'funchal',
+            'ponta delgada', 'évora', 'beja', 'viana do castelo',
+            'guarda', 'castelo branco', 'portalegre', 'santarém'
+        ];
+        return mainCities.includes(city.toLowerCase().trim());
+    }
+
+    // Validação do formulário
+    function validateLocationForm() {
+        const locationInput = document.getElementById('location');
+        const latitude = document.getElementById('latitude').value;
+        const longitude = document.getElementById('longitude').value;
+        const location = locationInput.value.trim();
+        
+        if (!location) {
+            showLocationStatus('error', 'Localização é obrigatória');
+            locationInput.focus();
+            return false;
+        }
+        
+        if (location.length < 3) {
+            showLocationStatus('error', 'Localização deve ter pelo menos 3 caracteres');
+            locationInput.focus();
+            return false;
+        }
+        
+        // Se há coordenadas, aceitar a localização (veio do cadastro ou foi selecionada)
+        if (latitude && longitude) {
+            return true;
+        }
+        
+        // Verificar se tem vírgula (formato cidade, distrito) ou é uma cidade principal
+        if (!location.includes(',') && location.split(' ').length < 2 && !isMainCity(location)) {
+            showLocationStatus('error', 'Use formato "Cidade" ou "Cidade, Distrito" (ex: Lisboa ou Porto, Distrito do Porto)');
+            locationInput.focus();
+            return false;
+        }
+        
+        return true;
+    }
+
+    // Inicializar sistema de geolocalização
+    document.addEventListener('DOMContentLoaded', function() {
+        initLocationAutocomplete();
+        
+        // Dados salvos do onboarding
+        const onboardingDataRaw = '{{ onboarding_data | tojson | safe }}';
+        const onboardingData = onboardingDataRaw ? JSON.parse(onboardingDataRaw) : {};
+        const step3Data = onboardingData.step_3 || {};
+        
+        // Pré-selecionar campos salvos
+        if (step3Data.farm_area) {
+            document.getElementById('farm_area').value = step3Data.farm_area;
+        }
+        
+        if (step3Data.soil_type) {
+            document.getElementById('soil_type').value = step3Data.soil_type;
+        }
+        
+        if (step3Data.climate) {
+            document.getElementById('climate').value = step3Data.climate;
+        }
+        
+        // Pré-selecionar fontes de água salvos
+        if (step3Data.water_sources) {
+            step3Data.water_sources.forEach(source => {
+                const checkbox = document.querySelector(`input[name="water_sources"][value="${source}"]`);
+                if (checkbox) {
+                    checkbox.checked = true;
+                }
+            });
+        }
+        
+        // Se há localização padrão do usuário, detectar clima automaticamente
+        const locationInput = document.getElementById('location');
+        const latitude = document.getElementById('latitude').value;
+        const longitude = document.getElementById('longitude').value;
+        
+        if (locationInput.value.trim() && (latitude || longitude)) {
+            // Mostrar que a localização foi preenchida automaticamente
+            showLocationStatus('success', `Localização do seu cadastro: ${locationInput.value}`);
+            
+            // Detectar clima baseado na localização existente
+            setTimeout(() => {
+                detectClimateAutomatically();
+            }, 500);
+            
+            // Detectar solo baseado na localização existente
+            setTimeout(() => {
+                detectSoilAutomatically();
+            }, 800);
+        }
+    });
+
+    // Função para detectar clima automaticamente baseado na localização
+    function detectClimateAutomatically() {
+        const locationValue = document.getElementById('location').value;
+        const latitude = document.getElementById('latitude').value;
+        const longitude = document.getElementById('longitude').value;
+        const climateSelect = document.getElementById('climate');
+        
+        // Só detectar se há localização válida
+        if (!locationValue) {
+            return;
+        }
+        
+        console.log('Detectando clima para:', locationValue, 'Coords:', latitude, longitude);
+        
+        // Mapas de clima para Portugal
+        const climateMapping = {
+            // Norte - Temperado oceânico
+            norte: {
+                keywords: ['braga', 'porto', 'viana', 'bragança', 'vila real', 'aveiro', 'guarda', 'minho'],
+                climate: 'temperado',
+                description: 'Temperado oceânico (Norte de Portugal)'
+            },
+            // Centro - Temperado mediterrânico
+            centro: {
+                keywords: ['coimbra', 'leiria', 'viseu', 'castelo branco', 'santarém', 'beira'],
+                climate: 'temperado', 
+                description: 'Temperado mediterrânico (Centro de Portugal)'
+            },
+            // Lisboa e Vale do Tejo - Subtropical
+            lisboa: {
+                keywords: ['lisboa', 'setúbal', 'sintra', 'cascais', 'oeiras', 'almada', 'amadora'],
+                climate: 'subtropical',
+                description: 'Subtropical mediterrânico (Grande Lisboa)'
+            },
+            // Alentejo - Subtropical seco
+            alentejo: {
+                keywords: ['évora', 'beja', 'portalegre', 'elvas', 'sines', 'alentejo'],
+                climate: 'subtropical',
+                description: 'Subtropical seco (Alentejo)'
+            },
+            // Algarve - Subtropical
+            algarve: {
+                keywords: ['faro', 'lagos', 'portimão', 'tavira', 'olhão', 'albufeira', 'algarve'],
+                climate: 'subtropical',
+                description: 'Subtropical mediterrânico (Algarve)'
+            },
+            // Madeira - Subtropical oceânico
+            madeira: {
+                keywords: ['funchal', 'madeira', 'porto santo'],
+                climate: 'subtropical',
+                description: 'Subtropical oceânico (Madeira)'
+            },
+            // Açores - Temperado oceânico
+            acores: {
+                keywords: ['angra', 'ponta delgada', 'horta', 'açores', 'azores'],
+                climate: 'temperado',
+                description: 'Temperado oceânico (Açores)'
+            }
+        };
+        
+        // Função para detectar por coordenadas
+        function detectByCoordinates(lat, lon) {
+            const latitude = parseFloat(lat);
+            const longitude = parseFloat(lon);
+            
+            // Portugal Continental: aproximadamente 36.5°N to 42.5°N, -9.5°W to -6°W
+            if (latitude >= 36.5 && latitude <= 42.5 && longitude >= -9.5 && longitude <= -6.0) {
+                if (latitude < 37.5) {
+                    return { climate: 'subtropical', description: 'Subtropical mediterrânico (Algarve)', method: 'coordinates' };
+                } else if (latitude > 41.0) {
+                    return { climate: 'temperado', description: 'Temperado oceânico (Norte)', method: 'coordinates' };
+                } else if (latitude >= 39.0 && latitude <= 41.0) {
+                    return { climate: 'temperado', description: 'Temperado mediterrânico (Centro)', method: 'coordinates' };
+                } else {
+                    return { climate: 'subtropical', description: 'Subtropical mediterrânico (Lisboa/Vale do Tejo)', method: 'coordinates' };
+                }
+            }
+            
+            // Madeira: aproximadamente 32.6°N to 33.1°N, -17.3°W to -16.2°W
+            if (latitude >= 32.6 && latitude <= 33.1 && longitude >= -17.3 && longitude <= -16.2) {
+                return { climate: 'subtropical', description: 'Subtropical oceânico (Madeira)', method: 'coordinates' };
+            }
+            
+            // Açores: aproximadamente 36.9°N to 39.7°N, -31.3°W to -25.0°W
+            if (latitude >= 36.9 && latitude <= 39.7 && longitude >= -31.3 && longitude <= -25.0) {
+                return { climate: 'temperado', description: 'Temperado oceânico (Açores)', method: 'coordinates' };
+            }
+            
+            return null;
+        }
+        
+        let detectedClimate = null;
+        
+        // Tentar detecção por coordenadas primeiro (mais preciso)
+        if (latitude && longitude) {
+            detectedClimate = detectByCoordinates(latitude, longitude);
+            if (detectedClimate) {
+                console.log('Clima detectado por coordenadas:', detectedClimate);
+            }
+        }
+        
+        // Se não conseguiu por coordenadas, tentar por palavras-chave
+        if (!detectedClimate) {
+            const locationLower = locationValue.toLowerCase();
+            
+            for (const [region, data] of Object.entries(climateMapping)) {
+                for (const keyword of data.keywords) {
+                    if (locationLower.includes(keyword)) {
+                        detectedClimate = {
+                            climate: data.climate,
+                            description: data.description,
+                            method: 'keyword',
+                            region: region
+                        };
+                        console.log('Clima detectado por palavra-chave:', detectedClimate);
+                        break;
+                    }
+                }
+                if (detectedClimate) break;
+            }
+        }
+        
+        // Fallback para Portugal
+        if (!detectedClimate && (locationValue.toLowerCase().includes('portugal') || locationValue.toLowerCase().includes('pt'))) {
+            detectedClimate = {
+                climate: 'temperado',
+                description: 'Clima temperado mediterrânico (padrão para Portugal)',
+                method: 'fallback'
+            };
+        }
+        
+        // Aplicar clima detectado
+        if (detectedClimate) {
+            const option = climateSelect.querySelector(`option[value="${detectedClimate.climate}"]`);
+            if (option) {
+                climateSelect.value = detectedClimate.climate;
+                showClimateDetectionFeedback(detectedClimate);
+            }
+        }
+    }
+    
+    // Função para forçar detecção de clima (chamada pelo botão refresh)
+    function forceDetectClimate() {
+        const locationValue = document.getElementById('location').value;
+        const climateSelect = document.getElementById('climate');
+        const refreshBtn = document.getElementById('refresh-climate-btn');
+        
+        // Verificar se há localização
+        if (!locationValue || locationValue.trim() === '') {
+            showClimateDetectionFeedback({
+                description: 'Por favor, insira uma localização primeiro',
+                confidence: 'error'
+            });
+            return;
+        }
+        
+        // Animação do botão
+        refreshBtn.style.transform = 'rotate(360deg)';
+        refreshBtn.style.transition = 'transform 0.5s ease-in-out';
+        
+        // Resetar seleção atual
+        climateSelect.value = '';
+        
+        // Remover feedback anterior
+        const existingFeedback = climateSelect.parentNode.parentNode.querySelector('.climate-feedback');
+        if (existingFeedback) {
+            existingFeedback.remove();
+        }
+        
+        // Forçar detecção (versão que ignora se já há valor selecionado)
+        setTimeout(() => {
+            detectClimateAutomaticallyForced();
+            
+            // Resetar animação do botão
+            setTimeout(() => {
+                refreshBtn.style.transform = '';
+                refreshBtn.style.transition = '';
+            }, 500);
+        }, 100);
+    }
+    
+    // Versão modificada da função de detecção que ignora se já há valor selecionado
+    function detectClimateAutomaticallyForced() {
+        const locationValue = document.getElementById('location').value;
+        const latitude = document.getElementById('latitude').value;
+        const longitude = document.getElementById('longitude').value;
+        const climateSelect = document.getElementById('climate');
+        
+        // Só verificar se há localização (ignorar se já há clima selecionado)
+        if (!locationValue) {
+            showClimateDetectionFeedback({
+                description: 'Localização não encontrada',
+                confidence: 'error'
+            });
+            return;
+        }
+        
+        console.log('🔄 Forçando detecção de clima para:', locationValue, 'Coords:', latitude, longitude);
+        
+        // Usar a mesma lógica da função original
+        const climateMapping = {
+            // Norte - Temperado oceânico
+            norte: {
+                keywords: ['braga', 'porto', 'viana', 'bragança', 'vila real', 'aveiro', 'guarda', 'minho'],
+                climate: 'temperado',
+                description: 'Temperado oceânico (Norte de Portugal)'
+            },
+            // Centro - Temperado mediterrânico
+            centro: {
+                keywords: ['coimbra', 'leiria', 'viseu', 'castelo branco', 'santarém', 'beira'],
+                climate: 'temperado', 
+                description: 'Temperado mediterrânico (Centro de Portugal)'
+            },
+            // Lisboa e Vale do Tejo - Subtropical
+            lisboa: {
+                keywords: ['lisboa', 'setúbal', 'sintra', 'cascais', 'oeiras', 'almada', 'amadora'],
+                climate: 'subtropical',
+                description: 'Subtropical mediterrânico (Grande Lisboa)'
+            },
+            // Alentejo - Subtropical seco
+            alentejo: {
+                keywords: ['évora', 'beja', 'portalegre', 'elvas', 'sines', 'alentejo'],
+                climate: 'subtropical',
+                description: 'Subtropical seco (Alentejo)'
+            },
+            // Algarve - Subtropical
+            algarve: {
+                keywords: ['faro', 'lagos', 'portimão', 'tavira', 'olhão', 'albufeira', 'algarve'],
+                climate: 'subtropical',
+                description: 'Subtropical mediterrânico (Algarve)'
+            },
+            // Madeira - Subtropical oceânico
+            madeira: {
+                keywords: ['funchal', 'madeira', 'porto santo'],
+                climate: 'subtropical',
+                description: 'Subtropical oceânico (Madeira)'
+            },
+            // Açores - Temperado oceânico
+            acores: {
+                keywords: ['angra', 'ponta delgada', 'horta', 'açores', 'azores'],
+                climate: 'temperado',
+                description: 'Temperado oceânico (Açores)'
+            }
+        };
+        
+        // Função para detectar por coordenadas
+        function detectByCoordinates(lat, lon) {
+            const latitude = parseFloat(lat);
+            const longitude = parseFloat(lon);
+            
+            // Portugal Continental: aproximadamente 36.5°N to 42.5°N, -9.5°W to -6°W
+            if (latitude >= 36.5 && latitude <= 42.5 && longitude >= -9.5 && longitude <= -6.0) {
+                if (latitude < 37.5) {
+                    return { climate: 'subtropical', description: 'Subtropical mediterrânico (Algarve)', method: 'coordinates' };
+                } else if (latitude > 41.0) {
+                    return { climate: 'temperado', description: 'Temperado oceânico (Norte)', method: 'coordinates' };
+                } else if (latitude >= 39.0 && latitude <= 41.0) {
+                    return { climate: 'temperado', description: 'Temperado mediterrânico (Centro)', method: 'coordinates' };
+                } else {
+                    return { climate: 'subtropical', description: 'Subtropical mediterrânico (Lisboa/Vale do Tejo)', method: 'coordinates' };
+                }
+            }
+            
+            // Madeira: aproximadamente 32.6°N to 33.1°N, -17.3°W to -16.2°W
+            if (latitude >= 32.6 && latitude <= 33.1 && longitude >= -17.3 && longitude <= -16.2) {
+                return { climate: 'subtropical', description: 'Subtropical oceânico (Madeira)', method: 'coordinates' };
+            }
+            
+            // Açores: aproximadamente 36.9°N to 39.7°N, -31.3°W to -25.0°W
+            if (latitude >= 36.9 && latitude <= 39.7 && longitude >= -31.3 && longitude <= -25.0) {
+                return { climate: 'temperado', description: 'Temperado oceânico (Açores)', method: 'coordinates' };
+            }
+            
+            return null;
+        }
+        
+        let detectedClimate = null;
+        
+        // Tentar detecção por coordenadas primeiro (mais preciso)
+        if (latitude && longitude) {
+            detectedClimate = detectByCoordinates(latitude, longitude);
+            if (detectedClimate) {
+                console.log('🎯 Clima detectado por coordenadas:', detectedClimate);
+            }
+        }
+        
+        // Se não conseguiu por coordenadas, tentar por palavras-chave
+        if (!detectedClimate) {
+            const locationLower = locationValue.toLowerCase();
+            
+            for (const [region, data] of Object.entries(climateMapping)) {
+                for (const keyword of data.keywords) {
+                    if (locationLower.includes(keyword)) {
+                        detectedClimate = {
+                            climate: data.climate,
+                            description: data.description,
+                            method: 'keyword',
+                            region: region
+                        };
+                        console.log('🏙️ Clima detectado por palavra-chave:', detectedClimate);
+                        break;
+                    }
+                }
+                if (detectedClimate) break;
+            }
+        }
+        
+        // Fallback para Portugal
+        if (!detectedClimate && (locationValue.toLowerCase().includes('portugal') || locationValue.toLowerCase().includes('pt'))) {
+            detectedClimate = {
+                climate: 'temperado',
+                description: 'Clima temperado mediterrânico (padrão para Portugal)',
+                method: 'fallback'
+            };
+        }
+        
+        // Aplicar clima detectado
+        if (detectedClimate) {
+            const option = climateSelect.querySelector(`option[value="${detectedClimate.climate}"]`);
+            if (option) {
+                climateSelect.value = detectedClimate.climate;
+                
+                // Adicionar indicador de que foi forçado
+                detectedClimate.forced = true;
+                showClimateDetectionFeedback(detectedClimate);
+                
+                console.log('✅ Clima aplicado:', detectedClimate.climate);
+            } else {
+                showClimateDetectionFeedback({
+                    description: 'Clima detectado não está nas opções disponíveis',
+                    confidence: 'error'
+                });
+            }
+        } else {
+            showClimateDetectionFeedback({
+                description: 'Não foi possível detectar o clima para esta localização. Tente ser mais específico.',
+                confidence: 'error'
+            });
+        }
+    }
+    
+    // Função para mostrar feedback da detecção de clima
+    function showClimateDetectionFeedback(data) {
+        const climateSelect = document.getElementById('climate');
+        const feedbackContainer = document.createElement('div');
+        
+        // Definir cores e ícones baseado no tipo de feedback
+        let bgColor, borderColor, textColor, icon, iconColor, prefix;
+        
+        if (data.confidence === 'error') {
+            bgColor = 'bg-red-50';
+            borderColor = 'border-red-200';
+            textColor = 'text-red-700';
+            iconColor = 'text-red-500';
+            icon = `<svg class="w-4 h-4 mr-2 ${iconColor}" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                    </svg>`;
+            prefix = 'Erro:';
+        } else {
+            bgColor = 'bg-green-50';
+            borderColor = 'border-green-200';
+            textColor = 'text-green-700';
+            iconColor = 'text-green-500';
+            
+            if (data.forced) {
+                icon = `<svg class="w-4 h-4 mr-2 ${iconColor}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                        </svg>`;
+                prefix = 'Detecção atualizada:';
+            } else {
+                icon = `<svg class="w-4 h-4 mr-2 ${iconColor}" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                        </svg>`;
+                prefix = 'Clima detectado automaticamente:';
+            }
+        }
+        
+        feedbackContainer.className = `mt-2 p-2 ${bgColor} border ${borderColor} rounded-md text-sm`;
+        
+        let confidenceText = '';
+        if (data.confidence && data.confidence !== 'error') {
+            confidenceText = data.confidence === 'high' ? '(Alta confiança)' : 
+                            data.confidence === 'medium' ? '(Confiança média)' : 
+                            '(Baixa confiança)';
+        }
+        
+        feedbackContainer.innerHTML = `
+            <div class="flex items-center">
+                ${icon}
+                <span class="${textColor}">
+                    <strong>${prefix}</strong> ${data.description || 'Baseado na sua localização'}
+                    ${confidenceText}
+                </span>
+            </div>
+        `;
+        
+        // Remover feedback anterior se existir
+        const existingFeedback = climateSelect.parentNode.querySelector('.climate-feedback');
+        if (existingFeedback) {
+            existingFeedback.remove();
+        }
+        
+        feedbackContainer.classList.add('climate-feedback');
+        climateSelect.parentNode.appendChild(feedbackContainer);
+        
+        // Remover feedback após tempo variável (erros ficam mais tempo)
+        const timeout = data.confidence === 'error' ? 8000 : 10000;
+        setTimeout(() => {
+            if (feedbackContainer.parentNode) {
+                feedbackContainer.remove();
+            }
+        }, timeout);
+    }
+    
+    // Event listener para detectar clima quando a localização for selecionada
+    document.addEventListener('DOMContentLoaded', function() {
+        const locationInput = document.getElementById('location');
+        const refreshBtn = document.getElementById('refresh-climate-btn');
+        const refreshSoilBtn = document.getElementById('refresh-soil-btn');
+        
+        // Event listener para o botão de refresh do clima
+        refreshBtn.addEventListener('click', forceDetectClimate);
+        
+        // Event listener para o botão de refresh do solo
+        refreshSoilBtn.addEventListener('click', forceDetectSoil);
+        
+        // Não mais necessário: a detecção agora acontece diretamente na função selectLocation()
+        // quando o usuário efetivamente seleciona uma nova localização
+    });
+
+    // Função para forçar detecção de solo (chamada pelo botão refresh)
+    function forceDetectSoil() {
+        const locationValue = document.getElementById('location').value;
+        const soilSelect = document.getElementById('soil_type');
+        const refreshBtn = document.getElementById('refresh-soil-btn');
+        
+        // Verificar se há localização
+        if (!locationValue || locationValue.trim() === '') {
+            showSoilDetectionFeedback({
+                description: 'Por favor, insira uma localização primeiro',
+                confidence: 'error'
+            });
+            return;
+        }
+        
+        // Animação do botão
+        refreshBtn.style.transform = 'rotate(360deg)';
+        refreshBtn.style.transition = 'transform 0.5s ease-in-out';
+        
+        // Mostrar loading
+        showSoilDetectionFeedback({
+            description: '🤖 Analisando localização com IA...',
+            confidence: 'loading'
+        });
+        
+        // Resetar seleção atual
+        soilSelect.value = '';
+        
+        // Detectar solo usando API
+        setTimeout(() => {
+            detectSoilAutomatically();
+            
+            // Resetar animação do botão
+            setTimeout(() => {
+                refreshBtn.style.transform = '';
+                refreshBtn.style.transition = '';
+            }, 500);
+        }, 500);
+    }
+
+    // Função para detectar solo automaticamente usando IA
+    async function detectSoilAutomatically() {
+        const locationValue = document.getElementById('location').value;
+        const latitude = document.getElementById('latitude').value;
+        const longitude = document.getElementById('longitude').value;
+        const climate = document.getElementById('climate').value;
+        const soilSelect = document.getElementById('soil_type');
+        
+        try {
+            const requestBody = {
+                location: locationValue
+            };
+            
+            // Adicionar coordenadas se disponíveis
+            if (latitude && longitude) {
+                requestBody.latitude = parseFloat(latitude);
+                requestBody.longitude = parseFloat(longitude);
+            }
+            
+            // Adicionar clima se disponível
+            if (climate) {
+                requestBody.climate = climate;
+            }
+            
+            console.log('🤖 Detectando tipo de solo via IA:', requestBody);
+            
+            const response = await fetch('/api/geocoding/detect-soil', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-Token': window.csrfToken
+                },
+                body: JSON.stringify(requestBody)
+            });
+            
+            const data = await response.json();
+            
+            if (data.success && data.soil_detection && data.soil_detection.primary_soil) {
+                const detection = data.soil_detection;
+                
+                // Aplicar solo detectado
+                soilSelect.value = detection.primary_soil;
+                
+                // Mostrar feedback com informações detalhadas
+                showSoilDetectionFeedback({
+                    primary_soil: detection.primary_soil,
+                    confidence: detection.confidence,
+                    description: detection.description,
+                    alternatives: detection.alternatives,
+                    reasoning: detection.reasoning,
+                    method: detection.method
+                });
+                
+                console.log('🎯 Solo detectado pela IA:', detection);
+            } else {
+                console.warn('⚠️ Não foi possível detectar o solo:', data);
+                showSoilDetectionFeedback({
+                    description: data.error || 'Não foi possível detectar o solo para esta localização',
+                    confidence: 'error'
+                });
+            }
+            
+        } catch (error) {
+            console.error('❌ Erro na detecção de solo:', error);
+            showSoilDetectionFeedback({
+                description: 'Erro ao conectar com o serviço de IA. Tente novamente.',
+                confidence: 'error'
+            });
+        }
+    }
+
+    // Função para mostrar feedback da detecção de solo
+    function showSoilDetectionFeedback(data) {
+        const soilSelect = document.getElementById('soil_type');
+        const container = soilSelect.parentNode.parentNode; // div do tipo de solo
+        
+        // Remover feedback anterior
+        const existingFeedback = container.querySelector('.soil-feedback');
+        if (existingFeedback) {
+            existingFeedback.remove();
+        }
+        
+        // Criar elemento de feedback
+        const feedbackDiv = document.createElement('div');
+        feedbackDiv.className = 'soil-feedback mt-2 p-3 rounded-md text-sm';
+        
+        if (data.confidence === 'error') {
+            feedbackDiv.className += ' bg-red-50 border border-red-200 text-red-700';
+            feedbackDiv.innerHTML = `
+                <div class="flex items-center">
+                    <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                    </svg>
+                    <span>${data.description}</span>
+                </div>
+            `;
+        } else if (data.confidence === 'loading') {
+            feedbackDiv.className += ' bg-blue-50 border border-blue-200 text-blue-700';
+            feedbackDiv.innerHTML = `
+                <div class="flex items-center">
+                    <svg class="w-4 h-4 mr-2 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                    </svg>
+                    <span>${data.description}</span>
+                </div>
+            `;
+        } else if (data.primary_soil) {
+            // Sucesso na detecção
+            const confidenceColor = data.confidence === 'high' ? 'green' : data.confidence === 'medium' ? 'yellow' : 'blue';
+            const confidenceText = data.confidence === 'high' ? 'Alta confiança' : data.confidence === 'medium' ? 'Média confiança' : 'Baixa confiança';
+            
+            feedbackDiv.className += ` bg-${confidenceColor}-50 border border-${confidenceColor}-200 text-${confidenceColor}-700`;
+            
+            let alternativesHtml = '';
+            if (data.alternatives && data.alternatives.length > 1) {
+                alternativesHtml = `
+                    <div class="mt-2">
+                        <strong>Outras possibilidades:</strong>
+                        <ul class="ml-4 mt-1">
+                            ${data.alternatives.slice(1, 3).map(alt => 
+                                `<li>• ${alt.type} (${alt.probability}%)</li>`
+                            ).join('')}
+                        </ul>
+                    </div>
+                `;
+            }
+            
+            let reasoningHtml = '';
+            if (data.reasoning && data.reasoning.length > 0) {
+                reasoningHtml = `
+                    <div class="mt-2 text-xs opacity-75">
+                        <strong>Análise IA:</strong> ${data.reasoning.slice(0, 2).join(' • ')}
+                    </div>
+                `;
+            }
+            
+            feedbackDiv.innerHTML = `
+                <div class="flex items-start">
+                    <svg class="w-4 h-4 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                    </svg>
+                    <div class="flex-grow">
+                        <div class="font-medium">🤖 Solo detectado: ${data.primary_soil.toUpperCase()}</div>
+                        <div class="text-xs mt-1 opacity-75">${confidenceText} • ${data.method || 'IA geográfica'}</div>
+                        <div class="mt-1">${data.description}</div>
+                        ${alternativesHtml}
+                        ${reasoningHtml}
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Inserir feedback
+        container.appendChild(feedbackDiv);
+        
+        // Remover feedback após 15 segundos (exceto se for loading ou erro)
+        if (data.confidence !== 'loading' && data.confidence !== 'error') {
+            setTimeout(() => {
+                if (feedbackDiv && feedbackDiv.parentNode) {
+                    feedbackDiv.remove();
+                }
+            }, 15000);
+        }
+    }
+
+    document.getElementById('onboardingStep3Form').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        // Validar localização
+        if (!validateLocationForm()) {
+            return false;
+        }
+        
+        const step = 3;
+        const farmName = document.getElementById('farm_name').value;
+        const location = document.getElementById('location').value;
+        const latitude = document.getElementById('latitude').value;
+        const longitude = document.getElementById('longitude').value;
+        const formattedAddress = document.getElementById('formatted-address').value;
+        const farmArea = document.getElementById('farm_area').value;
+        const soilType = document.getElementById('soil_type').value;
+        const climate = document.getElementById('climate').value;
+        
+        // Coletar fontes de água selecionadas
+        const waterSources = [];
+        document.querySelectorAll('input[name="water_sources"]:checked').forEach(checkbox => {
+            waterSources.push(checkbox.value);
+        });
+
+        try {
+            const headers = {
+                'Content-Type': 'application/json',
+            };
+            
+            // Adicione o token CSRF se disponível
+            if (window.csrfToken) {
+                headers['X-CSRF-Token'] = window.csrfToken;
+                console.log('Enviando token CSRF:', window.csrfToken);
+            }
+
+            const formData = {
+                step: step,
+                farm_name: farmName,
+                location: location,
+                latitude: latitude,
+                longitude: longitude,
+                formatted_address: formattedAddress,
+                farm_area: farmArea,
+                soil_type: soilType,
+                climate: climate,
+                water_sources: waterSources
+            };
+
+            const response = await fetch("{{ url_for('auth.save_onboarding') }}", {
+                method: 'POST',
+                headers: headers,
+                body: JSON.stringify(formData)
+            });
+
+            if (response.ok) {
+                window.location.href = "{{ url_for('auth.onboarding', step=4) }}";
+            } else {
+                const errorData = await response.json();
+                alert(errorData.error || 'Erro ao salvar dados');
+            }
+        } catch (error) {
+            alert('Erro de conexão');
+        }
+    });
+</script>
+{% endblock %}

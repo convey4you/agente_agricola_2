@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bem-vindo ao AgroTech Portugal</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/onboarding.css') }}">
+</head>
+<body class="onboarding-body">
+    <div class="onboarding-container">
+        <!-- Barra de Progresso -->
+        <div class="progress-header">
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: {{ progress.progress_percentage }}%"></div>
+            </div>
+            <span class="progress-text">{{ progress.progress_percentage|round|int }}% Concluído</span>
+        </div>
+
+        <!-- Conteúdo Principal -->
+        <div class="welcome-content">
+            <div class="welcome-hero">
+                <div class="welcome-animation">
+                    <img src="{{ url_for('static', filename='images/agrotech-logo-animated.svg') }}" 
+                         alt="AgroTech Portugal" class="logo-animated">
+                </div>
+                
+                <h1 class="welcome-title">
+                    🌱 Bem-vindo ao AgroTech Portugal
+                </h1>
+                
+                <p class="welcome-subtitle">
+                    Transforme sua atividade agrícola com tecnologia inteligente
+                </p>
+            </div>
+
+            <!-- Vídeo de Apresentação -->
+            <div class="video-section">
+                <div class="video-container">
+                    <video controls poster="{{ url_for('static', filename='images/video-poster.jpg') }}">
+                        <source src="{{ url_for('static', filename='videos/welcome.mp4') }}" type="video/mp4">
+                        Seu navegador não suporta vídeo HTML5.
+                    </video>
+                </div>
+            </div>
+
+            <!-- Destaques da Plataforma -->
+            <div class="highlights-section">
+                <h2>O que você pode fazer com o AgroTech:</h2>
+                <div class="highlights-grid">
+                    <div class="highlight-card">
+                        <div class="highlight-icon">🌾</div>
+                        <h3>Gestão Inteligente de Culturas</h3>
+                        <p>Monitore suas culturas em tempo real com alertas personalizados e recomendações baseadas em IA</p>
+                    </div>
+                    
+                    <div class="highlight-card">
+                        <div class="highlight-icon">🌤️</div>
+                        <h3>Monitoramento Climático</h3>
+                        <p>Previsões meteorológicas precisas e alertas de condições adversas para proteger sua produção</p>
+                    </div>
+                    
+                    <div class="highlight-card">
+                        <div class="highlight-icon">🤖</div>
+                        <h3>Assistente IA Personalizado</h3>
+                        <p>Obtenha conselhos especializados e soluções personalizadas para seus desafios agrícolas</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Benefícios -->
+            <div class="benefits-section">
+                <h2>Benefícios que você terá:</h2>
+                <div class="benefits-list">
+                    <div class="benefit-item">
+                        <span class="benefit-icon">📈</span>
+                        <span>Aumento de até 30% na produtividade</span>
+                    </div>
+                    <div class="benefit-item">
+                        <span class="benefit-icon">💰</span>
+                        <span>Redução de custos operacionais</span>
+                    </div>
+                    <div class="benefit-item">
+                        <span class="benefit-icon">🌱</span>
+                        <span>Práticas mais sustentáveis</span>
+                    </div>
+                    <div class="benefit-item">
+                        <span class="benefit-icon">⏰</span>
+                        <span>Economia de tempo nas decisões</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Call to Action -->
+            <div class="cta-section">
+                <h2>Pronto para começar?</h2>
+                <p>O processo de configuração leva apenas 5-10 minutos</p>
+                
+                <div class="cta-buttons">
+                    <button class="btn-primary btn-large" data-action="start-onboarding">
+                        🚀 Vamos Começar!
+                    </button>
+                    
+                    <button class="btn-secondary" data-action="skip-to-overview">
+                        Pular para Visão Geral
+                    </button>
+                </div>
+                
+                <div class="time-estimate">
+                    <span class="time-icon">⏱️</span>
+                    <span>Tempo estimado: {{ progress.estimated_completion_time }} minutos</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navegação -->
+        <div class="navigation-footer">
+            <div class="nav-info">
+                <span>Etapa 1 de 9</span>
+            </div>
+            
+            <div class="nav-buttons">
+                <button class="btn-outline" data-action="skip-step">
+                    Pular
+                </button>
+                <button class="btn-primary" data-action="next-step">
+                    Continuar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modais -->
+    <div id="skipModal" class="modal">
+        <div class="modal-content">
+            <h3>Pular Onboarding?</h3>
+            <p>Você pode configurar sua conta mais tarde, mas recomendamos completar o processo agora para uma melhor experiência.</p>
+            <div class="modal-buttons">
+                <button class="btn-outline" data-action="close-modal">Cancelar</button>
+                <button class="btn-primary" data-action="confirm-skip">Sim, Pular</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/onboarding.js') }}"></script>
+    <script nonce="{{ g.csp_nonce }}">
+        // Dados da sessão
+        const onboardingData = {
+            userId: {{ current_user.id }},
+            currentStep: '{{ current_step.id if current_step else "" }}',
+            progressPercentage: {{ progress.progress_percentage }},
+            estimatedTime: {{ progress.estimated_completion_time }}
+        };
+
+        // Funções específicas da página
+        function startOnboarding() {
+            // Reproduzir animação de confetti
+            playConfettiAnimation();
+            
+            // Navegar para próxima etapa
+            setTimeout(() => {
+                window.location.href = "{{ url_for('onboarding.step_page', step_id='profile_setup') }}";
+            }, 1500);
+        }
+
+        function skipToOverview() {
+            showModal('skipModal');
+        }
+
+        function nextStep() {
+            startOnboarding();
+        }
+
+        function skipStep() {
+            skipToOverview();
+        }
+
+        function confirmSkip() {
+            fetch('/api/onboarding/step/welcome/skip', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({})
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.href = "{{ url_for('main.dashboard') }}";
+                } else {
+                    showNotification('Erro ao pular etapa', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showNotification('Erro de conexão', 'error');
+            });
+        }
+
+        // Animação de entrada
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animar elementos na entrada
+            const elements = document.querySelectorAll('.highlight-card, .benefit-item');
+            elements.forEach((el, index) => {
+                setTimeout(() => {
+                    el.classList.add('animate-in');
+                }, index * 100);
+            });
+
+            // Event listeners para ações do onboarding
+            const startButton = document.querySelector('[data-action="start-onboarding"]');
+            if (startButton) {
+                startButton.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    startOnboarding();
+                });
+            }
+
+            const skipToOverviewButton = document.querySelector('[data-action="skip-to-overview"]');
+            if (skipToOverviewButton) {
+                skipToOverviewButton.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    skipToOverview();
+                });
+            }
+
+            const nextStepButton = document.querySelector('[data-action="next-step"]');
+            if (nextStepButton) {
+                nextStepButton.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    nextStep();
+                });
+            }
+
+            const skipStepButton = document.querySelector('[data-action="skip-step"]');
+            if (skipStepButton) {
+                skipStepButton.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    skipStep();
+                });
+            }
+
+            const closeModalButton = document.querySelector('[data-action="close-modal"]');
+            if (closeModalButton) {
+                closeModalButton.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    closeModal();
+                });
+            }
+
+            const confirmSkipButton = document.querySelector('[data-action="confirm-skip"]');
+            if (confirmSkipButton) {
+                confirmSkipButton.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    confirmSkip();
+                });
+            }
+
+            console.log('✅ Event listeners do onboarding configurados');
+
+            // Registrar visualização da página
+            trackOnboardingInteraction('welcome', 'page_view');
+        });
+
+        // Tracking de interações
+        function trackOnboardingInteraction(stepId, interactionType, data = {}) {
+            fetch('/api/onboarding/webhook/step-interaction', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    step_id: stepId,
+                    interaction_type: interactionType,
+                    interaction_data: data,
+                    timestamp: new Date().toISOString()
+                })
+            });
+        }
+    </script>
+</body>
+</html>

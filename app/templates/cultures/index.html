@@ -1,0 +1,646 @@
+{% extends "base.html" %}
+
+{% block title %}Minhas Culturas{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4 py-6">
+    <!-- Header -->
+    <div class="flex justify-between items-center mb-6">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900">🌱 Minhas Culturas</h1>
+            <p class="text-gray-600 mt-1">Gerencie e monitore suas culturas agrícolas</p>
+        </div>
+        <div class="flex space-x-3">
+            <a href="/cultures/wizard" class="btn btn-primary flex items-center">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                </svg>
+                Nova Cultura
+            </a>
+            <button id="reload-cultures-btn" 
+                    class="btn btn-secondary flex items-center">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                </svg>
+                Atualizar
+            </button>
+        </div>
+    </div>
+
+    <!-- Loading State -->
+    <div id="loading-state" class="hidden">
+        <div class="bg-white rounded-lg shadow p-6">
+            <div class="animate-pulse flex space-x-4">
+                <div class="rounded-full bg-gray-200 h-12 w-12"></div>
+                <div class="flex-1 space-y-2 py-1">
+                    <div class="h-4 bg-gray-200 rounded w-3/4"></div>
+                    <div class="h-4 bg-gray-200 rounded w-1/2"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Empty State -->
+    <div id="empty-state" class="hidden">
+        <div class="bg-white rounded-lg shadow-sm border-2 border-dashed border-gray-200 p-12 text-center">
+            <div class="mx-auto h-24 w-24 text-gray-400 mb-4">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" 
+                          d="M12 6.253v13m0-13c-1.5 0-3.5 1-4.5 2.5m4.5-2.5c1.5 0 3.5 1 4.5 2.5M9 10l3 3 3-3"></path>
+                </svg>
+            </div>
+            <h3 class="text-lg font-medium text-gray-900 mb-2">Ainda não tem culturas</h3>
+            <p class="text-gray-600 mb-6">Comece adicionando sua primeira cultura para monitorizar e gerir a sua propriedade.</p>
+            <a href="/cultures/wizard" class="btn btn-primary flex items-center">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                </svg>
+                Adicionar Primeira Cultura
+            </a>
+        </div>
+    </div>
+
+    <!-- Cultures Grid -->
+    <div id="cultures-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Cards will be inserted here dynamically -->
+    </div>
+
+    <!-- Error State -->
+    <div id="error-state" class="hidden">
+        <div class="bg-red-50 border border-red-200 rounded-lg p-6">
+            <div class="flex items-start">
+                <div class="flex-shrink-0">
+                    <svg class="h-5 w-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+                <div class="ml-3">
+                    <h3 class="text-sm font-medium text-red-800">Erro ao carregar culturas</h3>
+                    <p id="error-message" class="mt-1 text-sm text-red-700"></p>
+                    <button id="retry-load-btn" class="mt-3 text-sm text-red-600 hover:text-red-500">
+                        Tentar novamente
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Culture Detail Modal -->
+<div id="culture-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50">
+    <div class="flex items-center justify-center min-h-screen p-4">
+        <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-screen overflow-y-auto">
+            <div class="p-6">
+                <div class="flex justify-between items-start mb-4">
+                    <h3 id="modal-title" class="text-lg font-semibold text-gray-900"></h3>
+                    <button id="close-modal-btn" class="text-gray-400 hover:text-gray-600">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                <div id="modal-content">
+                    <!-- Content will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Removido modal do wizard -->
+
+<style>
+.culture-card {
+    @apply bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow duration-200;
+}
+
+.culture-card:hover {
+    transform: translateY(-2px);
+}
+
+.culture-status {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+}
+
+.status-active {
+    @apply bg-green-100 text-green-800;
+}
+
+.status-growing {
+    @apply bg-blue-100 text-blue-800;
+}
+
+.status-harvest {
+    @apply bg-yellow-100 text-yellow-800;
+}
+
+.status-dormant {
+    @apply bg-gray-100 text-gray-800;
+}
+
+.metric-item {
+    @apply flex justify-between items-center py-2 border-b border-gray-100 last:border-b-0;
+}
+
+.btn {
+    @apply px-4 py-2 rounded-md font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2;
+}
+
+.btn-primary {
+    @apply bg-green-600 text-white hover:bg-green-700 focus:ring-green-500;
+}
+
+.btn-secondary {
+    @apply bg-gray-200 text-gray-700 hover:bg-gray-300 focus:ring-gray-500;
+}
+
+.btn-danger {
+    @apply bg-red-600 text-white hover:bg-red-700 focus:ring-red-500;
+}
+</style>
+
+<script nonce="{{ g.csp_nonce if g.csp_nonce else 'default' }}">
+// Culture Management JavaScript
+let cultures = [];
+let currentCulture = null;
+
+// Definir token CSRF para requisições AJAX
+window.csrfToken = '{{ csrf_token() }}' || document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+console.log('🔒 Token CSRF definido para cultures:', window.csrfToken ? 'SIM' : 'NÃO');
+
+// Load cultures on page load
+document.addEventListener('DOMContentLoaded', function() {
+    loadCultures();
+    
+    // Add event listeners for buttons
+    const openWizardBtn = document.getElementById('open-wizard-btn');
+    const reloadCulturesBtn = document.getElementById('reload-cultures-btn');
+    const addFirstCultureBtn = document.getElementById('add-first-culture-btn');
+    const retryLoadBtn = document.getElementById('retry-load-btn');
+    const closeModalBtn = document.getElementById('close-modal-btn');
+    
+    if (openWizardBtn) {
+        openWizardBtn.addEventListener('click', openWizard);
+    }
+    
+    if (reloadCulturesBtn) {
+        reloadCulturesBtn.addEventListener('click', loadCultures);
+    }
+    
+    if (addFirstCultureBtn) {
+        addFirstCultureBtn.addEventListener('click', openWizard);
+    }
+    
+    if (retryLoadBtn) {
+        retryLoadBtn.addEventListener('click', loadCultures);
+    }
+    
+    if (closeModalBtn) {
+        closeModalBtn.addEventListener('click', closeModal);
+    }
+});
+
+// Load cultures from API
+async function loadCultures() {
+    try {
+        console.log('Iniciando carregamento de culturas...');
+        showLoading();
+        
+        const response = await fetch('/cultures/api', {
+            method: 'GET',
+            credentials: 'same-origin',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        });
+        
+        console.log('Resposta recebida:', response.status, response.statusText);
+        
+        if (!response.ok) {
+            console.log('Resposta não OK:', response.status);
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        console.log('Dados recebidos:', data);
+        
+        // Verificar se precisa de onboarding
+        if (data.needs_onboarding) {
+            console.log('Usuário precisa completar onboarding');
+            showError('Complete seu perfil antes de acessar as culturas. Redirecionando...');
+            setTimeout(() => {
+                window.location.href = '/auth/onboarding';
+            }, 2000);
+            return;
+        }
+        
+        if (data.success) {
+            cultures = data.cultures || [];
+            console.log('Culturas carregadas:', cultures.length);
+            renderCultures();
+        } else {
+            console.log('Erro no data.success:', data.error);
+            showError(data.error || 'Erro ao carregar culturas');
+        }
+        
+    } catch (error) {
+        console.error('Erro ao carregar culturas:', error);
+        showError('Erro de conexão. Verifique sua internet.');
+    }
+}
+
+// Render cultures grid
+function renderCultures() {
+    hideAllStates();
+    
+    if (cultures.length === 0) {
+        const emptyState = document.getElementById('empty-state');
+        if (emptyState) {
+            emptyState.classList.remove('hidden');
+        }
+        return;
+    }
+    
+    const grid = document.getElementById('cultures-grid');
+    if (!grid) {
+        console.error('❌ Elemento cultures-grid não encontrado');
+        return;
+    }
+    
+    grid.classList.remove('hidden');
+    
+    grid.innerHTML = cultures.map(culture => `
+        <div class="culture-card" data-action="view-culture" data-culture-id="${culture.id}">
+            <!-- Culture Header -->
+            <div class="flex items-start justify-between mb-4">
+                <div class="flex-1">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-1">${culture.nome}</h3>
+                    <p class="text-sm text-gray-600">${culture.tipo_cultura || 'Tipo não definido'}</p>
+                </div>
+                <span class="culture-status ${getStatusClass(culture.status || 'active')}">
+                    ${getStatusText(culture.status || 'active')}
+                </span>
+            </div>
+            
+            <!-- Culture Image/Icon -->
+            <div class="mb-4">
+                <div class="h-32 bg-gradient-to-br from-green-100 to-green-200 rounded-lg flex items-center justify-center">
+                    <div class="text-4xl">${getCultureIcon(culture.tipo_cultura)}</div>
+                </div>
+            </div>
+            
+            <!-- Culture Metrics -->
+            <div class="space-y-2">
+                <div class="metric-item">
+                    <span class="text-sm text-gray-600">Área:</span>
+                    <span class="text-sm font-medium">${culture.area || 0}m²</span>
+                </div>
+                <div class="metric-item">
+                    <span class="text-sm text-gray-600">Data Plantio:</span>
+                    <span class="text-sm font-medium">${formatDate(culture.data_plantio)}</span>
+                </div>
+                <div class="metric-item">
+                    <span class="text-sm text-gray-600">Dias de Crescimento:</span>
+                    <span class="text-sm font-medium">${calculateGrowingDays(culture.data_plantio)}</span>
+                </div>
+            </div>
+            
+            <!-- Actions -->
+            <div class="mt-4 flex space-x-2">
+                <button data-action="edit-culture" data-culture-id="${culture.id}" 
+                        class="flex-1 text-sm text-green-600 hover:text-green-800 py-1">
+                    Editar
+                </button>
+                <button data-action="delete-culture" data-culture-id="${culture.id}" 
+                        class="flex-1 text-sm text-red-600 hover:text-red-800 py-1">
+                    Eliminar
+                </button>
+            </div>
+        </div>
+    `).join('');
+}
+
+// View culture details
+function viewCulture(cultureId) {
+    const culture = cultures.find(c => c.id === cultureId);
+    if (!culture) return;
+    
+    currentCulture = culture;
+    
+    document.getElementById('modal-title').textContent = culture.nome;
+    document.getElementById('modal-content').innerHTML = `
+        <div class="space-y-6">
+            <!-- Culture Overview -->
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Tipo de Cultura</label>
+                    <p class="mt-1 text-sm text-gray-900">${culture.tipo_cultura || 'Não definido'}</p>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Status</label>
+                    <span class="mt-1 culture-status ${getStatusClass(culture.status || 'active')}">
+                        ${getStatusText(culture.status || 'active')}
+                    </span>
+                </div>
+            </div>
+            
+            <!-- Metrics -->
+            <div class="grid grid-cols-3 gap-4">
+                <div class="text-center p-4 bg-gray-50 rounded-lg">
+                    <div class="text-2xl font-bold text-gray-900">${culture.area || 0}</div>
+                    <div class="text-sm text-gray-600">m² Área</div>
+                </div>
+                <div class="text-center p-4 bg-gray-50 rounded-lg">
+                    <div class="text-2xl font-bold text-gray-900">${calculateGrowingDays(culture.data_plantio)}</div>
+                    <div class="text-sm text-gray-600">Dias</div>
+                </div>
+                <div class="text-center p-4 bg-gray-50 rounded-lg">
+                    <div class="text-2xl font-bold text-gray-900">€${culture.custo_estimado || 0}</div>
+                    <div class="text-sm text-gray-600">Custo</div>
+                </div>
+            </div>
+            
+            <!-- Description -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Observações</label>
+                <p class="text-sm text-gray-900 bg-gray-50 p-3 rounded">${culture.observacoes || 'Nenhuma observação registada.'}</p>
+            </div>
+            
+            <!-- Actions -->
+            <div class="flex space-x-3 pt-4 border-t">
+                <button data-action="edit-culture" data-culture-id="${culture.id}" class="btn btn-primary flex-1">
+                    Editar Cultura
+                </button>
+                <button data-action="delete-culture" data-culture-id="${culture.id}" class="btn btn-danger">
+                    Eliminar
+                </button>
+            </div>
+        </div>
+    `;
+    
+    const cultureModal = document.getElementById('culture-modal');
+    if (cultureModal) {
+        cultureModal.classList.remove('hidden');
+    } else {
+        console.error('❌ Elemento culture-modal não encontrado');
+    }
+}
+
+// Open wizard for new culture
+function openWizard() {
+    // Load wizard step 1
+    loadWizardStep(1);
+}
+
+// Load wizard step
+async function loadWizardStep(step) {
+    try {
+        const response = await fetch(`/cultures/wizard?step=${step}&modal=true`, {
+            method: 'GET',
+            credentials: 'same-origin',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': 'text/html, application/json'
+            }
+        });
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const html = await response.text();
+        const wizardContent = document.getElementById('wizard-content');
+        const wizardModal = document.getElementById('wizard-modal');
+        
+        if (wizardContent) {
+            wizardContent.innerHTML = html;
+        }
+        if (wizardModal) {
+            wizardModal.classList.remove('hidden');
+        }
+        
+    } catch (error) {
+        console.error('Erro ao carregar wizard:', error);
+        alert('Erro ao abrir wizard de cultura');
+    }
+}
+
+// Close modals
+function closeModal() {
+    const cultureModal = document.getElementById('culture-modal');
+    const wizardModal = document.getElementById('wizard-modal');
+    
+    if (cultureModal) {
+        cultureModal.classList.add('hidden');
+    }
+    if (wizardModal) {
+        wizardModal.classList.add('hidden');
+    }
+}
+
+// Edit culture
+function editCulture(cultureId) {
+    closeModal();
+    // TODO: Implement edit functionality
+    alert('Funcionalidade de edição em desenvolvimento');
+}
+
+// Delete culture
+async function deleteCulture(cultureId) {
+    if (!confirm('Tem certeza que deseja eliminar esta cultura?')) {
+        return;
+    }
+    
+    console.log('🗑️ Deletando cultura ID:', cultureId);
+    console.log('🔒 Token CSRF disponível:', window.csrfToken ? 'SIM' : 'NÃO');
+    console.log('🔒 Token CSRF valor:', window.csrfToken ? window.csrfToken.substring(0, 10) + '...' : 'undefined');
+    
+    try {
+        const response = await fetch(`/cultures/${cultureId}`, {
+            method: 'DELETE',
+            credentials: 'same-origin',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-Token': window.csrfToken || ''
+            }
+        });
+        
+        console.log('🌐 Resposta status:', response.status);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        let data;
+        try {
+            data = await response.json();
+        } catch (parseError) {
+            console.error('❌ Erro ao fazer parse da resposta JSON:', parseError);
+            throw new Error('Resposta inválida do servidor');
+        }
+        
+        console.log('📦 Dados da resposta:', data);
+        
+        if (data && data.success) {
+            console.log('✅ Cultura deletada com sucesso');
+            closeModal();
+            loadCultures(); // Reload the list
+            alert('Cultura eliminada com sucesso!');
+        } else {
+            const errorMessage = (data && data.error) || (data && data.message) || 'Erro desconhecido ao eliminar cultura';
+            console.error('❌ Erro retornado pelo servidor:', errorMessage);
+            alert('Erro ao eliminar cultura: ' + errorMessage);
+        }
+        
+    } catch (error) {
+        console.error('Erro ao eliminar cultura:', error);
+        alert('Erro de conexão ao eliminar cultura');
+    }
+}
+
+// Utility functions
+function showLoading() {
+    hideAllStates();
+    const loadingState = document.getElementById('loading-state');
+    if (loadingState) {
+        loadingState.classList.remove('hidden');
+    }
+}
+
+function showError(message) {
+    hideAllStates();
+    const errorMessage = document.getElementById('error-message');
+    const errorState = document.getElementById('error-state');
+    
+    if (errorMessage) {
+        errorMessage.textContent = message;
+    }
+    if (errorState) {
+        errorState.classList.remove('hidden');
+    }
+}
+
+function hideAllStates() {
+    const elements = [
+        'loading-state',
+        'empty-state', 
+        'error-state',
+        'cultures-grid'
+    ];
+    
+    elements.forEach(id => {
+        const element = document.getElementById(id);
+        if (element) {
+            element.classList.add('hidden');
+        }
+    });
+}
+
+function getStatusClass(status) {
+    const statusMap = {
+        'active': 'status-active',
+        'growing': 'status-growing',
+        'harvest': 'status-harvest',
+        'dormant': 'status-dormant'
+    };
+    return statusMap[status] || 'status-active';
+}
+
+function getStatusText(status) {
+    const statusMap = {
+        'active': 'Ativa',
+        'growing': 'Crescendo',
+        'harvest': 'Colheita',
+        'dormant': 'Dormente'
+    };
+    return statusMap[status] || 'Ativa';
+}
+
+function getCultureIcon(tipo) {
+    const iconMap = {
+        'tomate': '🍅',
+        'alface': '🥬',
+        'cenoura': '🥕',
+        'batata': '🥔',
+        'milho': '🌽',
+        'trigo': '🌾',
+        'default': '🌱'
+    };
+    return iconMap[tipo?.toLowerCase()] || iconMap.default;
+}
+
+function formatDate(dateString) {
+    if (!dateString) return 'Não definida';
+    try {
+        return new Date(dateString).toLocaleDateString('pt-PT');
+    } catch {
+        return 'Data inválida';
+    }
+}
+
+function calculateGrowingDays(plantDate) {
+    if (!plantDate) return 0;
+    try {
+        const planted = new Date(plantDate);
+        const today = new Date();
+        const diffTime = Math.abs(today - planted);
+        return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    } catch {
+        return 0;
+    }
+}
+
+// Close modal when clicking outside - Configurar event listeners
+document.addEventListener('DOMContentLoaded', function() {
+    // Event listener para fechar modais ao clicar fora
+    window.addEventListener('click', function(event) {
+        const modal = document.getElementById('culture-modal');
+        const wizardModal = document.getElementById('wizard-modal');
+        
+        if (event.target === modal) {
+            closeModal();
+        }
+        if (event.target === wizardModal) {
+            closeModal();
+        }
+    });
+
+    // Event delegation para ações de cultura (elementos gerados dinamicamente)
+    document.addEventListener('click', function(e) {
+        // Visualizar cultura
+        if (e.target.closest('[data-action="view-culture"]')) {
+            e.preventDefault();
+            const cultureCard = e.target.closest('[data-action="view-culture"]');
+            const cultureId = cultureCard.getAttribute('data-culture-id');
+            if (cultureId) {
+                viewCulture(parseInt(cultureId));
+            }
+        }
+        
+        // Editar cultura
+        if (e.target.matches('[data-action="edit-culture"]') || e.target.closest('[data-action="edit-culture"]')) {
+            e.preventDefault();
+            e.stopPropagation();
+            const button = e.target.matches('[data-action="edit-culture"]') ? e.target : e.target.closest('[data-action="edit-culture"]');
+            const cultureId = button.getAttribute('data-culture-id');
+            if (cultureId) {
+                editCulture(parseInt(cultureId));
+            }
+        }
+        
+        // Deletar cultura
+        if (e.target.matches('[data-action="delete-culture"]') || e.target.closest('[data-action="delete-culture"]')) {
+            e.preventDefault();
+            e.stopPropagation();
+            const button = e.target.matches('[data-action="delete-culture"]') ? e.target : e.target.closest('[data-action="delete-culture"]');
+            const cultureId = button.getAttribute('data-culture-id');
+            if (cultureId) {
+                deleteCulture(parseInt(cultureId));
+            }
+        }
+    });
+
+    console.log('✅ Event listeners do cultures index configurados');
+});
+</script>
+{% endblock %}

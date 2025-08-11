@@ -1,0 +1,878 @@
+{% extends "base.html" %}
+
+{% block title %}Marketplace{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4 py-6">
+    <!-- Header -->
+    <div class="flex justify-between items-center mb-6">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900">🛒 Marketplace Agrícola</h1>
+            <p class="text-gray-600 mt-1">Compre e venda produtos agrícolas diretamente com outros produtores</p>
+        </div>
+        <div class="flex space-x-3">
+            <button data-action="open-publish-modal" 
+                    class="btn btn-primary flex items-center">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                </svg>
+                Publicar Produto
+            </button>
+            <button data-action="load-products" 
+                    class="btn btn-secondary flex items-center">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                </svg>
+                Atualizar
+            </button>
+        </div>
+    </div>
+
+    <!-- Search and Filters -->
+    <div class="bg-white rounded-lg shadow-sm border p-6 mb-6">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <!-- Search -->
+            <div class="md:col-span-2">
+                <label for="search" class="block text-sm font-medium text-gray-700 mb-2">Pesquisar produtos</label>
+                <div class="relative">
+                    <input type="text" id="search" placeholder="Ex: tomates, alface, equipamentos..."
+                           class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center">
+                        <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Category Filter -->
+            <div>
+                <label for="category" class="block text-sm font-medium text-gray-700 mb-2">Categoria</label>
+                <select id="category" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
+                    <option value="">Todas as categorias</option>
+                    <option value="hortalicas">Hortaliças</option>
+                    <option value="frutas">Frutas</option>
+                    <option value="cereais">Cereais</option>
+                    <option value="equipamentos">Equipamentos</option>
+                    <option value="sementes">Sementes</option>
+                    <option value="fertilizantes">Fertilizantes</option>
+                </select>
+            </div>
+            
+            <!-- Location Filter -->
+            <div>
+                <label for="location" class="block text-sm font-medium text-gray-700 mb-2">Localização</label>
+                <select id="location" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
+                    <option value="">Toda Portugal</option>
+                    <option value="lisboa">Lisboa</option>
+                    <option value="porto">Porto</option>
+                    <option value="coimbra">Coimbra</option>
+                    <option value="braga">Braga</option>
+                    <option value="faro">Faro</option>
+                </select>
+            </div>
+        </div>
+        
+        <!-- Advanced Filters -->
+        <div class="mt-4 flex flex-wrap gap-3">
+            <button data-action="toggle-filter" data-filter="price" class="filter-btn">
+                💰 Preço
+            </button>
+            <button data-action="toggle-filter" data-filter="date" class="filter-btn">
+                📅 Data
+            </button>
+            <button data-action="toggle-filter" data-filter="organic" class="filter-btn">
+                🌱 Biológico
+            </button>
+            <button data-action="apply-filters" class="btn btn-primary btn-sm">
+                Aplicar Filtros
+            </button>
+        </div>
+    </div>
+
+    <!-- Loading State -->
+    <div id="loading-state" class="hidden">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <div class="bg-white rounded-lg shadow-sm border p-4 animate-pulse" v-for="i in 8">
+                <div class="h-48 bg-gray-200 rounded mb-4"></div>
+                <div class="h-4 bg-gray-200 rounded mb-2"></div>
+                <div class="h-4 bg-gray-200 rounded w-3/4"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Empty State -->
+    <div id="empty-state" class="hidden">
+        <div class="bg-white rounded-lg shadow-sm border-2 border-dashed border-gray-200 p-12 text-center">
+            <div class="mx-auto h-24 w-24 text-gray-400 mb-4">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" 
+                          d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+                </svg>
+            </div>
+            <h3 class="text-lg font-medium text-gray-900 mb-2">Nenhum produto encontrado</h3>
+            <p class="text-gray-600 mb-6">Tente ajustar os filtros ou seja o primeiro a publicar nesta categoria.</p>
+            <button data-action="open-publish-modal" class="btn btn-primary">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                </svg>
+                Publicar Primeiro Produto
+            </button>
+        </div>
+    </div>
+
+    <!-- Products Grid -->
+    <div id="products-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <!-- Products will be inserted here dynamically -->
+    </div>
+
+    <!-- Error State -->
+    <div id="error-state" class="hidden">
+        <div class="bg-red-50 border border-red-200 rounded-lg p-6">
+            <div class="flex items-start">
+                <div class="flex-shrink-0">
+                    <svg class="h-5 w-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+                <div class="ml-3">
+                    <h3 class="text-sm font-medium text-red-800">Erro ao carregar produtos</h3>
+                    <p id="error-message" class="mt-1 text-sm text-red-700"></p>
+                    <button data-action="load-products" class="mt-3 text-sm text-red-600 hover:text-red-500">
+                        Tentar novamente
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Product Detail Modal -->
+<div id="product-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50">
+    <div class="flex items-center justify-center min-h-screen p-4">
+        <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-screen overflow-y-auto">
+            <div class="p-6">
+                <div class="flex justify-between items-start mb-4">
+                    <h3 id="product-modal-title" class="text-lg font-semibold text-gray-900"></h3>
+                    <button data-action="close-product-modal" class="text-gray-400 hover:text-gray-600">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                <div id="product-modal-content">
+                    <!-- Content will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Publish Product Modal -->
+<div id="publish-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50">
+    <div class="flex items-center justify-center min-h-screen p-4">
+        <div class="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-screen overflow-y-auto">
+            <div class="p-6">
+                <div class="flex justify-between items-start mb-4">
+                    <h3 class="text-lg font-semibold text-gray-900">📝 Publicar Produto</h3>
+                    <button data-action="close-publish-modal" class="text-gray-400 hover:text-gray-600">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                
+                <form id="publish-form" class="space-y-6">
+                    <!-- Product Basic Info -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="product-name" class="block text-sm font-medium text-gray-700 mb-2">Nome do Produto *</label>
+                            <input type="text" id="product-name" name="name" required
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                                   placeholder="Ex: Tomates Frescos">
+                        </div>
+                        
+                        <div>
+                            <label for="product-category" class="block text-sm font-medium text-gray-700 mb-2">Categoria *</label>
+                            <select id="product-category" name="category" required
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
+                                <option value="">Selecione uma categoria</option>
+                                <option value="hortalicas">Hortaliças</option>
+                                <option value="frutas">Frutas</option>
+                                <option value="cereais">Cereais</option>
+                                <option value="equipamentos">Equipamentos</option>
+                                <option value="sementes">Sementes</option>
+                                <option value="fertilizantes">Fertilizantes</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- Price and Quantity -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div>
+                            <label for="product-price" class="block text-sm font-medium text-gray-700 mb-2">Preço (€) *</label>
+                            <input type="number" id="product-price" name="price" required step="0.01" min="0"
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                                   placeholder="0.00">
+                        </div>
+                        
+                        <div>
+                            <label for="product-unit" class="block text-sm font-medium text-gray-700 mb-2">Unidade *</label>
+                            <select id="product-unit" name="unit" required
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
+                                <option value="kg">Por kg</option>
+                                <option value="unidade">Por unidade</option>
+                                <option value="caixa">Por caixa</option>
+                                <option value="saco">Por saco</option>
+                                <option value="m2">Por m²</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label for="product-quantity" class="block text-sm font-medium text-gray-700 mb-2">Quantidade Disponível</label>
+                            <input type="number" id="product-quantity" name="quantity" min="1"
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                                   placeholder="Ex: 50">
+                        </div>
+                    </div>
+                    
+                    <!-- Description -->
+                    <div>
+                        <label for="product-description" class="block text-sm font-medium text-gray-700 mb-2">Descrição</label>
+                        <textarea id="product-description" name="description" rows="4"
+                                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                                  placeholder="Descreva seu produto: qualidade, origem, métodos de cultivo..."></textarea>
+                    </div>
+                    
+                    <!-- Location and Contact -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="product-location" class="block text-sm font-medium text-gray-700 mb-2">Localização *</label>
+                            <input type="text" id="product-location" name="location" required
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                                   placeholder="Ex: Lisboa, Porto, Coimbra...">
+                        </div>
+                        
+                        <div>
+                            <label for="product-contact" class="block text-sm font-medium text-gray-700 mb-2">Contacto</label>
+                            <input type="text" id="product-contact" name="contact"
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                                   placeholder="Telefone ou email (opcional)">
+                        </div>
+                    </div>
+                    
+                    <!-- Options -->
+                    <div class="space-y-3">
+                        <div class="flex items-center">
+                            <input type="checkbox" id="product-organic" name="organic" class="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded">
+                            <label for="product-organic" class="ml-2 block text-sm text-gray-700">Produto biológico/orgânico</label>
+                        </div>
+                        
+                        <div class="flex items-center">
+                            <input type="checkbox" id="product-delivery" name="delivery" class="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded">
+                            <label for="product-delivery" class="ml-2 block text-sm text-gray-700">Ofereço entrega</label>
+                        </div>
+                    </div>
+                    
+                    <!-- Submit -->
+                    <div class="flex justify-end space-x-3 pt-6 border-t">
+                        <button type="button" data-action="close-publish-modal" class="btn btn-secondary">
+                            Cancelar
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                            </svg>
+                            Publicar Produto
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.btn {
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-weight: 500;
+    transition: all 0.2s;
+    border: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+}
+
+.btn-primary {
+    background-color: #059669;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #047857;
+}
+
+.btn-secondary {
+    background-color: #e5e7eb;
+    color: #374151;
+}
+
+.btn-secondary:hover {
+    background-color: #d1d5db;
+}
+
+.btn-sm {
+    padding: 6px 12px;
+    font-size: 14px;
+}
+
+.filter-btn {
+    padding: 6px 12px;
+    border-radius: 20px;
+    background-color: #f3f4f6;
+    border: 1px solid #d1d5db;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 14px;
+}
+
+.filter-btn:hover {
+    background-color: #e5e7eb;
+}
+
+.filter-btn.active {
+    background-color: #dcfce7;
+    border-color: #059669;
+    color: #047857;
+}
+
+.product-card {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    border: 1px solid #e5e7eb;
+    transition: all 0.2s;
+    cursor: pointer;
+}
+
+.product-card:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    transform: translateY(-2px);
+}
+
+.product-image {
+    height: 200px;
+    background: linear-gradient(135deg, #059669, #10b981);
+    border-radius: 8px 8px 0 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+}
+
+.product-price {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #059669;
+}
+
+.product-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.badge-organic {
+    background-color: #dcfce7;
+    color: #047857;
+}
+
+.badge-delivery {
+    background-color: #dbeafe;
+    color: #1d4ed8;
+}
+</style>
+
+<script nonce="{{ g.csp_nonce if g.csp_nonce else 'default' }}">
+// Marketplace JavaScript
+let products = [];
+let filters = {
+    search: '',
+    category: '',
+    location: '',
+    price: null,
+    date: null,
+    organic: false
+};
+
+// Load products on page load
+document.addEventListener('DOMContentLoaded', function() {
+    loadProducts();
+    setupEventListeners();
+});
+
+function setupEventListeners() {
+    // Search input
+    document.getElementById('search').addEventListener('input', debounce(function(e) {
+        filters.search = e.target.value;
+        applyFilters();
+    }, 300));
+    
+    // Category filter
+    document.getElementById('category').addEventListener('change', function(e) {
+        filters.category = e.target.value;
+        applyFilters();
+    });
+    
+    // Location filter
+    document.getElementById('location').addEventListener('change', function(e) {
+        filters.location = e.target.value;
+        applyFilters();
+    });
+    
+    // Publish form
+    document.getElementById('publish-form').addEventListener('submit', handlePublishSubmit);
+}
+
+// Load products from API
+async function loadProducts() {
+    try {
+        showLoading();
+        
+        const response = await fetch('/marketplace/', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        });
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            products = data.products || [];
+            renderProducts();
+        } else {
+            showError(data.error || 'Erro ao carregar produtos');
+        }
+        
+    } catch (error) {
+        console.error('Erro ao carregar produtos:', error);
+        // For now, show demo products
+        showDemoProducts();
+    }
+}
+
+function showDemoProducts() {
+    products = [
+        {
+            id: 1,
+            name: 'Tomates Frescos',
+            category: 'hortalicas',
+            price: 2.50,
+            unit: 'kg',
+            location: 'Lisboa',
+            organic: true,
+            delivery: true,
+            description: 'Tomates frescos cultivados em estufa, sem pesticidas.',
+            seller: 'João Silva',
+            contact: '(+351) 912 345 678'
+        },
+        {
+            id: 2,
+            name: 'Alface Hidropónica',
+            category: 'hortalicas',
+            price: 1.80,
+            unit: 'unidade',
+            location: 'Porto',
+            organic: false,
+            delivery: false,
+            description: 'Alface cultivada em sistema hidropónico.',
+            seller: 'Maria Santos',
+            contact: 'maria@exemplo.pt'
+        },
+        {
+            id: 3,
+            name: 'Mel de Eucalipto',
+            category: 'outros',
+            price: 8.50,
+            unit: 'kg',
+            location: 'Coimbra',
+            organic: true,
+            delivery: true,
+            description: 'Mel puro de eucalipto, produção própria.',
+            seller: 'António Costa',
+            contact: '(+351) 967 123 456'
+        }
+    ];
+    renderProducts();
+}
+
+function renderProducts() {
+    hideAllStates();
+    
+    const filteredProducts = applyProductFilters();
+    
+    if (filteredProducts.length === 0) {
+        document.getElementById('empty-state').classList.remove('hidden');
+        return;
+    }
+    
+    const grid = document.getElementById('products-grid');
+    grid.classList.remove('hidden');
+    
+    grid.innerHTML = filteredProducts.map(product => `
+        <div class="product-card" data-action="view-product" data-product-id="${product.id}">
+            <div class="product-image">
+                ${getProductIcon(product.category)}
+            </div>
+            
+            <div class="p-4">
+                <!-- Header -->
+                <div class="mb-3">
+                    <h3 class="font-semibold text-gray-900 mb-1">${product.name}</h3>
+                    <p class="text-sm text-gray-600">${product.location}</p>
+                </div>
+                
+                <!-- Price -->
+                <div class="mb-3">
+                    <span class="product-price">€${product.price}</span>
+                    <span class="text-sm text-gray-600">/${product.unit}</span>
+                </div>
+                
+                <!-- Badges -->
+                <div class="flex flex-wrap gap-2 mb-3">
+                    ${product.organic ? '<span class="product-badge badge-organic">🌱 Biológico</span>' : ''}
+                    ${product.delivery ? '<span class="product-badge badge-delivery">🚚 Entrega</span>' : ''}
+                </div>
+                
+                <!-- Description -->
+                <p class="text-sm text-gray-600 line-clamp-2">${product.description || 'Sem descrição'}</p>
+                
+                <!-- Seller -->
+                <div class="mt-3 pt-3 border-t border-gray-100">
+                    <p class="text-xs text-gray-500">Vendido por: ${product.seller}</p>
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+function applyProductFilters() {
+    return products.filter(product => {
+        // Search filter
+        if (filters.search && !product.name.toLowerCase().includes(filters.search.toLowerCase()) &&
+            !product.description?.toLowerCase().includes(filters.search.toLowerCase())) {
+            return false;
+        }
+        
+        // Category filter
+        if (filters.category && product.category !== filters.category) {
+            return false;
+        }
+        
+        // Location filter
+        if (filters.location && !product.location.toLowerCase().includes(filters.location.toLowerCase())) {
+            return false;
+        }
+        
+        // Organic filter
+        if (filters.organic && !product.organic) {
+            return false;
+        }
+        
+        return true;
+    });
+}
+
+function viewProduct(productId) {
+    const product = products.find(p => p.id === productId);
+    if (!product) return;
+    
+    document.getElementById('product-modal-title').textContent = product.name;
+    document.getElementById('product-modal-content').innerHTML = `
+        <div class="space-y-6">
+            <!-- Product Image -->
+            <div class="h-64 bg-gradient-to-br from-green-100 to-green-200 rounded-lg flex items-center justify-center text-6xl">
+                ${getProductIcon(product.category)}
+            </div>
+            
+            <!-- Product Info -->
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Preço</label>
+                    <p class="text-2xl font-bold text-green-600">€${product.price}/${product.unit}</p>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Localização</label>
+                    <p class="text-lg text-gray-900">${product.location}</p>
+                </div>
+            </div>
+            
+            <!-- Badges -->
+            <div class="flex flex-wrap gap-2">
+                ${product.organic ? '<span class="product-badge badge-organic">🌱 Produto Biológico</span>' : ''}
+                ${product.delivery ? '<span class="product-badge badge-delivery">🚚 Entrega Disponível</span>' : ''}
+            </div>
+            
+            <!-- Description -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Descrição</label>
+                <p class="text-gray-900 bg-gray-50 p-3 rounded">${product.description || 'Sem descrição disponível.'}</p>
+            </div>
+            
+            <!-- Seller Info -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Informações do Vendedor</label>
+                <div class="bg-gray-50 p-3 rounded">
+                    <p class="font-medium">${product.seller}</p>
+                    ${product.contact ? `<p class="text-sm text-gray-600 mt-1">${product.contact}</p>` : ''}
+                </div>
+            </div>
+            
+            <!-- Actions -->
+            <div class="flex space-x-3 pt-4 border-t">
+                <button data-action="contact-seller" data-product-id="${product.id}" class="btn btn-primary flex-1">
+                    💬 Contactar Vendedor
+                </button>
+                <button data-action="close-product-modal" class="btn btn-secondary">
+                    Fechar
+                </button>
+            </div>
+        </div>
+    `;
+    
+    document.getElementById('product-modal').classList.remove('hidden');
+}
+
+function contactSeller(productId) {
+    const product = products.find(p => p.id === productId);
+    if (product && product.contact) {
+        if (product.contact.includes('@')) {
+            window.location.href = `mailto:${product.contact}?subject=Interesse em ${product.name}`;
+        } else {
+            alert(`Contacte o vendedor: ${product.contact}`);
+        }
+    } else {
+        alert('Informações de contacto não disponíveis');
+    }
+}
+
+function openPublishModal() {
+    document.getElementById('publish-modal').classList.remove('hidden');
+}
+
+function closeProductModal() {
+    document.getElementById('product-modal').classList.add('hidden');
+}
+
+function closePublishModal() {
+    document.getElementById('publish-modal').classList.add('hidden');
+    document.getElementById('publish-form').reset();
+}
+
+async function handlePublishSubmit(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(e.target);
+    const productData = Object.fromEntries(formData.entries());
+    
+    // Convert checkboxes to boolean
+    productData.organic = formData.has('organic');
+    productData.delivery = formData.has('delivery');
+    
+    try {
+        // For now, add to demo products
+        const newProduct = {
+            id: Date.now(),
+            name: productData.name,
+            category: productData.category,
+            price: parseFloat(productData.price),
+            unit: productData.unit,
+            quantity: parseInt(productData.quantity) || null,
+            description: productData.description,
+            location: productData.location,
+            contact: productData.contact,
+            organic: productData.organic,
+            delivery: productData.delivery,
+            seller: 'Você',
+            created_at: new Date().toISOString()
+        };
+        
+        products.unshift(newProduct);
+        renderProducts();
+        closePublishModal();
+        
+        alert('✅ Produto publicado com sucesso!');
+        
+    } catch (error) {
+        console.error('Erro ao publicar produto:', error);
+        alert('Erro ao publicar produto. Tente novamente.');
+    }
+}
+
+function toggleFilter(filterType) {
+    const button = document.querySelector(`[data-filter="${filterType}"]`);
+    button.classList.toggle('active');
+    
+    if (filterType === 'organic') {
+        filters.organic = button.classList.contains('active');
+        applyFilters();
+    }
+}
+
+function applyFilters() {
+    renderProducts();
+}
+
+function getProductIcon(category) {
+    const icons = {
+        'hortalicas': '🥬',
+        'frutas': '🍎',
+        'cereais': '🌾',
+        'equipamentos': '🚜',
+        'sementes': '🌱',
+        'fertilizantes': '🧪',
+        'outros': '📦'
+    };
+    return icons[category] || icons.outros;
+}
+
+// Utility functions
+function showLoading() {
+    hideAllStates();
+    document.getElementById('loading-state').classList.remove('hidden');
+}
+
+function showError(message) {
+    hideAllStates();
+    document.getElementById('error-message').textContent = message;
+    document.getElementById('error-state').classList.remove('hidden');
+}
+
+function hideAllStates() {
+    document.getElementById('loading-state').classList.add('hidden');
+    document.getElementById('empty-state').classList.add('hidden');
+    document.getElementById('error-state').classList.add('hidden');
+    document.getElementById('products-grid').classList.add('hidden');
+}
+
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
+
+// Configurar event listeners quando DOM estiver carregado
+document.addEventListener('DOMContentLoaded', function() {
+    // Event listener para fechar modais ao clicar fora
+    window.addEventListener('click', function(event) {
+        const productModal = document.getElementById('product-modal');
+        const publishModal = document.getElementById('publish-modal');
+        
+        if (event.target === productModal) {
+            closeProductModal();
+        }
+        if (event.target === publishModal) {
+            closePublishModal();
+        }
+    });
+
+    // Event listeners para botões principais
+    const openPublishButtons = document.querySelectorAll('[data-action="open-publish-modal"]');
+    openPublishButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            openPublishModal();
+        });
+    });
+
+    const loadProductsButtons = document.querySelectorAll('[data-action="load-products"]');
+    loadProductsButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            loadProducts();
+        });
+    });
+
+    // Event listeners para filtros
+    const toggleFilterButtons = document.querySelectorAll('[data-action="toggle-filter"]');
+    toggleFilterButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            const filter = this.getAttribute('data-filter');
+            toggleFilter(filter);
+        });
+    });
+
+    const applyFiltersButton = document.querySelector('[data-action="apply-filters"]');
+    if (applyFiltersButton) {
+        applyFiltersButton.addEventListener('click', function(e) {
+            e.preventDefault();
+            applyFilters();
+        });
+    }
+
+    // Event listeners para fechar modais
+    const closeProductModalButtons = document.querySelectorAll('[data-action="close-product-modal"]');
+    closeProductModalButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            closeProductModal();
+        });
+    });
+
+    const closePublishModalButtons = document.querySelectorAll('[data-action="close-publish-modal"]');
+    closePublishModalButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            closePublishModal();
+        });
+    });
+
+    // Event delegation para elementos gerados dinamicamente
+    document.addEventListener('click', function(e) {
+        // Visualizar produto
+        if (e.target.closest('[data-action="view-product"]')) {
+            e.preventDefault();
+            const productCard = e.target.closest('[data-action="view-product"]');
+            const productId = productCard.getAttribute('data-product-id');
+            if (productId) {
+                viewProduct(parseInt(productId));
+            }
+        }
+
+        // Contactar vendedor
+        if (e.target.matches('[data-action="contact-seller"]') || e.target.closest('[data-action="contact-seller"]')) {
+            e.preventDefault();
+            const button = e.target.matches('[data-action="contact-seller"]') ? e.target : e.target.closest('[data-action="contact-seller"]');
+            const productId = button.getAttribute('data-product-id');
+            if (productId) {
+                contactSeller(parseInt(productId));
+            }
+        }
+
+        // Fechar modal de produto (gerado dinamicamente)
+        if (e.target.matches('[data-action="close-product-modal"]') || e.target.closest('[data-action="close-product-modal"]')) {
+            e.preventDefault();
+            closeProductModal();
+        }
+    });
+
+    console.log('✅ Event listeners do marketplace configurados');
+});
+</script>
+{% endblock %}

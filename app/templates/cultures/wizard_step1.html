@@ -1,0 +1,490 @@
+{% extends "base.html" %}
+
+{% block title %}Nova Cultura - Passo 1{% endblock %}
+
+{% block head %}
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<meta name="cache-version" content="{{ cache_version }}">
+{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-green-50 to-green-100 flex items-center justify-center px-4">
+    <div class="max-w-2xl w-full">
+        <!-- Progress Bar -->
+        <div class="mb-8">
+            <div class="flex justify-between items-center mb-2">
+                <span class="text-sm font-medium text-green-600">Passo 1 de 5</span>
+                <span class="text-sm text-gray-500">20%</span>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-2">
+                <div class="bg-green-600 h-2 rounded-full" style="width: 20%"></div>
+            </div>
+        </div>
+
+        <!-- Culture Selection Card -->
+        <div class="bg-white rounded-lg shadow-xl p-8">
+            <!-- Header -->
+            <div class="text-center mb-6">
+                <div class="mx-auto h-16 w-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
+                    <svg class="h-8 w-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13c-1.5 0-3.5 1-4.5 2.5m4.5-2.5c1.5 0 3.5 1 4.5 2.5M9 10l3 3 3-3"></path>
+                    </svg>
+                </div>
+                <h1 class="text-2xl font-bold text-gray-900 mb-2">
+                    Selecione sua Cultura 🌱
+                </h1>
+                <p class="text-gray-600">
+                    Escolha o tipo de cultura que deseja adicionar à sua propriedade
+                </p>
+            </div>
+
+            <!-- Form -->
+            <form id="wizardStep1Form">
+                <div class="space-y-6">
+                    <!-- Nome da Cultura -->
+                    <div>
+                        <label for="nome" class="block text-sm font-medium text-gray-700 mb-2">
+                            Nome da Cultura *
+                        </label>
+                        <input type="text" id="nome" name="nome" required
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                               placeholder="Ex: Tomate, Alface, Quinoa...">
+                        
+                        <!-- Status de Verificação -->
+                        <div id="verificacao-status" class="mt-3 p-3 rounded-lg hidden">
+                            <!-- Status será exibido aqui -->
+                        </div>
+                    </div>
+
+                    <!-- Tipo da Cultura -->
+                    <div>
+                        <label for="tipo" class="block text-sm font-medium text-gray-700 mb-2">
+                            Tipo da Cultura *
+                        </label>
+                        <select id="tipo" name="tipo" required
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                            <option value="">Selecione o tipo</option>
+                            <option value="hortalica">Hortaliça</option>
+                            <option value="arvore_frutifera">Árvore Frutífera</option>
+                            <option value="erva_aromatica">Erva Aromática</option>
+                            <option value="cereal">Cereal</option>
+                            <option value="leguminosa">Leguminosa</option>
+                            <option value="tuberculo">Tubérculo</option>
+                        </select>
+                    </div>
+
+                    <!-- Variedade -->
+                    <div>
+                        <label for="variedade" class="block text-sm font-medium text-gray-700 mb-2">
+                            Variedade (Opcional)
+                        </label>
+                        <input type="text" id="variedade" name="variedade"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                               placeholder="Ex: Tomate Cereja, Alface Americana...">
+                    </div>
+
+                    <!-- Sugestões de IA -->
+                    <div id="sugestoes-ia" class="bg-blue-50 border border-blue-200 rounded-lg p-4 hidden">
+                        <h4 class="font-medium text-blue-900 mb-2">🤖 Sugestões do Sistema</h4>
+                        <div id="sugestoes-conteudo"></div>
+                        <button type="button" id="aplicar-sugestoes-btn"
+                                class="mt-3 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-200">
+                            Aplicar Sugestões
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Navigation Buttons -->
+                <div class="flex justify-between mt-8">
+                    <a href="{{ url_for('dashboard.index') }}" 
+                       class="px-6 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition duration-200">
+                        Cancelar
+                    </a>
+                    <button type="submit"
+                            class="px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition duration-200">
+                        Próximo: Definir Área
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Help Text -->
+        <div class="text-center mt-6">
+            <p class="text-sm text-gray-600">
+                🔍 Digite o nome da cultura para verificar se temos informações específicas sobre ela
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script nonce="{{ g.csp_nonce }}">
+document.addEventListener('DOMContentLoaded', function() {
+    // Adicionar event listeners
+    const nomeInput = document.getElementById('nome');
+    const aplicarBtn = document.getElementById('aplicar-sugestoes-btn');
+    
+    if (nomeInput) {
+        nomeInput.addEventListener('blur', verificarCultura);
+    }
+    
+    if (aplicarBtn) {
+        aplicarBtn.addEventListener('click', aplicarSugestoes);
+    }
+});
+
+let dadosSugeridos = null;
+
+// Função utilitária para recuperar dados da cultura nos próximos passos
+function getSugestoesCultura() {
+    return {
+        ciclo_dias: sessionStorage.getItem('cultura_ciclo_dias'),
+        epoca_plantio: sessionStorage.getItem('cultura_epoca_plantio'),
+        espacamento: sessionStorage.getItem('cultura_espacamento'),
+        profundidade: sessionStorage.getItem('cultura_profundidade'),
+        temperatura: sessionStorage.getItem('cultura_temperatura'),
+        ph_solo: sessionStorage.getItem('cultura_ph_solo'),
+        irrigacao: sessionStorage.getItem('cultura_irrigacao')
+    };
+}
+
+// Limpar dados salvos quando necessário
+function limparSugestoesCultura() {
+    sessionStorage.removeItem('cultura_ciclo_dias');
+    sessionStorage.removeItem('cultura_epoca_plantio');
+    sessionStorage.removeItem('cultura_espacamento');
+    sessionStorage.removeItem('cultura_profundidade');
+    sessionStorage.removeItem('cultura_temperatura');
+    sessionStorage.removeItem('cultura_ph_solo');
+    sessionStorage.removeItem('cultura_irrigacao');
+}
+
+// Verificar cultura com debounce
+let verificacaoTimeout;
+function verificarCultura() {
+    clearTimeout(verificacaoTimeout);
+    verificacaoTimeout = setTimeout(() => {
+        const nome = document.getElementById('nome').value.trim();
+        
+        if (nome.length >= 3) {
+            verificarCulturaAPI(nome);
+        }
+    }, 500);
+}
+
+async function verificarCulturaAPI(nome) {
+    try {
+        // Mostrar indicador de carregamento
+        mostrarStatusCarregamento();
+        
+        const response = await fetch('/cultures/api/verificar', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ nome: nome })
+        });
+        
+        // Verificar se recebeu HTML (página de login) em vez de JSON
+        const contentType = response.headers.get('content-type');
+        if (!response.ok || !contentType || !contentType.includes('application/json')) {
+            if (response.status === 403 || response.status === 401) {
+                // Redirecionar para login se não autenticado
+                console.log('Sessão expirada, redirecionando para login...');
+                window.location.href = '/auth/login';
+                return;
+            }
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        
+        const data = await response.json();
+        mostrarStatusVerificacao(data);
+        
+        if (data.success && data.encontrada && data.dados_sugeridos) {
+            dadosSugeridos = data.dados_sugeridos;
+            mostrarSugestoes(data.dados_sugeridos);
+        }
+        
+    } catch (error) {
+        console.error('Erro ao verificar cultura:', error);
+        mostrarStatusVerificacao({
+            success: false,
+            message: 'Erro de conexão'
+        });
+    }
+}
+
+function mostrarStatusCarregamento() {
+    const statusDiv = document.getElementById('verificacao-status');
+    
+    statusDiv.classList.remove('hidden');
+    statusDiv.className = 'mt-3 p-3 rounded-lg bg-blue-50 border border-blue-200';
+    statusDiv.innerHTML = `
+        <div class="flex items-center">
+            <svg class="animate-spin h-5 w-5 text-blue-500 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <span class="text-blue-800">🔍 Verificando cultura... (pode incluir consulta à IA)</span>
+        </div>
+    `;
+}
+
+function mostrarStatusVerificacao(data) {
+    const statusDiv = document.getElementById('verificacao-status');
+    
+    statusDiv.classList.remove('hidden');
+    
+    if (data.success && data.encontrada) {
+        // Definir cor baseada na fonte
+        let corClasse = 'bg-green-50 border border-green-200';
+        let iconColor = 'text-green-500';
+        let textColor = 'text-green-800';
+        let prefixo = '✅ Cultura Conhecida:';
+        
+        if (data.fonte === 'IA') {
+            corClasse = 'bg-blue-50 border border-blue-200';
+            iconColor = 'text-blue-500';
+            textColor = 'text-blue-800';
+            prefixo = '🤖 Nova Cultura (via IA):';
+        }
+        
+        statusDiv.className = `mt-3 p-3 rounded-lg ${corClasse}`;
+        statusDiv.innerHTML = `
+            <div class="flex items-center">
+                <svg class="h-5 w-5 ${iconColor} mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                </svg>
+                <span class="${textColor}"><strong>${prefixo}</strong> ${data.message}</span>
+            </div>
+            ${data.nova_cultura ? '<div class="mt-2 text-sm ' + textColor + '">💾 Cultura adicionada à nossa base de dados!</div>' : ''}
+        `;
+    } else {
+        // Cultura não encontrada - personalizar mensagem baseada na fonte
+        let mensagem = data.message || 'Pode continuar manualmente.';
+        
+        statusDiv.className = 'mt-3 p-3 rounded-lg bg-yellow-50 border border-yellow-200';
+        statusDiv.innerHTML = `
+            <div class="flex items-center">
+                <svg class="h-5 w-5 text-yellow-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                </svg>
+                <span class="text-yellow-800"><strong>ℹ️ Nova Cultura:</strong> ${mensagem}</span>
+            </div>
+        `;
+    }
+}
+
+function mostrarSugestoes(dados) {
+    const sugestoesDiv = document.getElementById('sugestoes-ia');
+    const conteudoDiv = document.getElementById('sugestoes-conteudo');
+    
+    let html = '<div class="space-y-2">';
+    
+    // Informações principais (aplicáveis neste passo)
+    if (dados.tipo) {
+        html += `<p><strong>Tipo sugerido:</strong> ${dados.tipo}</p>`;
+    }
+    
+    if (dados.variedade) {
+        html += `<p><strong>Variedade sugerida:</strong> ${dados.variedade}</p>`;
+    }
+    
+    // Separador visual
+    if (dados.ciclo_dias || dados.epoca_plantio || dados.espacamento || dados.profundidade_plantio || dados.temperatura_ideal || dados.ph_solo || dados.irrigacao) {
+        html += '<hr class="my-3 border-blue-200">';
+        html += '<p class="text-sm text-blue-700 font-medium">📋 Informações adicionais (serão aplicadas nos próximos passos):</p>';
+    }
+    
+    // Informações para próximos passos
+    if (dados.ciclo_dias) {
+        html += `<p class="text-sm"><strong>Ciclo:</strong> ${dados.ciclo_dias} dias</p>`;
+    }
+    
+    if (dados.epoca_plantio) {
+        html += `<p class="text-sm"><strong>Época de plantio:</strong> ${dados.epoca_plantio}</p>`;
+    }
+    
+    if (dados.espacamento) {
+        html += `<p class="text-sm"><strong>Espaçamento:</strong> ${dados.espacamento}</p>`;
+    }
+    
+    if (dados.profundidade_plantio) {
+        html += `<p class="text-sm"><strong>Profundidade:</strong> ${dados.profundidade_plantio}</p>`;
+    }
+    
+    if (dados.temperatura_ideal) {
+        html += `<p class="text-sm"><strong>Temperatura ideal:</strong> ${dados.temperatura_ideal}</p>`;
+    }
+    
+    if (dados.ph_solo) {
+        html += `<p class="text-sm"><strong>pH do solo:</strong> ${dados.ph_solo}</p>`;
+    }
+    
+    if (dados.irrigacao) {
+        html += `<p class="text-sm"><strong>Irrigação:</strong> ${dados.irrigacao}</p>`;
+    }
+    
+    html += '</div>';
+    
+    conteudoDiv.innerHTML = html;
+    sugestoesDiv.classList.remove('hidden');
+    
+    // Salvar automaticamente os dados no sessionStorage para uso nos próximos passos
+    salvarDadosParaProximosPassos(dados);
+}
+
+function salvarDadosParaProximosPassos(dados) {
+    // Salvar dados importantes automaticamente no sessionStorage
+    if (dados.ciclo_dias) {
+        sessionStorage.setItem('cultura_ciclo_dias', dados.ciclo_dias);
+        console.log('Ciclo salvo automaticamente:', dados.ciclo_dias);
+    }
+    
+    if (dados.epoca_plantio) {
+        sessionStorage.setItem('cultura_epoca_plantio', dados.epoca_plantio);
+    }
+    
+    if (dados.espacamento) {
+        sessionStorage.setItem('cultura_espacamento', dados.espacamento);
+    }
+    
+    if (dados.profundidade_plantio) {
+        sessionStorage.setItem('cultura_profundidade', dados.profundidade_plantio);
+    }
+    
+    if (dados.temperatura_ideal) {
+        sessionStorage.setItem('cultura_temperatura', dados.temperatura_ideal);
+    }
+    
+    if (dados.ph_solo) {
+        sessionStorage.setItem('cultura_ph_solo', dados.ph_solo);
+    }
+    
+    if (dados.irrigacao) {
+        sessionStorage.setItem('cultura_irrigacao', dados.irrigacao);
+    }
+}
+
+function aplicarSugestoes() {
+    if (dadosSugeridos) {
+        let aplicadas = [];
+        
+        // Aplicar tipo da cultura
+        if (dadosSugeridos.tipo) {
+            const tipoMapping = {
+                'cultura_geral': 'hortalica',
+                'hortalica_folhosa': 'hortalica',
+                'arvore_frutifera': 'arvore_frutifera',
+                'cereal': 'cereal',
+                'leguminosa': 'leguminosa'
+            };
+            
+            const tipoSugerido = tipoMapping[dadosSugeridos.tipo] || 'hortalica';
+            document.getElementById('tipo').value = tipoSugerido;
+            aplicadas.push('Tipo da cultura');
+        }
+        
+        // Aplicar variedade se disponível e campo estiver vazio
+        if (dadosSugeridos.variedade && !document.getElementById('variedade').value.trim()) {
+            document.getElementById('variedade').value = dadosSugeridos.variedade;
+            aplicadas.push('Variedade');
+        }
+        
+        // Armazenar informações extras para próximos passos
+        if (dadosSugeridos.ciclo_dias) {
+            sessionStorage.setItem('cultura_ciclo_dias', dadosSugeridos.ciclo_dias);
+            aplicadas.push('Ciclo de crescimento');
+        }
+        
+        if (dadosSugeridos.epoca_plantio) {
+            sessionStorage.setItem('cultura_epoca_plantio', dadosSugeridos.epoca_plantio);
+            aplicadas.push('Época de plantio');
+        }
+        
+        if (dadosSugeridos.espacamento) {
+            sessionStorage.setItem('cultura_espacamento', dadosSugeridos.espacamento);
+            aplicadas.push('Espaçamento recomendado');
+        }
+        
+        if (dadosSugeridos.profundidade_plantio) {
+            sessionStorage.setItem('cultura_profundidade', dadosSugeridos.profundidade_plantio);
+            aplicadas.push('Profundidade de plantio');
+        }
+        
+        if (dadosSugeridos.temperatura_ideal) {
+            sessionStorage.setItem('cultura_temperatura', dadosSugeridos.temperatura_ideal);
+            aplicadas.push('Temperatura ideal');
+        }
+        
+        if (dadosSugeridos.ph_solo) {
+            sessionStorage.setItem('cultura_ph_solo', dadosSugeridos.ph_solo);
+            aplicadas.push('pH do solo');
+        }
+        
+        if (dadosSugeridos.irrigacao) {
+            sessionStorage.setItem('cultura_irrigacao', dadosSugeridos.irrigacao);
+            aplicadas.push('Necessidades de irrigação');
+        }
+        
+        // Feedback detalhado para o usuário
+        if (aplicadas.length > 0) {
+            const mensagem = `✅ Sugestões aplicadas:\n• ${aplicadas.join('\n• ')}\n\nℹ️ Informações adicionais foram salvas para os próximos passos do wizard.`;
+            alert(mensagem);
+        } else {
+            alert('ℹ️ Nenhuma sugestão disponível para aplicar.');
+        }
+    }
+}
+
+// Submissão do formulário
+document.getElementById('wizardStep1Form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const formData = {
+        step: '1',
+        nome: document.getElementById('nome').value.trim(),
+        tipo: document.getElementById('tipo').value,
+        variedade: document.getElementById('variedade').value.trim()
+    };
+    
+    if (!formData.nome || !formData.tipo) {
+        alert('Por favor, preencha os campos obrigatórios.');
+        return;
+    }
+    
+    try {
+        const response = await fetch('{{ url_for("culture.save_wizard_step") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData)
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            // Backup dos dados no localStorage para fallback
+            const backupData = JSON.parse(localStorage.getItem('culture_wizard_backup') || '{}');
+            Object.assign(backupData, formData);
+            localStorage.setItem('culture_wizard_backup', JSON.stringify(backupData));
+            console.log('DEBUG: Dados salvos no localStorage backup:', backupData);
+            console.log('DEBUG: Cache version:', '{{ cache_version }}'); // Cache busting debug
+            
+            // Redirecionar para próximo passo
+            window.location.href = `/cultures/wizard?step=2`;
+        } else {
+            alert('Erro ao salvar dados: ' + (result.error || 'Erro desconhecido'));
+        }
+        
+    } catch (error) {
+        console.error('Erro ao submeter formulário:', error);
+        alert('Erro de conexão. Tente novamente.');
+    }
+});
+</script>
+{% endblock %}

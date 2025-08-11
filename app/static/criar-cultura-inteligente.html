@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Criar Cultura - Sistema Inteligente</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #2c5530;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.2em;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 40px;
+            font-size: 1.1em;
+        }
+        
+        .form-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+        
+        .form-section {
+            background: #f9f9f9;
+            padding: 25px;
+            border-radius: 10px;
+        }
+        
+        .form-section h3 {
+            color: #2c5530;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #4CAF50;
+            padding-bottom: 10px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: #4CAF50;
+            outline: none;
+            box-shadow: 0 0 5px rgba(76, 175, 80, 0.3);
+        }
+        
+        .culture-name-section {
+            position: relative;
+        }
+        
+        .verification-status {
+            margin-top: 10px;
+            padding: 15px;
+            border-radius: 8px;
+            display: none;
+        }
+        
+        .status-unknown {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+        }
+        
+        .status-known {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        
+        .status-generated {
+            background: #e7f3ff;
+            border: 1px solid #b3daff;
+            color: #004085;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+            margin: 5px;
+        }
+        
+        .btn-primary {
+            background: #4CAF50;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #45a049;
+        }
+        
+        .btn-secondary {
+            background: #2196F3;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #1976D2;
+        }
+        
+        .btn-warning {
+            background: #FF9800;
+            color: white;
+        }
+        
+        .btn-warning:hover {
+            background: #F57C00;
+        }
+        
+        .suggested-data {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .suggested-data h4 {
+            color: #2c5530;
+            margin-bottom: 15px;
+        }
+        
+        .data-item {
+            margin-bottom: 10px;
+            padding: 8px;
+            background: white;
+            border-radius: 5px;
+            border-left: 3px solid #4CAF50;
+        }
+        
+        .data-item strong {
+            color: #2c5530;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            color: #666;
+            font-style: italic;
+            margin: 20px 0;
+        }
+        
+        .result-section {
+            margin-top: 30px;
+            padding: 20px;
+            border-radius: 10px;
+            display: none;
+        }
+        
+        .result-success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        
+        .result-error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        
+        .actions {
+            text-align: center;
+            margin-top: 30px;
+        }
+        
+        .auto-fill-btn {
+            background: #17a2b8;
+            color: white;
+            margin-top: 10px;
+        }
+        
+        .auto-fill-btn:hover {
+            background: #138496;
+        }
+        
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196F3;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        .info-box h4 {
+            margin-top: 0;
+            color: #1976D2;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌱 Criar Nova Cultura</h1>
+        <div class="subtitle">
+            Sistema Inteligente com Auto-Sugestão de Dados Agronômicos
+        </div>
+        
+        <div class="form-container">
+            <div class="form-section culture-name-section">
+                <h3>📝 Informações Básicas</h3>
+                
+                <div class="form-group">
+                    <label for="nomeCultura">Nome da Cultura*</label>
+                    <input type="text" id="nomeCultura" placeholder="Ex: quinoa, chia, amaranto..." 
+                           onblur="verificarCultura()" maxlength="100">
+                </div>
+                
+                <div class="verification-status" id="verificationStatus">
+                    <!-- Status será exibido aqui -->
+                </div>
+                
+                <div class="form-group">
+                    <label for="tipoCultura">Tipo da Cultura</label>
+                    <select id="tipoCultura">
+                        <option value="hortalica">Hortaliça</option>
+                        <option value="arvore_frutifera">Árvore Frutífera</option>
+                        <option value="erva_aromatica">Erva Aromática</option>
+                        <option value="cereal">Cereal</option>
+                        <option value="leguminosa">Leguminosa</option>
+                        <option value="tuberculo">Tubérculo</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="variedade">Variedade (Opcional)</label>
+                    <input type="text" id="variedade" placeholder="Ex: quinoa real, chia branca...">
+                </div>
+                
+                <div class="form-group">
+                    <label for="areaPlantada">Área Plantada (m²)</label>
+                    <input type="number" id="areaPlantada" placeholder="Ex: 10.5" step="0.1" min="0">
+                </div>
+                
+                <div class="form-group">
+                    <label for="localizacao">Localização</label>
+                    <input type="text" id="localizacao" placeholder="Ex: Estufa 1, Canteiro A...">
+                </div>
+            </div>
+            
+            <div class="form-section">
+                <h3>📅 Cronograma</h3>
+                
+                <div class="form-group">
+                    <label for="dataPlantio">Data de Plantio</label>
+                    <input type="date" id="dataPlantio">
+                </div>
+                
+                <div class="form-group">
+                    <label for="dataColheita">Data Prevista de Colheita</label>
+                    <input type="date" id="dataColheita">
+                </div>
+                
+                <div class="form-group">
+                    <label for="observacoes">Observações</label>
+                    <textarea id="observacoes" rows="4" 
+                              placeholder="Adicione observações específicas sobre esta cultura..."></textarea>
+                </div>
+                
+                <div class="info-box">
+                    <h4>💡 Sistema Inteligente</h4>
+                    <p>Quando você digitar o nome de uma cultura desconhecida, o sistema automaticamente:</p>
+                    <ul>
+                        <li>🔍 Verifica se a cultura existe na base de dados</li>
+                        <li>🤖 Gera dados agronômicos automaticamente</li>
+                        <li>📋 Sugere informações de cultivo</li>
+                        <li>💾 Adiciona a cultura ao sistema para uso futuro</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div id="suggestedDataSection" class="suggested-data" style="display: none;">
+            <h4>🤖 Dados Sugeridos pelo Sistema</h4>
+            <div id="suggestedDataContent"></div>
+            <button class="btn auto-fill-btn" onclick="aplicarDadosSugeridos()">
+                ✨ Aplicar Dados Sugeridos aos Campos
+            </button>
+        </div>
+        
+        <div class="loading" id="loading">
+            🔄 Processando...
+        </div>
+        
+        <div class="result-section" id="resultSection">
+            <!-- Resultado será exibido aqui -->
+        </div>
+        
+        <div class="actions">
+            <button class="btn btn-secondary" onclick="verificarCultura()">🔍 Verificar Cultura</button>
+            <button class="btn btn-primary" onclick="criarCultura()">🌱 Criar Cultura</button>
+            <button class="btn btn-warning" onclick="limparFormulario()">🗑️ Limpar Formulário</button>
+        </div>
+    </div>
+
+    <script>
+        let dadosSugeridos = null;
+        let statusVerificacao = null;
+        
+        function verificarCultura() {
+            const nome = document.getElementById('nomeCultura').value.trim();
+            
+            if (!nome || nome.length < 3) {
+                return;
+            }
+            
+            mostrarLoading(true);
+            
+            fetch('/api/culturas/verificar', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ nome: nome })
+            })
+            .then(response => response.json())
+            .then(data => {
+                mostrarLoading(false);
+                
+                if (data.success) {
+                    statusVerificacao = data;
+                    dadosSugeridos = data.dados_sugeridos;
+                    
+                    exibirStatusVerificacao(data);
+                    
+                    if (data.dados_sugeridos) {
+                        exibirDadosSugeridos(data.dados_sugeridos, nome);
+                    } else {
+                        document.getElementById('suggestedDataSection').style.display = 'none';
+                    }
+                } else {
+                    exibirErro(data.error || 'Erro ao verificar cultura');
+                }
+            })
+            .catch(error => {
+                mostrarLoading(false);
+                exibirErro('Erro de conexão: ' + error.message);
+            });
+        }
+        
+        function exibirStatusVerificacao(data) {
+            const statusDiv = document.getElementById('verificationStatus');
+            const { cultura_existe, fonte, message } = data;
+            
+            statusDiv.style.display = 'block';
+            
+            if (cultura_existe && fonte === 'base_conhecimento') {
+                statusDiv.className = 'verification-status status-known';
+                statusDiv.innerHTML = `✅ <strong>Cultura Conhecida:</strong> ${message}`;
+            } else if (fonte === 'cache_auto' || fonte === 'auto_gerado') {
+                statusDiv.className = 'verification-status status-generated';
+                statusDiv.innerHTML = `🤖 <strong>Cultura Auto-Gerada:</strong> ${message}`;
+            } else {
+                statusDiv.className = 'verification-status status-unknown';
+                statusDiv.innerHTML = `❓ <strong>Cultura Nova:</strong> ${message}`;
+            }
+        }
+        
+        function exibirDadosSugeridos(dados, nomeCultura) {
+            const section = document.getElementById('suggestedDataSection');
+            const content = document.getElementById('suggestedDataContent');
+            
+            let html = `<div class="data-item"><strong>Cultura:</strong> ${nomeCultura.toUpperCase()}</div>`;
+            html += `<div class="data-item"><strong>Ciclo:</strong> ${dados.ciclo_dias || 90} dias</div>`;
+            
+            if (dados.irrigacao) {
+                html += `<div class="data-item"><strong>Irrigação:</strong> ${dados.irrigacao.frequencia}</div>`;
+                html += `<div class="data-item"><strong>Cuidados:</strong> ${dados.irrigacao.cuidados}</div>`;
+            }
+            
+            if (dados.cuidados_clima) {
+                html += `<div class="data-item"><strong>Temperatura:</strong> ${dados.cuidados_clima.temperatura_ideal}</div>`;
+            }
+            
+            if (dados.pragas_doencas && dados.pragas_doencas.principais) {
+                const pragas = dados.pragas_doencas.principais.map(p => p.nome).join(', ');
+                html += `<div class="data-item"><strong>Principais Pragas:</strong> ${pragas}</div>`;
+            }
+            
+            content.innerHTML = html;
+            section.style.display = 'block';
+        }
+        
+        function aplicarDadosSugeridos() {
+            if (!dadosSugeridos) return;
+            
+            // Determinar tipo baseado nos dados
+            const tipoMapping = {
+                'cultura_geral': 'hortalica',
+                'hortalica_folhosa': 'hortalica',
+                'arvore_frutifera': 'arvore_frutifera',
+                'cereal': 'cereal',
+                'leguminosa': 'leguminosa'
+            };
+            
+            const tipoSugerido = tipoMapping[dadosSugeridos.tipo] || 'hortalica';
+            document.getElementById('tipoCultura').value = tipoSugerido;
+            
+            // Calcular data de colheita baseada no ciclo
+            const dataPlantio = document.getElementById('dataPlantio').value;
+            if (dataPlantio && dadosSugeridos.ciclo_dias) {
+                const plantio = new Date(dataPlantio);
+                const colheita = new Date(plantio);
+                colheita.setDate(plantio.getDate() + dadosSugeridos.ciclo_dias);
+                document.getElementById('dataColheita').value = colheita.toISOString().split('T')[0];
+            }
+            
+            // Adicionar informações às observações
+            let observacoes = document.getElementById('observacoes').value;
+            const infoIA = [
+                `📋 Dados sugeridos automaticamente pelo sistema IA`,
+                `⏰ Ciclo estimado: ${dadosSugeridos.ciclo_dias} dias`
+            ];
+            
+            if (dadosSugeridos.irrigacao) {
+                infoIA.push(`💧 Irrigação: ${dadosSugeridos.irrigacao.frequencia}`);
+            }
+            
+            if (observacoes) {
+                observacoes += '\n\n' + infoIA.join('\n');
+            } else {
+                observacoes = infoIA.join('\n');
+            }
+            
+            document.getElementById('observacoes').value = observacoes;
+            
+            alert('✅ Dados aplicados com sucesso aos campos do formulário!');
+        }
+        
+        function criarCultura() {
+            const nome = document.getElementById('nomeCultura').value.trim();
+            
+            if (!nome) {
+                alert('Nome da cultura é obrigatório!');
+                return;
+            }
+            
+            const dadosFormulario = {
+                nome: nome,
+                tipo: document.getElementById('tipoCultura').value,
+                variedade: document.getElementById('variedade').value,
+                area_plantada: document.getElementById('areaPlantada').value,
+                localizacao: document.getElementById('localizacao').value,
+                data_plantio: document.getElementById('dataPlantio').value,
+                data_colheita_prevista: document.getElementById('dataColheita').value,
+                observacoes: document.getElementById('observacoes').value
+            };
+            
+            mostrarLoading(true);
+            
+            fetch('/api/culturas/com-sugestao', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(dadosFormulario)
+            })
+            .then(response => response.json())
+            .then(data => {
+                mostrarLoading(false);
+                
+                if (data.mensagem) {
+                    exibirSucesso(data);
+                } else {
+                    exibirErro(data.erro || 'Erro ao criar cultura');
+                }
+            })
+            .catch(error => {
+                mostrarLoading(false);
+                exibirErro('Erro de conexão: ' + error.message);
+            });
+        }
+        
+        function exibirSucesso(data) {
+            const section = document.getElementById('resultSection');
+            section.className = 'result-section result-success';
+            section.style.display = 'block';
+            
+            let html = `<h4>✅ ${data.mensagem}</h4>`;
+            html += `<p><strong>Cultura:</strong> ${data.cultura.nome}</p>`;
+            html += `<p><strong>Tipo:</strong> ${data.cultura.tipo}</p>`;
+            html += `<p><strong>Fonte dos dados:</strong> ${data.fonte_dados}</p>`;
+            
+            if (data.dados_sugeridos) {
+                html += `<p><strong>💡 Dados foram gerados automaticamente pelo sistema IA!</strong></p>`;
+            }
+            
+            if (data.sugestao_completa) {
+                html += `<details><summary>📋 Ver dados completos sugeridos</summary>`;
+                html += `<pre style="white-space: pre-wrap; font-size: 12px;">${data.sugestao_completa}</pre>`;
+                html += `</details>`;
+            }
+            
+            section.innerHTML = html;
+            
+            // Limpar formulário após sucesso
+            setTimeout(() => {
+                if (confirm('Cultura criada com sucesso! Deseja limpar o formulário para adicionar outra?')) {
+                    limparFormulario();
+                }
+            }, 2000);
+        }
+        
+        function exibirErro(mensagem) {
+            const section = document.getElementById('resultSection');
+            section.className = 'result-section result-error';
+            section.style.display = 'block';
+            section.innerHTML = `<h4>❌ Erro</h4><p>${mensagem}</p>`;
+        }
+        
+        function limparFormulario() {
+            document.getElementById('nomeCultura').value = '';
+            document.getElementById('tipoCultura').value = 'hortalica';
+            document.getElementById('variedade').value = '';
+            document.getElementById('areaPlantada').value = '';
+            document.getElementById('localizacao').value = '';
+            document.getElementById('dataPlantio').value = '';
+            document.getElementById('dataColheita').value = '';
+            document.getElementById('observacoes').value = '';
+            
+            document.getElementById('verificationStatus').style.display = 'none';
+            document.getElementById('suggestedDataSection').style.display = 'none';
+            document.getElementById('resultSection').style.display = 'none';
+            
+            dadosSugeridos = null;
+            statusVerificacao = null;
+        }
+        
+        function mostrarLoading(mostrar) {
+            document.getElementById('loading').style.display = mostrar ? 'block' : 'none';
+        }
+        
+        // Auto-verificar quando usuário parar de digitar
+        let timeoutVerificacao;
+        document.getElementById('nomeCultura').addEventListener('input', function() {
+            clearTimeout(timeoutVerificacao);
+            timeoutVerificacao = setTimeout(() => {
+                if (this.value.length >= 3) {
+                    verificarCultura();
+                }
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

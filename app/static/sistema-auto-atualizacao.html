@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agente Agrícola IA - Sistema de Auto-Atualização</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #2c5530;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.2em;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 40px;
+            font-size: 1.1em;
+        }
+        
+        .chat-container {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+            margin-top: 30px;
+        }
+        
+        .chat-area {
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 20px;
+            background: #f9f9f9;
+        }
+        
+        .chat-messages {
+            height: 400px;
+            overflow-y: auto;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            background: white;
+        }
+        
+        .message {
+            margin-bottom: 15px;
+            padding: 10px 15px;
+            border-radius: 10px;
+            max-width: 80%;
+        }
+        
+        .user-message {
+            background: #e3f2fd;
+            margin-left: auto;
+            text-align: right;
+        }
+        
+        .bot-message {
+            background: #f1f8e9;
+            margin-right: auto;
+        }
+        
+        .nova-cultura {
+            background: #fff3e0 !important;
+            border-left: 4px solid #ff9800;
+        }
+        
+        .input-group {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .input-group input {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: #4caf50;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #45a049;
+        }
+        
+        .btn-secondary {
+            background: #2196f3;
+            color: white;
+            font-size: 14px;
+            padding: 8px 16px;
+        }
+        
+        .cache-area h3 {
+            color: #2c5530;
+            margin-bottom: 20px;
+        }
+        
+        .cache-item {
+            background: #f5f5f5;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            border-left: 4px solid #4caf50;
+        }
+        
+        .cache-item strong {
+            color: #2c5530;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .status-pendente {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .examples {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .examples h4 {
+            color: #495057;
+            margin-bottom: 10px;
+        }
+        
+        .example-btn {
+            display: inline-block;
+            margin: 5px;
+            padding: 5px 10px;
+            background: #e9ecef;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .example-btn:hover {
+            background: #dee2e6;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            color: #666;
+            font-style: italic;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            padding: 15px;
+            background: #e8f5e8;
+            border-radius: 8px;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2c5530;
+        }
+        
+        .stat-label {
+            font-size: 14px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🤖 Agente Agrícola IA</h1>
+        <div class="subtitle">
+            Sistema Inteligente de Auto-Atualização para Culturas Agrícolas
+        </div>
+        
+        <div class="chat-container">
+            <div class="chat-area">
+                <h3>💬 Consulta Inteligente</h3>
+                <div class="chat-messages" id="chatMessages"></div>
+                
+                <div class="input-group">
+                    <input type="text" id="perguntaInput" placeholder="Ex: Como plantar quinoa? Cultivo de chia é difícil?" maxlength="500">
+                    <button class="btn btn-primary" onclick="enviarPergunta()">Enviar</button>
+                </div>
+                
+                <div class="loading" id="loading">🔄 Processando consulta...</div>
+                
+                <div class="examples">
+                    <h4>📝 Exemplos de perguntas:</h4>
+                    <button class="example-btn" onclick="usarExemplo('Como plantar quinoa?')">Plantar quinoa</button>
+                    <button class="example-btn" onclick="usarExemplo('Cultivo de chia é difícil?')">Cultivo de chia</button>
+                    <button class="example-btn" onclick="usarExemplo('Como plantar amaranto?')">Plantar amaranto</button>
+                    <button class="example-btn" onclick="usarExemplo('Sementes de moringa')">Sementes de moringa</button>
+                    <button class="example-btn" onclick="usarExemplo('Plantar aveia orgânica')">Aveia orgânica</button>
+                </div>
+            </div>
+            
+            <div class="cache-area">
+                <h3>📋 Culturas Auto-Adicionadas</h3>
+                <button class="btn btn-secondary" onclick="atualizarCache()">🔄 Atualizar</button>
+                <button class="btn btn-secondary" onclick="limparCache()">🗑️ Limpar Cache</button>
+                
+                <div id="cacheList" style="margin-top: 20px;">
+                    <div class="loading">Carregando cache...</div>
+                </div>
+                
+                <div class="stats">
+                    <div class="stat-item">
+                        <div class="stat-number" id="totalCulturas">0</div>
+                        <div class="stat-label">Culturas Adicionadas</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="totalConsultas">0</div>
+                        <div class="stat-label">Consultas Realizadas</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let totalConsultas = 0;
+        
+        // Inicializar
+        document.addEventListener('DOMContentLoaded', function() {
+            atualizarCache();
+            
+            // Enter para enviar
+            document.getElementById('perguntaInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    enviarPergunta();
+                }
+            });
+        });
+        
+        function enviarPergunta() {
+            const input = document.getElementById('perguntaInput');
+            const pergunta = input.value.trim();
+            
+            if (!pergunta) {
+                alert('Digite uma pergunta sobre culturas!');
+                return;
+            }
+            
+            // Mostrar pergunta do usuário
+            adicionarMensagem(pergunta, 'user');
+            input.value = '';
+            
+            // Mostrar loading
+            document.getElementById('loading').style.display = 'block';
+            
+            // Fazer requisição
+            fetch('/api/cultura/consulta', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ pergunta: pergunta })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('loading').style.display = 'none';
+                
+                if (data.success) {
+                    const isNovaCultura = data.nova_cultura_adicionada;
+                    adicionarMensagem(data.resposta, 'bot', isNovaCultura);
+                    
+                    totalConsultas++;
+                    document.getElementById('totalConsultas').textContent = totalConsultas;
+                    
+                    if (isNovaCultura) {
+                        setTimeout(atualizarCache, 1000); // Atualizar cache após nova cultura
+                    }
+                } else {
+                    adicionarMensagem(`❌ Erro: ${data.error}`, 'bot');
+                }
+            })
+            .catch(error => {
+                document.getElementById('loading').style.display = 'none';
+                adicionarMensagem('❌ Erro de conexão com o servidor', 'bot');
+                console.error('Erro:', error);
+            });
+        }
+        
+        function adicionarMensagem(texto, tipo, isNovaCultura = false) {
+            const messages = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            
+            messageDiv.className = `message ${tipo}-message`;
+            if (isNovaCultura) {
+                messageDiv.classList.add('nova-cultura');
+            }
+            
+            // Converter quebras de linha para HTML
+            const textoFormatado = texto.replace(/\n/g, '<br>');
+            messageDiv.innerHTML = textoFormatado;
+            
+            messages.appendChild(messageDiv);
+            messages.scrollTop = messages.scrollHeight;
+        }
+        
+        function usarExemplo(exemplo) {
+            document.getElementById('perguntaInput').value = exemplo;
+        }
+        
+        function atualizarCache() {
+            fetch('/api/cultura/cache')
+            .then(response => response.json())
+            .then(data => {
+                const cacheList = document.getElementById('cacheList');
+                
+                if (data.success) {
+                    const culturas = data.culturas_cache;
+                    
+                    if (Object.keys(culturas).length === 0) {
+                        cacheList.innerHTML = '<div style="color: #666; text-align: center;">Nenhuma cultura auto-adicionada ainda</div>';
+                    } else {
+                        let html = '';
+                        for (const [cultura, info] of Object.entries(culturas)) {
+                            const data_formatada = new Date(info.data_adicao).toLocaleString('pt-BR');
+                            html += `
+                                <div class="cache-item">
+                                    <strong>${cultura.toUpperCase()}</strong><br>
+                                    <small>Adicionada: ${data_formatada}</small><br>
+                                    <span class="status-badge status-pendente">${info.status}</span>
+                                </div>
+                            `;
+                        }
+                        cacheList.innerHTML = html;
+                    }
+                    
+                    document.getElementById('totalCulturas').textContent = data.total;
+                } else {
+                    cacheList.innerHTML = '<div style="color: red;">Erro ao carregar cache</div>';
+                }
+            })
+            .catch(error => {
+                document.getElementById('cacheList').innerHTML = '<div style="color: red;">Erro de conexão</div>';
+                console.error('Erro:', error);
+            });
+        }
+        
+        function limparCache() {
+            if (!confirm('Tem certeza que deseja limpar todas as culturas auto-adicionadas?')) {
+                return;
+            }
+            
+            fetch('/api/cultura/cache', { method: 'DELETE' })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    atualizarCache();
+                    alert('✅ Cache limpo com sucesso!');
+                } else {
+                    alert(`❌ Erro: ${data.error}`);
+                }
+            })
+            .catch(error => {
+                alert('❌ Erro de conexão');
+                console.error('Erro:', error);
+            });
+        }
+    </script>
+</body>
+</html>

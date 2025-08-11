@@ -1,0 +1,61 @@
+{% extends "auth/base.html" %}
+
+{% block title %}Login - Agente Agrícola{% endblock %}
+
+{% block content %}
+<div class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-md w-full space-y-8">
+        <div class="auth-header text-center">
+            <div class="mx-auto h-16 w-16 flex items-center justify-center rounded-full bg-green-100 mb-4">
+                <i class="fas fa-seedling text-green-600 text-2xl"></i>
+            </div>
+            <h1 class="text-3xl font-extrabold text-gray-900">Bem-vindo de volta</h1>
+            <p class="mt-2 text-sm text-gray-600">
+                Acesse sua conta para gerenciar suas culturas
+            </p>
+        </div>
+        
+        <form class="auth-form mt-8 space-y-6" action="{{ url_for('auth.login') }}" method="POST">
+            <div class="form-group">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" id="email" name="email" required 
+                       class="form-input"
+                       placeholder="seu@email.com">
+            </div>
+            
+            <div class="form-group">
+                <label for="password" class="form-label">Senha</label>
+                <input type="password" id="password" name="password" required
+                       class="form-input">
+            </div>
+            
+            <div class="form-options flex items-center justify-between">
+                <label class="checkbox flex items-center">
+                    <input type="checkbox" name="remember" 
+                           class="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded">
+                    <span class="ml-2 text-sm text-gray-900">Manter-me conectado</span>
+                </label>
+                <a href="#" class="text-sm font-medium text-green-600 hover:text-green-500">
+                    Esqueci a senha
+                </a>
+            </div>
+            
+            <button type="submit" class="btn btn-primary w-full">
+                Entrar
+            </button>
+        </form>
+        
+        <div class="auth-footer text-center">
+            <p class="text-sm text-gray-600">
+                Não tem conta? 
+                <a href="{{ url_for('auth.register') }}" class="font-medium text-green-600 hover:text-green-500">
+                    Registre-se
+                </a>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}

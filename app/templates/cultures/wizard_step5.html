@@ -1,0 +1,652 @@
+{% extends "base.html" %}
+
+{% block title %}Nova Cultura - Confirmação{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-green-50 to-green-100 flex items-center justify-center px-4">
+    <div class="max-w-3xl w-full">
+        <!-- Progress Bar -->
+        <div class="mb-8">
+            <div class="flex justify-between items-center mb-2">
+                <span class="text-sm font-medium text-green-600">Passo 5 de 5</span>
+                <span class="text-sm text-gray-500">100%</span>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-2">
+                <div class="bg-green-600 h-2 rounded-full" style="width: 100%"></div>
+            </div>
+        </div>
+
+        <!-- Confirmation Card -->
+        <div class="bg-white rounded-lg shadow-xl p-8">
+            <!-- Header -->
+            <div class="text-center mb-8">
+                <div class="mx-auto h-16 w-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
+                    <svg class="h-8 w-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+                <h1 class="text-2xl font-bold text-gray-900 mb-2">
+                    Revisão e Confirmação 🎯
+                </h1>
+                <p class="text-gray-600">
+                    Revise todas as informações antes de criar sua nova cultura
+                </p>
+            </div>
+
+            <!-- Summary Sections -->
+            <div class="space-y-6">
+                <!-- Informações Básicas -->
+                <div class="bg-gray-50 rounded-lg p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold text-gray-900 flex items-center">
+                            <span class="bg-green-100 text-green-800 rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">1</span>
+                            Informações Básicas
+                        </h3>
+                        <button type="button" data-editar="1" class="text-blue-600 hover:text-blue-800 text-sm">
+                            Editar
+                        </button>
+                    </div>
+                    <div id="resumo-basico" class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                        <!-- Será preenchido via JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Área e Localização -->
+                <div class="bg-gray-50 rounded-lg p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold text-gray-900 flex items-center">
+                            <span class="bg-green-100 text-green-800 rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">2</span>
+                            Área e Localização
+                        </h3>
+                        <button type="button" data-editar="2" class="text-blue-600 hover:text-blue-800 text-sm">
+                            Editar
+                        </button>
+                    </div>
+                    <div id="resumo-area" class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                        <!-- Será preenchido via JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Calendário -->
+                <div class="bg-gray-50 rounded-lg p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold text-gray-900 flex items-center">
+                            <span class="bg-green-100 text-green-800 rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">3</span>
+                            Cronograma de Cultivo
+                        </h3>
+                        <button type="button" data-editar="3" class="text-blue-600 hover:text-blue-800 text-sm">
+                            Editar
+                        </button>
+                    </div>
+                    <div id="resumo-calendario" class="space-y-3">
+                        <!-- Será preenchido via JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Recursos e Cuidados -->
+                <div class="bg-gray-50 rounded-lg p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold text-gray-900 flex items-center">
+                            <span class="bg-green-100 text-green-800 rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">4</span>
+                            Recursos e Cuidados
+                        </h3>
+                        <button type="button" data-editar="4" class="text-blue-600 hover:text-blue-800 text-sm">
+                            Editar
+                        </button>
+                    </div>
+                    <div id="resumo-recursos" class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                        <!-- Será preenchido via JavaScript -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Estimativas e Previsões -->
+            <div class="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-6">
+                <h3 class="text-lg font-semibold text-blue-900 mb-4">📊 Estimativas do Sistema</h3>
+                <div id="estimativas-finais" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <!-- Será preenchido via JavaScript -->
+                </div>
+            </div>
+
+            <!-- Próximos Passos -->
+            <div class="mt-8 bg-green-50 border border-green-200 rounded-lg p-6">
+                <h3 class="text-lg font-semibold text-green-900 mb-4">🚀 Próximos Passos</h3>
+                <div class="space-y-3 text-sm text-green-800">
+                    <div class="flex items-start">
+                        <span class="bg-green-200 text-green-800 rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold mr-3 mt-0.5">1</span>
+                        <div>
+                            <div class="font-medium">Cultura será adicionada ao seu dashboard</div>
+                            <div class="text-green-600">Você poderá acompanhar o progresso em tempo real</div>
+                        </div>
+                    </div>
+                    <div class="flex items-start">
+                        <span class="bg-green-200 text-green-800 rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold mr-3 mt-0.5">2</span>
+                        <div>
+                            <div class="font-medium">Lembretes automáticos serão criados</div>
+                            <div class="text-green-600">Irrigação, fertilização e monitoramento</div>
+                        </div>
+                    </div>
+                    <div class="flex items-start">
+                        <span class="bg-green-200 text-green-800 rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold mr-3 mt-0.5">3</span>
+                        <div>
+                            <div class="font-medium">Agente IA ficará disponível</div>
+                            <div class="text-green-600">Dicas personalizadas e suporte especializado</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Terms and Confirmation -->
+            <div class="mt-8 border-t pt-6">
+                <div class="mb-6">
+                    <label class="flex items-start">
+                        <input type="checkbox" id="confirmar-dados" class="mr-3 mt-1" required>
+                        <span class="text-sm text-gray-700">
+                            Confirmo que todos os dados estão corretos e desejo criar esta cultura. 
+                            Poderei editar as informações a qualquer momento após a criação.
+                        </span>
+                    </label>
+                </div>
+
+                <div class="mb-6">
+                    <label class="flex items-start">
+                        <input type="checkbox" id="aceitar-lembretes" class="mr-3 mt-1" checked>
+                        <span class="text-sm text-gray-700">
+                            Desejo receber lembretes automáticos sobre cuidados com esta cultura
+                        </span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex justify-between mt-8">
+                <a href="{{ url_for('culture.culture_wizard', step='4') }}" 
+                   class="px-6 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition duration-200">
+                    Voltar
+                </a>
+                
+                <div class="space-x-3">
+                    <button type="button" id="salvar-rascunho" 
+                            class="px-6 py-2 border border-green-600 text-green-600 rounded-md hover:bg-green-50 transition duration-200">
+                        Salvar Rascunho
+                    </button>
+                    <button type="button" id="btn-criar"
+                            class="px-8 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition duration-200 font-medium opacity-60">
+                        🌱 Criar Cultura
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Success Message (Hidden) -->
+        <div id="mensagem-sucesso" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div class="bg-white rounded-lg p-8 max-w-md mx-4 text-center">
+                <div class="mx-auto h-16 w-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
+                    <svg class="h-8 w-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-900 mb-2">🎉 Cultura Criada com Sucesso!</h3>
+                <p class="text-gray-600 mb-6">Sua nova cultura foi adicionada ao sistema e está pronta para acompanhamento.</p>
+                <button id="ir-dashboard" 
+                        class="w-full bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 transition duration-200">
+                    Ir para Dashboard
+                </button>
+            </div>
+        </div>
+
+        <!-- Modal de Confirmação Necessária -->
+        <div id="modal-confirmacao" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div class="bg-white rounded-lg p-8 max-w-md mx-4 text-center relative">
+                <!-- Botão X no canto superior direito -->
+                <button id="fechar-modal-confirmacao" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+                
+                <!-- Ícone circular verde com checkmark -->
+                <div class="mx-auto h-16 w-16 bg-green-100 rounded-full flex items-center justify-center mb-6">
+                    <svg class="h-8 w-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                </div>
+                
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">⚠️ Confirmação Necessária!</h3>
+                
+                <p class="text-gray-600 mb-8 leading-relaxed">
+                    Para criar sua cultura, você precisa confirmar que todos os dados estão corretos marcando a caixa de confirmação.
+                </p>
+                
+                <button id="ir-para-confirmacao"
+                        class="w-full bg-green-600 text-white py-3 px-4 rounded-md hover:bg-green-700 transition duration-200 font-medium">
+                    Ver Confirmação
+                </button>
+            </div>
+        </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script nonce="{{ g.csp_nonce }}">
+let dadosCompletos = {};
+
+// Carregar todos os dados do wizard
+async function carregarDadosCompletos() {
+    try {
+        const response = await fetch('{{ url_for("culture.get_wizard_data") }}');
+        const result = await response.json();
+        const data = result.data || {};
+        dadosCompletos = data;
+        
+        preencherResumos(data);
+        calcularEstimativasFinais(data);
+    } catch (error) {
+        console.error('Erro ao carregar dados:', error);
+    }
+}
+
+function preencherResumos(data) {
+    // Resumo Básico
+    const resumoBasico = document.getElementById('resumo-basico');
+    resumoBasico.innerHTML = `
+        <div>
+            <div class="font-medium text-gray-900">Nome:</div>
+            <div class="text-gray-600">${data.nome || 'Não especificado'}</div>
+        </div>
+        <div>
+            <div class="font-medium text-gray-900">Tipo:</div>
+            <div class="text-gray-600">${formatarTipo(data.tipo) || 'Não especificado'}</div>
+        </div>
+        <div>
+            <div class="font-medium text-gray-900">Variedade:</div>
+            <div class="text-gray-600">${data.variedade || 'Não especificada'}</div>
+        </div>
+    `;
+
+    // Resumo Área
+    const resumoArea = document.getElementById('resumo-area');
+    resumoArea.innerHTML = `
+        <div>
+            <div class="font-medium text-gray-900">Área de Plantio:</div>
+            <div class="text-gray-600">${data.area_plantada ? data.area_plantada + ' m²' : 'Não especificada'}</div>
+        </div>
+        <div>
+            <div class="font-medium text-gray-900">Localização:</div>
+            <div class="text-gray-600">${data.localizacao || 'Não especificada'}</div>
+        </div>
+        ${data.coordenadas && data.coordenadas.latitude ? `
+        <div class="md:col-span-2">
+            <div class="font-medium text-gray-900">Coordenadas GPS:</div>
+            <div class="text-gray-600">${data.coordenadas.latitude.toFixed(6)}, ${data.coordenadas.longitude.toFixed(6)}</div>
+        </div>
+        ` : ''}
+    `;
+
+    // Resumo Calendário
+    const resumoCalendario = document.getElementById('resumo-calendario');
+    if (data.data_plantio) {
+        const plantio = new Date(data.data_plantio);
+        const colheita = data.data_colheita_prevista ? new Date(data.data_colheita_prevista) : null;
+        const cicloDias = colheita ? Math.ceil((colheita - plantio) / (1000 * 60 * 60 * 24)) : null;
+        
+        resumoCalendario.innerHTML = `
+            <div class="flex items-center justify-between bg-white rounded-lg p-4">
+                <div class="flex items-center space-x-4">
+                    <div class="text-center">
+                        <div class="text-sm font-medium text-green-800">Plantio</div>
+                        <div class="text-lg font-bold text-green-600">${formatarData(plantio)}</div>
+                    </div>
+                    <svg class="h-6 w-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                    </svg>
+                    <div class="text-center">
+                        <div class="text-sm font-medium text-orange-800">Colheita</div>
+                        <div class="text-lg font-bold text-orange-600">${colheita ? formatarData(colheita) : 'Não definida'}</div>
+                    </div>
+                </div>
+                ${cicloDias ? `
+                <div class="text-right">
+                    <div class="text-sm text-gray-600">Ciclo</div>
+                    <div class="text-lg font-bold text-blue-600">${cicloDias} dias</div>
+                </div>
+                ` : ''}
+            </div>
+        `;
+    } else {
+        resumoCalendario.innerHTML = '<p class="text-gray-500">Datas não definidas</p>';
+    }
+
+    // Resumo Recursos
+    const resumoRecursos = document.getElementById('resumo-recursos');
+    const recursos = [];
+    
+    if (data.freq_irrigacao) {
+        recursos.push(`
+            <div>
+                <div class="font-medium text-gray-900">💧 Irrigação:</div>
+                <div class="text-gray-600">${formatarFrequencia(data.freq_irrigacao)}</div>
+            </div>
+        `);
+    }
+    
+    if (data.sistema_irrigacao) {
+        recursos.push(`
+            <div>
+                <div class="font-medium text-gray-900">🚿 Sistema:</div>
+                <div class="text-gray-600">${formatarSistema(data.sistema_irrigacao)}</div>
+            </div>
+        `);
+    }
+    
+    if (data.tipo_fertilizante) {
+        recursos.push(`
+            <div>
+                <div class="font-medium text-gray-900">🌿 Fertilização:</div>
+                <div class="text-gray-600">${formatarFertilizante(data.tipo_fertilizante)}</div>
+            </div>
+        `);
+    }
+    
+    if (data.metodo_controle) {
+        recursos.push(`
+            <div>
+                <div class="font-medium text-gray-900">🐛 Controle:</div>
+                <div class="text-gray-600">${formatarControle(data.metodo_controle)}</div>
+            </div>
+        `);
+    }
+    
+    resumoRecursos.innerHTML = recursos.join('') || '<p class="text-gray-500">Recursos não configurados</p>';
+}
+
+function calcularEstimativasFinais(data) {
+    const estimativasDiv = document.getElementById('estimativas-finais');
+    const area = data.area_plantada || 0;
+    
+    let estimativas = [];
+    
+    // Estimativa de água semanal
+    if (data.freq_irrigacao && data.quantidade_agua && area > 0) {
+        let multiplicador = 1;
+        switch (data.freq_irrigacao) {
+            case 'diaria': multiplicador = 7; break;
+            case 'dia_sim_dia_nao': multiplicador = 3.5; break;
+            case '2_3_vezes_semana': multiplicador = 2.5; break;
+            case 'semanal': multiplicador = 1; break;
+        }
+        
+        const aguaSemanal = data.quantidade_agua * area * multiplicador;
+        estimativas.push(`
+            <div class="text-center">
+                <div class="text-2xl font-bold text-blue-600">${aguaSemanal.toFixed(0)}L</div>
+                <div class="text-sm text-blue-800">Água/semana</div>
+            </div>
+        `);
+    }
+    
+    // Estimativa de produtividade (baseada no tipo)
+    if (area > 0 && data.tipo) {
+        const produtividade = estimarProdutividade(data.tipo, area);
+        estimativas.push(`
+            <div class="text-center">
+                <div class="text-2xl font-bold text-green-600">${produtividade.toFixed(1)}kg</div>
+                <div class="text-sm text-green-800">Produção estimada</div>
+            </div>
+        `);
+    }
+    
+    // Tempo de colheita
+    if (data.data_colheita_prevista) {
+        const colheita = new Date(data.data_colheita_prevista);
+        const hoje = new Date();
+        const diasAteColheita = Math.ceil((colheita - hoje) / (1000 * 60 * 60 * 24));
+        
+        estimativas.push(`
+            <div class="text-center">
+                <div class="text-2xl font-bold text-orange-600">${diasAteColheita}</div>
+                <div class="text-sm text-orange-800">Dias até colheita</div>
+            </div>
+        `);
+    }
+    
+    estimativasDiv.innerHTML = estimativas.join('') || '<p class="text-gray-500 col-span-3 text-center">Estimativas não disponíveis</p>';
+}
+
+function estimarProdutividade(tipo, area) {
+    // Produtividade média por m² baseada no tipo de cultura
+    const produtividadePorTipo = {
+        'hortalica': 3.0,      // 3kg/m²
+        'arvore_frutifera': 1.5, // 1.5kg/m² 
+        'erva_aromatica': 0.5,   // 0.5kg/m²
+        'cereal': 0.8,          // 0.8kg/m²
+        'leguminosa': 1.2,      // 1.2kg/m²
+        'tuberculo': 2.5        // 2.5kg/m²
+    };
+    
+    return (produtividadePorTipo[tipo] || 1) * area;
+}
+
+// Funções de formatação
+function formatarData(data) {
+    return data.toLocaleDateString('pt-BR');
+}
+
+function formatarTipo(tipo) {
+    const tipos = {
+        'hortalica': 'Hortaliça',
+        'arvore_frutifera': 'Árvore Frutífera',
+        'erva_aromatica': 'Erva Aromática',
+        'cereal': 'Cereal',
+        'leguminosa': 'Leguminosa',
+        'tuberculo': 'Tubérculo'
+    };
+    return tipos[tipo] || tipo;
+}
+
+function formatarFrequencia(freq) {
+    const frequencias = {
+        'diaria': 'Diária',
+        'dia_sim_dia_nao': 'Dia sim, dia não',
+        '2_3_vezes_semana': '2-3 vezes por semana',
+        'semanal': 'Semanal',
+        'conforme_necessidade': 'Conforme necessidade'
+    };
+    return frequencias[freq] || freq;
+}
+
+function formatarSistema(sistema) {
+    const sistemas = {
+        'gotejamento': 'Gotejamento',
+        'aspersao': 'Aspersão',
+        'manual': 'Manual'
+    };
+    return sistemas[sistema] || sistema;
+}
+
+function formatarFertilizante(tipo) {
+    const tipos = {
+        'organico': 'Orgânico',
+        'mineral': 'Mineral',
+        'misto': 'Misto',
+        'natural': 'Natural'
+    };
+    return tipos[tipo] || tipo;
+}
+
+function formatarControle(metodo) {
+    const metodos = {
+        'organico': 'Orgânico',
+        'biologico': 'Biológico',
+        'integrado': 'Manejo Integrado',
+        'convencional': 'Convencional',
+        'preventivo': 'Preventivo'
+    };
+    return metodos[metodo] || metodo;
+}
+
+// Funções de ação
+function editarEtapa(step) {
+    window.location.href = `{{ url_for("culture.culture_wizard") }}?step=${step}`;
+}
+
+async function salvarRascunho() {
+    // Implementar salvamento como rascunho
+    alert('🔖 Rascunho salvo! Você pode continuar editando depois.');
+}
+
+async function criarCultura() {
+    const btnCriar = document.getElementById('btn-criar');
+    const confirmarDados = document.getElementById('confirmar-dados');
+    
+    console.log('Função criarCultura executada:', confirmarDados.checked);
+    
+    if (!confirmarDados.checked) {
+        // Mostrar modal em vez de alert simples
+        console.log('Mostrando modal de confirmação');
+        document.getElementById('modal-confirmacao').classList.remove('hidden');
+        return;
+    }
+    
+    btnCriar.disabled = true;
+    btnCriar.innerHTML = '⏳ Criando...';
+    
+    try {
+        // BACKUP: Tentar recuperar dados do localStorage se sessão estiver vazia
+        const backupData = localStorage.getItem('culture_wizard_backup');
+        let wizardBackup = null;
+        
+        if (backupData) {
+            try {
+                wizardBackup = JSON.parse(backupData);
+                console.log('DEBUG: Dados de backup encontrados:', wizardBackup);
+            } catch (e) {
+                console.error('Erro ao parser backup:', e);
+            }
+        }
+        
+        const response = await fetch('{{ url_for("culture.save_wizard_step") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ 
+                step: '5',
+                aceitar_lembretes: document.getElementById('aceitar-lembretes').checked,
+                wizard_backup: wizardBackup  // NOVO: Enviar backup como fallback
+            })
+        });
+        
+        const result = await response.json();
+        console.log('DEBUG: Resposta do servidor:', result);
+        
+        if (result.success) {
+            // Mostrar mensagem de sucesso
+            document.getElementById('mensagem-sucesso').classList.remove('hidden');
+            
+            // Limpar localStorage após sucesso
+            localStorage.removeItem('culture_wizard_backup');
+            console.log('DEBUG: Cultura criada com sucesso, localStorage limpo');
+        } else {
+            console.error('Erro na criação da cultura:', result);
+            
+            // Mostrar erro mais detalhado em desenvolvimento
+            const errorMsg = result.error || 'Erro ao criar cultura';
+            const debugInfo = result.debug_info ? `\n\nDebug: ${JSON.stringify(result.debug_info, null, 2)}` : '';
+            
+            // Em produção, mostrar apenas erro amigável
+            if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                alert(errorMsg + debugInfo);
+            } else {
+                alert(errorMsg + '\n\nSe o problema persistir, tente refazer o processo desde o início.');
+            }
+            
+            btnCriar.disabled = false;
+            btnCriar.innerHTML = '🌱 Criar Cultura';
+        }
+    } catch (error) {
+        alert('Erro de conexão: ' + error.message);
+        btnCriar.disabled = false;
+        btnCriar.innerHTML = '🌱 Criar Cultura';
+    }
+}
+
+function irParaDashboard() {
+    window.location.href = '{{ url_for("dashboard.index") }}';
+}
+
+// Event listeners e inicialização
+document.addEventListener('DOMContentLoaded', function() {
+    // Estilo visual do botão baseado no checkbox (sem desabilitar)
+    document.getElementById('confirmar-dados').addEventListener('change', function() {
+        const btnCriar = document.getElementById('btn-criar');
+        if (this.checked) {
+            btnCriar.classList.remove('opacity-60');
+            btnCriar.classList.add('opacity-100');
+        } else {
+            btnCriar.classList.remove('opacity-100');
+            btnCriar.classList.add('opacity-60');
+        }
+    });
+    
+    // Botões de editar
+    document.querySelectorAll('[data-editar]').forEach(button => {
+        button.addEventListener('click', function() {
+            const step = this.dataset.editar;
+            editarEtapa(parseInt(step));
+        });
+    });
+    
+    // Botão salvar rascunho
+    document.getElementById('salvar-rascunho').addEventListener('click', salvarRascunho);
+    
+    // Botão criar cultura
+    document.getElementById('btn-criar').addEventListener('click', criarCultura);
+    
+    // Botão ir para dashboard
+    document.getElementById('ir-dashboard').addEventListener('click', irParaDashboard);
+    
+    // Event listeners do modal de confirmação
+    document.getElementById('fechar-modal-confirmacao').addEventListener('click', function() {
+        document.getElementById('modal-confirmacao').classList.add('hidden');
+    });
+    
+    document.getElementById('ir-para-confirmacao').addEventListener('click', function() {
+        document.getElementById('modal-confirmacao').classList.add('hidden');
+        // Scroll para a área de confirmação
+        document.getElementById('confirmar-dados').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        // Destacar o checkbox por alguns segundos
+        const checkboxLabel = document.getElementById('confirmar-dados').closest('label');
+        checkboxLabel.classList.add('bg-yellow-100', 'border', 'border-yellow-300', 'rounded-lg', 'p-3');
+        setTimeout(() => {
+            checkboxLabel.classList.remove('bg-yellow-100', 'border', 'border-yellow-300', 'rounded-lg', 'p-3');
+        }, 3000);
+    });
+    
+    // Carregar dados
+    carregarDadosCompletos();
+    
+    // Forçar estado inicial correto do botão
+    setTimeout(() => {
+        const confirmarDados = document.getElementById('confirmar-dados');
+        const btnCriar = document.getElementById('btn-criar');
+        
+        // Remover atributo disabled se existir
+        btnCriar.removeAttribute('disabled');
+        
+        // Aplicar estado visual baseado no checkbox
+        if (confirmarDados.checked) {
+            btnCriar.classList.remove('opacity-60');
+            btnCriar.classList.add('opacity-100');
+        } else {
+            btnCriar.classList.remove('opacity-100');
+            btnCriar.classList.add('opacity-60');
+        }
+        
+        console.log('Estado inicial do botão configurado - disabled:', btnCriar.disabled, 'checked:', confirmarDados.checked);
+    }, 100);
+});
+</script>
+{% endblock %}

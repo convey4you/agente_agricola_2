@@ -1,0 +1,71 @@
+# Multi-stage build para otimização de tamanho e segurança
+
+# Stage 1: Build dependencies
+FROM python:3.11-slim as builder
+
+# Instalar dependências do sistema
+RUN apt-get update && apt-get install -y \
+    gcc \
+    g++ \
+    libpq-dev \
+    libffi-dev \
+    libssl-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Criar usuário não-root
+RUN useradd --create-home --shell /bin/bash agrotech
+
+# Configurar diretório de trabalho
+WORKDIR /app
+
+# Copiar requirements e instalar dependências Python
+COPY requirements.txt .
+RUN pip install --no-cache-dir --user -r requirements.txt
+
+# Stage 2: Production image
+FROM python:3.11-slim as production
+
+# Instalar apenas dependências de runtime
+RUN apt-get update && apt-get install -y \
+    libpq5 \
+    curl \
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get clean
+
+# Criar usuário não-root
+RUN useradd --create-home --shell /bin/bash agrotech
+
+# Copiar dependências Python do stage builder
+COPY --from=builder /root/.local /home/agrotech/.local
+
+# Configurar PATH para usuário
+ENV PATH=/home/agrotech/.local/bin:$PATH
+
+# Configurar diretório de trabalho
+WORKDIR /app
+
+# Copiar código da aplicação
+COPY --chown=agrotech:agrotech . .
+
+# Criar diretórios necessários
+RUN mkdir -p logs uploads static/uploads \
+    && chown -R agrotech:agrotech logs uploads static/uploads
+
+# Configurar variáveis de ambiente
+ENV FLASK_APP=app.py
+ENV FLASK_ENV=production
+ENV PYTHONPATH=/app
+ENV PYTHONUNBUFFERED=1
+
+# Expor porta
+EXPOSE 5000
+
+# Mudar para usuário não-root
+USER agrotech
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:5000/health || exit 1
+
+# Comando de inicialização
+CMD ["gunicorn", "--bind", "0.0.0.0:5000", "--workers", "4", "--worker-class", "gevent", "--worker-connections", "1000", "--max-requests", "1000", "--max-requests-jitter", "100", "--timeout", "30", "--keep-alive", "2", "--log-level", "info", "--access-logfile", "-", "--error-logfile", "-", "app:app"]

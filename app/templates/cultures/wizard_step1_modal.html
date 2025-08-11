@@ -1,0 +1,301 @@
+<!-- Modal Header -->
+<div class="bg-white rounded-t-lg p-6 border-b border-gray-200">
+    <div class="flex justify-between items-center">
+        <div>
+            <h2 class="text-xl font-semibold text-gray-900">Nova Cultura - Passo 1 de 5</h2>
+            <p class="text-sm text-gray-600 mt-1">Selecione sua cultura</p>
+        </div>
+        <button id="close-modal-btn" class="text-gray-400 hover:text-gray-600 focus:outline-none">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+        </button>
+    </div>
+</div>
+
+<!-- Progress Bar -->
+<div class="px-6 py-4 bg-gray-50">
+    <div class="flex justify-between items-center mb-2">
+        <span class="text-sm font-medium text-green-600">Passo 1 de 5</span>
+        <span class="text-sm text-gray-500">20%</span>
+    </div>
+    <div class="w-full bg-gray-200 rounded-full h-2">
+        <div class="bg-green-600 h-2 rounded-full" style="width: 20%"></div>
+    </div>
+</div>
+
+<!-- Modal Content -->
+<div class="p-6">
+    <!-- Header -->
+    <div class="text-center mb-6">
+        <div class="mx-auto h-16 w-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
+            <svg class="h-8 w-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13c-1.5 0-3.5 1-4.5 2.5m4.5-2.5c1.5 0 3.5 1 4.5 2.5M9 10l3 3 3-3"></path>
+            </svg>
+        </div>
+        <h1 class="text-2xl font-bold text-gray-900 mb-2">
+            Selecione sua Cultura 🌱
+        </h1>
+        <p class="text-gray-600">
+            Escolha o tipo de cultura que deseja adicionar à sua propriedade
+        </p>
+    </div>
+
+    <!-- Form -->
+    <form id="wizardStep1Form">
+        <div class="space-y-6">
+            <!-- Nome da Cultura -->
+            <div>
+                <label for="nome" class="block text-sm font-medium text-gray-700 mb-2">
+                    Nome da Cultura *
+                </label>
+                <input type="text" id="nome" name="nome" required
+                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                       placeholder="Ex: Tomate, Alface, Quinoa..."
+                       data-action="verificar-cultura">>
+                
+                <!-- Status de Verificação -->
+                <div id="verificacao-status" class="mt-3 p-3 rounded-lg hidden">
+                    <!-- Status será exibido aqui -->
+                </div>
+            </div>
+
+            <!-- Tipo da Cultura -->
+            <div>
+                <label for="tipo" class="block text-sm font-medium text-gray-700 mb-2">
+                    Tipo da Cultura *
+                </label>
+                <select id="tipo" name="tipo" required
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                    <option value="">Selecione o tipo</option>
+                    <option value="hortalica">Hortaliça</option>
+                    <option value="arvore_frutifera">Árvore Frutífera</option>
+                    <option value="erva_aromatica">Erva Aromática</option>
+                    <option value="cereal">Cereal</option>
+                    <option value="leguminosa">Leguminosa</option>
+                    <option value="tuberculo">Tubérculo</option>
+                </select>
+            </div>
+
+            <!-- Variedade -->
+            <div>
+                <label for="variedade" class="block text-sm font-medium text-gray-700 mb-2">
+                    Variedade (Opcional)
+                </label>
+                <input type="text" id="variedade" name="variedade"
+                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                       placeholder="Ex: Tomate Cereja, Alface Americana...">
+            </div>
+
+            <!-- Sugestões de IA -->
+            <div id="sugestoes-ia" class="bg-blue-50 border border-blue-200 rounded-lg p-4 hidden">
+                <h4 class="font-medium text-blue-900 mb-2">🤖 Sugestões do Sistema</h4>
+                <div id="sugestoes-conteudo"></div>
+                <button type="button" data-action="aplicar-sugestoes" 
+                        class="mt-3 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-200">
+                    Aplicar Sugestões
+                </button>
+            </div>
+        </div>
+
+        <!-- Help Text -->
+        <div class="text-center mt-6 mb-6">
+            <p class="text-sm text-gray-600">
+                🔍 Digite o nome da cultura para verificar se temos informações específicas sobre ela
+            </p>
+        </div>
+
+        <!-- Navigation Buttons -->
+        <div class="flex justify-between mt-8">
+            <button type="button" id="cancel-wizard-btn" 
+                   class="px-6 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition duration-200">
+                Cancelar
+            </button>
+            <button type="submit"
+                    class="px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition duration-200">
+                Próximo: Definir Área
+            </button>
+        </div>
+    </form>
+</div>
+
+<script nonce="{{ g.csp_nonce }}">
+let dadosSugeridos = null;
+
+// Verificar cultura com debounce
+let verificacaoTimeout;
+function verificarCultura() {
+    clearTimeout(verificacaoTimeout);
+    verificacaoTimeout = setTimeout(() => {
+        const nome = document.getElementById('nome').value.trim();
+        if (nome.length >= 3) {
+            verificarCulturaAtual(nome);
+        } else {
+            document.getElementById('verificacao-status').classList.add('hidden');
+        }
+    }, 500);
+}
+
+async function verificarCulturaAtual(nome) {
+    try {
+        const response = await fetch('/cultures/verify', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ nome: nome })
+        });
+        
+        const data = await response.json();
+        mostrarStatusVerificacao(data);
+        
+        if (data.success && data.encontrada && data.dados_sugeridos) {
+            dadosSugeridos = data.dados_sugeridos;
+            mostrarSugestoes(data.dados_sugeridos);
+        }
+        
+    } catch (error) {
+        console.error('Erro ao verificar cultura:', error);
+        mostrarStatusVerificacao({
+            success: false,
+            message: 'Erro de conexão'
+        });
+    }
+}
+
+function mostrarStatusVerificacao(data) {
+    const statusDiv = document.getElementById('verificacao-status');
+    const { cultura_existe, fonte, message } = data;
+    
+    statusDiv.classList.remove('hidden');
+    
+    if (cultura_existe && fonte === 'base_conhecimento') {
+        statusDiv.className = 'mt-3 p-3 rounded-lg bg-green-50 border border-green-200';
+        statusDiv.innerHTML = `
+            <div class="flex items-center">
+                <svg class="h-5 w-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                </svg>
+                <span class="text-green-800"><strong>Cultura Conhecida:</strong> ${message}</span>
+            </div>
+        `;
+    } else if (fonte === 'cache_auto' || fonte === 'auto_gerado') {
+        statusDiv.className = 'mt-3 p-3 rounded-lg bg-blue-50 border border-blue-200';
+        statusDiv.innerHTML = `
+            <div class="flex items-center">
+                <svg class="h-5 w-5 text-blue-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+                </svg>
+                <span class="text-blue-800"><strong>Cultura Auto-Gerada:</strong> ${message}</span>
+            </div>
+        `;
+    } else {
+        statusDiv.className = 'mt-3 p-3 rounded-lg bg-yellow-50 border border-yellow-200';
+        statusDiv.innerHTML = `
+            <div class="flex items-center">
+                <svg class="h-5 w-5 text-yellow-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                </svg>
+                <span class="text-yellow-800"><strong>Cultura Nova:</strong> ${message}</span>
+            </div>
+        `;
+    }
+}
+
+function mostrarSugestoes(dados) {
+    if (dados && dados.nome) {
+        const sugestoesDiv = document.getElementById('sugestoes-ia');
+        if (sugestoesDiv) {
+            sugestoesDiv.innerHTML = `
+                <div class="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                    <h4 class="font-medium text-blue-900 mb-2">💡 Informações sobre ${dados.nome}:</h4>
+                    <p class="text-blue-800 text-sm">${dados.observacoes}</p>
+                    <div class="mt-2 text-xs text-blue-600">
+                        <span>🌱 Dificuldade: ${dados.dificuldade} | </span>
+                        <span>⏱️ Crescimento: ${dados.tempo_crescimento} dias | </span>
+                        <span>💰 Custo: €${dados.custo_estimado_m2}/m²</span>
+                    </div>
+                </div>
+            `;
+            sugestoesDiv.classList.remove('hidden');
+        }
+    }
+}
+
+function aplicarSugestoes() {
+    if (dadosSugeridos) {
+        alert('✅ Informações aplicadas automaticamente!');
+    }
+}
+
+// Submissão do formulário
+document.getElementById('wizardStep1Form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const formData = {
+        step: '1',
+        nome: document.getElementById('nome').value.trim(),
+        tipo: document.getElementById('tipo').value,
+        variedade: document.getElementById('variedade').value.trim()
+    };
+    
+    if (!formData.nome || !formData.tipo) {
+        alert('Por favor, preencha os campos obrigatórios.');
+        return;
+    }
+    
+    try {
+        const response = await fetch('{{ url_for("culture.save_wizard_step") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData)
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            // Carregar próximo passo no modal
+            loadWizardStep(2);
+        } else {
+            alert('Erro ao salvar dados: ' + (result.error || 'Erro desconhecido'));
+        }
+        
+    } catch (error) {
+        console.error('Erro ao submeter formulário:', error);
+        alert('Erro de conexão. Tente novamente.');
+    }
+});
+
+// Cancelar wizard
+document.getElementById('cancel-wizard-btn').addEventListener('click', function() {
+    if (confirm('Deseja cancelar a criação da cultura? Os dados não salvos serão perdidos.')) {
+        document.getElementById('wizard-modal').classList.add('hidden');
+    }
+});
+
+// Fechar modal
+document.getElementById('close-modal-btn').addEventListener('click', function() {
+    if (confirm('Deseja fechar o wizard? Os dados não salvos serão perdidos.')) {
+        document.getElementById('wizard-modal').classList.add('hidden');
+    }
+});
+
+// Event listener para aplicar sugestões
+document.addEventListener('click', function(e) {
+    if (e.target.matches('[data-action="aplicar-sugestoes"]')) {
+        e.preventDefault();
+        aplicarSugestoes();
+    }
+});
+
+// Event listener para verificar cultura ao sair do campo
+document.addEventListener('blur', function(e) {
+    if (e.target.matches('[data-action="verificar-cultura"]')) {
+        verificarCultura();
+    }
+}, true);
+
+console.log('✅ Event listeners do wizard step1 configurados');
+</script>

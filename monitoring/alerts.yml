@@ -1,0 +1,219 @@
+groups:
+  - name: AgroTech Alerts
+    rules:
+      # Sistema
+      - alert: AplicacaoIndisponivel
+        expr: up{job="agrotech-app"} == 0
+        for: 2m
+        labels:
+          severity: critical
+          service: aplicacao
+        annotations:
+          summary: "Aplicação AgroTech está indisponível"
+          description: "A aplicação principal não está respondendo há {{ $value }} minutos"
+          runbook: "Verificar logs da aplicação e status dos containers"
+
+      - alert: AltaUtilizacaoCPU
+        expr: rate(container_cpu_usage_seconds_total[5m]) * 100 > 80
+        for: 5m
+        labels:
+          severity: warning
+          service: sistema
+        annotations:
+          summary: "Alta utilização de CPU detectada"
+          description: "CPU está em {{ $value }}% de utilização por mais de 5 minutos"
+          runbook: "Verificar processos consumindo CPU e considerar scaling"
+
+      - alert: AltaUtilizacaoMemoria
+        expr: (container_memory_usage_bytes / container_spec_memory_limit_bytes) * 100 > 85
+        for: 3m
+        labels:
+          severity: warning
+          service: sistema
+        annotations:
+          summary: "Alta utilização de memória"
+          description: "Memória em {{ $value }}% de utilização"
+          runbook: "Verificar memory leaks e otimizar uso de memória"
+
+      - alert: EspacoDiscoLimitado
+        expr: (node_filesystem_avail_bytes / node_filesystem_size_bytes) * 100 < 15
+        for: 2m
+        labels:
+          severity: warning
+          service: sistema
+        annotations:
+          summary: "Espaço em disco limitado"
+          description: "Apenas {{ $value }}% de espaço livre no disco"
+          runbook: "Limpar logs antigos e backups desnecessários"
+
+      # Base de Dados
+      - alert: PostgreSQLIndisponivel
+        expr: up{job="postgresql"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          service: database
+        annotations:
+          summary: "PostgreSQL indisponível"
+          description: "Base de dados PostgreSQL não está respondendo"
+          runbook: "Verificar status do serviço PostgreSQL e conectividade"
+
+      - alert: MuitasConexoesBD
+        expr: pg_stat_activity_count > 80
+        for: 3m
+        labels:
+          severity: warning
+          service: database
+        annotations:
+          summary: "Muitas conexões à base de dados"
+          description: "{{ $value }} conexões ativas na base de dados"
+          runbook: "Verificar connection pooling e otimizar queries"
+
+      - alert: TempoRespostaBDAlto
+        expr: pg_stat_database_tup_returned / pg_stat_database_tup_fetched > 5
+        for: 5m
+        labels:
+          severity: warning
+          service: database
+        annotations:
+          summary: "Tempo de resposta da BD elevado"
+          description: "Queries demoram mais que o esperado"
+          runbook: "Analisar queries lentas e otimizar índices"
+
+      # Redis Cache
+      - alert: RedisIndisponivel
+        expr: up{job="redis"} == 0
+        for: 1m
+        labels:
+          severity: warning
+          service: cache
+        annotations:
+          summary: "Redis cache indisponível"
+          description: "Serviço de cache Redis não está respondendo"
+          runbook: "Verificar status do Redis e configurações"
+
+      - alert: RedisMemoriaAlta
+        expr: redis_memory_used_bytes / redis_memory_max_bytes * 100 > 90
+        for: 3m
+        labels:
+          severity: warning
+          service: cache
+        annotations:
+          summary: "Uso elevado de memória no Redis"
+          description: "Redis usando {{ $value }}% da memória disponível"
+          runbook: "Verificar keys em cache e políticas de eviction"
+
+      # Nginx Proxy
+      - alert: NginxIndisponivel
+        expr: up{job="nginx"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          service: proxy
+        annotations:
+          summary: "Nginx proxy indisponível"
+          description: "Servidor proxy Nginx não está respondendo"
+          runbook: "Verificar configuração e status do Nginx"
+
+      - alert: AltaLatenciaNginx
+        expr: histogram_quantile(0.95, rate(nginx_http_request_duration_seconds_bucket[5m])) > 2
+        for: 3m
+        labels:
+          severity: warning
+          service: proxy
+        annotations:
+          summary: "Latência alta no Nginx"
+          description: "95% das requisições demoram mais de 2 segundos"
+          runbook: "Verificar configuração de proxy e backend"
+
+      # Aplicação Específica
+      - alert: TaxaErroAlta
+        expr: rate(flask_http_request_exceptions_total[5m]) / rate(flask_http_request_total[5m]) * 100 > 5
+        for: 3m
+        labels:
+          severity: warning
+          service: aplicacao
+        annotations:
+          summary: "Taxa de erro elevada na aplicação"
+          description: "{{ $value }}% das requisições resultam em erro"
+          runbook: "Verificar logs de erro e saúde da aplicação"
+
+      - alert: UsuariosAtivosLimitados
+        expr: gauge_active_users < 5
+        for: 10m
+        labels:
+          severity: info
+          service: aplicacao
+        annotations:
+          summary: "Poucos usuários ativos"
+          description: "Apenas {{ $value }} usuários ativos nos últimos 10 minutos"
+          runbook: "Verificar se há problemas de acesso ou notificações"
+
+      # Integrações Externas
+      - alert: APIClimaIndisponivel
+        expr: up{job="openweather-api"} == 0
+        for: 5m
+        labels:
+          severity: warning
+          service: integracao
+        annotations:
+          summary: "API do clima indisponível"
+          description: "Serviço de dados meteorológicos não está respondendo"
+          runbook: "Verificar conectividade com OpenWeatherMap API"
+
+      - alert: SincronizacaoLentaCultura
+        expr: rate(background_tasks_total{task_type="cultura_sync"}[10m]) < 0.1
+        for: 15m
+        labels:
+          severity: warning
+          service: sincronizacao
+        annotations:
+          summary: "Sincronização de culturas lenta"
+          description: "Sincronização de dados de cultura está abaixo do esperado"
+          runbook: "Verificar tasks em background e conectividade"
+
+      # Segurança
+      - alert: TentativasLoginFalhadas
+        expr: rate(failed_login_attempts_total[5m]) > 10
+        for: 2m
+        labels:
+          severity: warning
+          service: seguranca
+        annotations:
+          summary: "Muitas tentativas de login falhadas"
+          description: "{{ $value }} tentativas de login falhadas por minuto"
+          runbook: "Verificar possível ataque de força bruta"
+
+      - alert: CertificadoSSLExpirando
+        expr: ssl_certificate_expiry_days < 30
+        for: 1h
+        labels:
+          severity: warning
+          service: seguranca
+        annotations:
+          summary: "Certificado SSL expira em breve"
+          description: "Certificado SSL expira em {{ $value }} dias"
+          runbook: "Renovar certificado SSL antes da expiração"
+
+      # Backup
+      - alert: BackupFalhado
+        expr: time() - backup_last_success_timestamp > 86400
+        for: 1h
+        labels:
+          severity: warning
+          service: backup
+        annotations:
+          summary: "Backup não foi executado"
+          description: "Último backup bem-sucedido há mais de 24 horas"
+          runbook: "Verificar processo de backup e corrigir falhas"
+
+      - alert: TamanhoBackupAnormal
+        expr: backup_size_bytes < 1000000 or backup_size_bytes > 10000000000
+        for: 5m
+        labels:
+          severity: warning
+          service: backup
+        annotations:
+          summary: "Tamanho de backup anormal"
+          description: "Backup com tamanho {{ $value }} bytes parece anormal"
+          runbook: "Verificar integridade e completude do backup"

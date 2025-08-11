@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block title %}Acesso Negado - Agente Agrícola{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div class="sm:mx-auto sm:w-full sm:max-w-md">
+        <div class="mx-auto h-16 w-16 flex items-center justify-center rounded-full bg-red-100 mb-6">
+            <i class="fas fa-ban text-red-600 text-2xl"></i>
+        </div>
+        <h1 class="text-center text-3xl font-extrabold text-gray-900 mb-2">
+            Acesso Negado
+        </h1>
+        <p class="text-center text-lg text-gray-600 mb-8">
+            Você não tem permissão para acessar este recurso.
+        </p>
+    </div>
+
+    <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+        <div class="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+            <div class="space-y-6">
+                <div class="text-center">
+                    <h2 class="text-xl font-semibold text-gray-900 mb-4">
+                        Possíveis causas:
+                    </h2>
+                    <ul class="text-left text-gray-600 space-y-2">
+                        <li class="flex items-start">
+                            <i class="fas fa-exclamation-triangle text-yellow-500 mt-1 mr-3"></i>
+                            <span>Token de segurança expirado ou inválido</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-user-lock text-red-500 mt-1 mr-3"></i>
+                            <span>Permissões insuficientes</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-clock text-blue-500 mt-1 mr-3"></i>
+                            <span>Sessão expirada</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="pt-6 border-t border-gray-200">
+                    <div class="flex flex-col space-y-3">
+                        <a href="{{ url_for('auth.login') }}" 
+                           class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition duration-150 ease-in-out">
+                            <i class="fas fa-sign-in-alt mr-2"></i>
+                            Fazer Login Novamente
+                        </a>
+                        
+                        <a href="{{ url_for('dashboard.index') }}" 
+                           class="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition duration-150 ease-in-out">
+                            <i class="fas fa-home mr-2"></i>
+                            Voltar ao Dashboard
+                        </a>
+                        
+                        <a href="javascript:history.back()" 
+                           class="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition duration-150 ease-in-out">
+                            <i class="fas fa-arrow-left mr-2"></i>
+                            Voltar
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-8 text-center">
+        <p class="text-sm text-gray-500">
+            Se o problema persistir, entre em contato com o suporte.
+        </p>
+    </div>
+</div>
+{% endblock %}

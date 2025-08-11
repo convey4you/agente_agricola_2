@@ -1,0 +1,491 @@
+{% extends "base.html" %}
+
+{% block title %}Monitoramento do Sistema{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50 py-8">
+    <div class="max-w-7xl mx-auto px-4">
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-900">🖥️ Monitoramento do Sistema</h1>
+            <p class="text-gray-600">Status em tempo real do Agente Agrícola</p>
+        </div>
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="mb-6">
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ 'danger' if category == 'error' else category }} p-4 mb-4 rounded-lg 
+                                    {{ 'bg-red-50 border border-red-200 text-red-700' if category == 'error' 
+                                    else 'bg-green-50 border border-green-200 text-green-700' if category == 'success'
+                                    else 'bg-blue-50 border border-blue-200 text-blue-700' }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <!-- Status Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white rounded-lg shadow p-6">
+                <div class="flex items-center">
+                    <div class="p-3 rounded-full bg-green-100">
+                        <span class="text-green-600 text-xl">🖥️</span>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-600">CPU</p>
+                        <p class="text-2xl font-semibold text-gray-900" id="cpu-usage">--</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow p-6">
+                <div class="flex items-center">
+                    <div class="p-3 rounded-full bg-blue-100">
+                        <span class="text-blue-600 text-xl">💾</span>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-600">Memória</p>
+                        <p class="text-2xl font-semibold text-gray-900" id="memory-usage">--</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow p-6">
+                <div class="flex items-center">
+                    <div class="p-3 rounded-full bg-yellow-100">
+                        <span class="text-yellow-600 text-xl">💿</span>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-600">Disco</p>
+                        <p class="text-2xl font-semibold text-gray-900" id="disk-usage">--</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow p-6">
+                <div class="flex items-center">
+                    <div class="p-3 rounded-full bg-purple-100">
+                        <span class="text-purple-600 text-xl">👥</span>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-600">Usuários</p>
+                        <p class="text-2xl font-semibold text-gray-900" id="total-users">--</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Database Management Section -->
+        {% if current_user.is_authenticated and current_user.email == 'admin@agrotech.pt' %}
+        <div class="bg-red-50 border border-red-200 rounded-lg p-6 mb-8">
+            <h2 class="text-xl font-bold text-red-800 mb-4">🗃️ Gerenciamento do Banco de Dados</h2>
+            <div class="bg-white rounded-lg p-6">
+                
+                <!-- Database Info -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-3">Informações do Banco</h3>
+                        <div class="space-y-2">
+                            {% if db_info and db_info.success %}
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Tipo:</span>
+                                    <span class="font-medium">{{ db_info.database_type }}</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Tabelas:</span>
+                                    <span class="font-medium">{{ db_info.total_tables }}</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Registros:</span>
+                                    <span class="font-medium">{{ db_info.total_records }}</span>
+                                </div>
+                                {% if db_info.database_size_mb > 0 %}
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Tamanho:</span>
+                                    <span class="font-medium">{{ db_info.database_size_mb }} MB</span>
+                                </div>
+                                {% endif %}
+                            {% else %}
+                                <p class="text-red-600">Erro ao obter informações do banco</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-3">Status de Saúde</h3>
+                        <div class="space-y-2">
+                            {% if db_validation and db_validation.success %}
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Status:</span>
+                                    <span class="px-2 py-1 rounded-full text-sm font-medium
+                                        {{ 'bg-green-100 text-green-800' if db_validation.status == 'healthy'
+                                        else 'bg-yellow-100 text-yellow-800' if db_validation.status == 'degraded'
+                                        else 'bg-red-100 text-red-800' }}">
+                                        {{ db_validation.status.title() }}
+                                    </span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Score:</span>
+                                    <span class="font-medium">{{ db_validation.health_score }}/100</span>
+                                </div>
+                                {% if db_validation.issues %}
+                                <div class="mt-2">
+                                    <span class="text-red-600 text-sm">Problemas:</span>
+                                    <ul class="list-disc list-inside text-sm text-red-600 mt-1">
+                                        {% for issue in db_validation.issues %}
+                                        <li>{{ issue }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                                {% endif %}
+                            {% else %}
+                                <p class="text-red-600">Erro na validação</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Sync Schema Section -->
+                <div class="bg-white rounded-lg shadow mt-6">
+                    <div class="px-6 py-4 border-b border-gray-200">
+                        <h3 class="text-lg font-semibold text-gray-900">🔄 Sincronização do Schema</h3>
+                        <p class="text-sm text-gray-600 mt-1">Atualiza o banco criando tabelas e campos ausentes sem perder dados</p>
+                    </div>
+                    <div class="p-6">
+                        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+                            <div class="flex items-start">
+                                <div class="flex-shrink-0">
+                                    <svg class="h-5 w-5 text-blue-400 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                                    </svg>
+                                </div>
+                                <div class="ml-3">
+                                    <h4 class="text-sm font-medium text-blue-800">Operação Segura</h4>
+                                    <p class="text-sm text-blue-700 mt-1">
+                                        Esta operação é <strong>segura</strong> e <strong>não remove dados existentes</strong>. 
+                                        Apenas adiciona tabelas e campos novos definidos no código.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <form method="POST" action="{{ url_for('monitoring.database_sync_schema_form') }}" 
+                              data-action="sync-schema">>
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                            <button type="submit" 
+                                    class="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                                🔄 SINCRONIZAR SCHEMA
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                
+                <!-- Reset Database Form -->
+                <div class="border-t border-gray-200 pt-6">
+                    <h3 class="text-lg font-semibold text-red-800 mb-3">⚠️ Reset Completo do Banco</h3>
+                    <div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
+                        <p class="text-red-800 text-sm mb-2">
+                            <strong>ATENÇÃO:</strong> Esta operação irá:
+                        </p>
+                        <ul class="list-disc list-inside text-red-700 text-sm space-y-1">
+                            <li>Remover TODAS as tabelas do banco de dados</li>
+                            <li>Recriar as tabelas do zero (estrutura limpa)</li>
+                            <li>Apagar TODOS os dados existentes (usuários, culturas, etc.)</li>
+                            <li>Funcionar tanto em SQLite (desenvolvimento) quanto PostgreSQL (produção)</li>
+                        </ul>
+                    </div>
+                    
+                    <form method="POST" action="{{ url_for('monitoring.database_reset_form') }}" 
+                          data-action="reset-database" class="space-y-4">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                        
+                        <div class="flex items-center">
+                            <input type="checkbox" id="create_backup" name="create_backup" checked
+                                   class="h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded">
+                            <label for="create_backup" class="ml-2 text-sm text-gray-700">
+                                Criar backup antes do reset (apenas SQLite)
+                            </label>
+                        </div>
+                        
+                        <div>
+                            <label for="confirmation" class="block text-sm font-medium text-gray-700 mb-1">
+                                Digite exatamente: <code class="bg-gray-100 px-2 py-1 rounded">CONFIRMO_RESET_COMPLETO</code>
+                            </label>
+                            <input type="text" id="confirmation" name="confirmation" required
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                                   placeholder="CONFIRMO_RESET_COMPLETO">
+                        </div>
+                        
+                        <button type="submit" 
+                                class="bg-red-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2">
+                            🗑️ RESETAR BANCO DE DADOS
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Detailed Stats -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- System Information -->
+            <div class="bg-white rounded-lg shadow">
+                <div class="px-6 py-4 border-b border-gray-200">
+                    <h3 class="text-lg font-semibold text-gray-900">Informações do Sistema</h3>
+                </div>
+                <div class="p-6">
+                    <div class="space-y-4">
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Status do Sistema:</span>
+                            <span id="system-status" class="px-3 py-1 rounded-full text-sm font-semibold">--</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Última Atualização:</span>
+                            <span id="last-update" class="text-gray-900">--</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Versão:</span>
+                            <span class="text-gray-900">2.0.0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Database Stats -->
+            <div class="bg-white rounded-lg shadow">
+                <div class="px-6 py-4 border-b border-gray-200">
+                    <h3 class="text-lg font-semibold text-gray-900">Estatísticas do Banco</h3>
+                </div>
+                <div class="p-6">
+                    <div class="space-y-4">
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Total de Culturas:</span>
+                            <span id="total-cultures" class="text-gray-900 font-semibold">--</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Total de Atividades:</span>
+                            <span id="total-activities" class="text-gray-900 font-semibold">--</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Atividades Recentes (24h):</span>
+                            <span id="recent-activities" class="text-gray-900 font-semibold">--</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Resource Usage Charts -->
+        <div class="mt-8 bg-white rounded-lg shadow">
+            <div class="px-6 py-4 border-b border-gray-200">
+                <h3 class="text-lg font-semibold text-gray-900">Uso de Recursos</h3>
+            </div>
+            <div class="p-6">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- CPU Bar -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">CPU</label>
+                        <div class="w-full bg-gray-200 rounded-full h-4">
+                            <div id="cpu-bar" class="bg-green-600 h-4 rounded-full transition-all duration-300" style="width: 0%"></div>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-1" id="cpu-details">--</p>
+                    </div>
+
+                    <!-- Memory Bar -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Memória</label>
+                        <div class="w-full bg-gray-200 rounded-full h-4">
+                            <div id="memory-bar" class="bg-blue-600 h-4 rounded-full transition-all duration-300" style="width: 0%"></div>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-1" id="memory-details">--</p>
+                    </div>
+
+                    <!-- Disk Bar -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Disco</label>
+                        <div class="w-full bg-gray-200 rounded-full h-4">
+                            <div id="disk-bar" class="bg-yellow-600 h-4 rounded-full transition-all duration-300" style="width: 0%"></div>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-1" id="disk-details">--</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script nonce="{{ g.csp_nonce }}">
+// Função para atualizar o status do sistema
+async function updateSystemStatus() {
+    try {
+        const response = await fetch('/monitoring/public-status');
+        const data = await response.json();
+        
+        if (data.error) {
+            console.error('Erro ao carregar status:', data.error);
+            return;
+        }
+        
+        // Atualizar cards principais
+        document.getElementById('cpu-usage').textContent = data.hardware.cpu.usage_percent.toFixed(1) + '%';
+        document.getElementById('memory-usage').textContent = data.hardware.memory.usage_percent.toFixed(1) + '%';
+        document.getElementById('disk-usage').textContent = data.hardware.disk.usage_percent.toFixed(1) + '%';
+        document.getElementById('total-users').textContent = data.application.total_users;
+        
+        // Atualizar informações detalhadas
+        const statusElement = document.getElementById('system-status');
+        statusElement.textContent = data.status === 'healthy' ? 'Saudável' : 'Atenção';
+        statusElement.className = `px-3 py-1 rounded-full text-sm font-semibold ${
+            data.status === 'healthy' 
+                ? 'bg-green-100 text-green-800' 
+                : 'bg-yellow-100 text-yellow-800'
+        }`;
+        
+        document.getElementById('last-update').textContent = new Date().toLocaleString('pt-BR');
+        document.getElementById('total-cultures').textContent = data.application.total_cultures;
+        document.getElementById('total-activities').textContent = data.application.total_activities;
+        document.getElementById('recent-activities').textContent = data.application.recent_activities_24h;
+        
+        // Atualizar barras de progresso
+        const cpuBar = document.getElementById('cpu-bar');
+        const memoryBar = document.getElementById('memory-bar');
+        const diskBar = document.getElementById('disk-bar');
+        
+        cpuBar.style.width = data.hardware.cpu.usage_percent + '%';
+        cpuBar.className = `h-4 rounded-full transition-all duration-300 ${
+            data.hardware.cpu.usage_percent > 80 ? 'bg-red-600' : 
+            data.hardware.cpu.usage_percent > 60 ? 'bg-yellow-600' : 'bg-green-600'
+        }`;
+        
+        memoryBar.style.width = data.hardware.memory.usage_percent + '%';
+        memoryBar.className = `h-4 rounded-full transition-all duration-300 ${
+            data.hardware.memory.usage_percent > 80 ? 'bg-red-600' : 
+            data.hardware.memory.usage_percent > 60 ? 'bg-yellow-600' : 'bg-blue-600'
+        }`;
+        
+        diskBar.style.width = data.hardware.disk.usage_percent + '%';
+        diskBar.className = `h-4 rounded-full transition-all duration-300 ${
+            data.hardware.disk.usage_percent > 90 ? 'bg-red-600' : 
+            data.hardware.disk.usage_percent > 70 ? 'bg-yellow-600' : 'bg-yellow-600'
+        }`;
+        
+        // Atualizar detalhes
+        document.getElementById('cpu-details').textContent = `${data.hardware.cpu.usage_percent.toFixed(1)}% de uso`;
+        document.getElementById('memory-details').textContent = `${data.hardware.memory.used_mb}MB / ${data.hardware.memory.total_mb}MB`;
+        document.getElementById('disk-details').textContent = `${data.hardware.disk.used_gb}GB / ${data.hardware.disk.total_gb}GB`;
+        
+    } catch (error) {
+        console.error('Erro ao atualizar status:', error);
+    }
+}
+
+// Função de confirmação para sincronização do schema
+function confirmSync() {
+    const userConfirm = confirm(
+        '🔄 CONFIRMAÇÃO DE SINCRONIZAÇÃO\n\n' +
+        'Você deseja sincronizar o schema do banco de dados?\n\n' +
+        '✅ ESTA OPERAÇÃO É SEGURA:\n' +
+        '• NÃO remove dados existentes\n' +
+        '• Apenas ADICIONA tabelas ausentes\n' +
+        '• Apenas ADICIONA campos ausentes\n' +
+        '• Preserva todos os dados atuais\n\n' +
+        'Clique em OK para continuar.'
+    );
+    
+    if (userConfirm) {
+        // Mostrar indicador de carregamento
+        const button = event.target;
+        const originalText = button.innerHTML;
+        button.innerHTML = '🔄 Sincronizando...';
+        button.disabled = true;
+        
+        // Se houver erro, restaurar o botão após 10 segundos
+        setTimeout(() => {
+            button.innerHTML = originalText;
+            button.disabled = false;
+        }, 10000);
+    }
+    
+    return userConfirm;
+}
+
+// Função de confirmação para reset do banco
+function confirmReset() {
+    const confirmation = document.getElementById('confirmation').value;
+    
+    if (confirmation !== 'CONFIRMO_RESET_COMPLETO') {
+        alert('❌ Confirmação incorreta! Digite exatamente: CONFIRMO_RESET_COMPLETO');
+        return false;
+    }
+    
+    const userConfirm = confirm(
+        '🚨 ÚLTIMA CONFIRMAÇÃO 🚨\n\n' +
+        'Você tem CERTEZA de que deseja RESETAR COMPLETAMENTE o banco de dados?\n\n' +
+        '⚠️ ESTA AÇÃO:\n' +
+        '• Apagará TODOS os dados (usuários, culturas, atividades, etc.)\n' +
+        '• Removerá TODAS as tabelas\n' +
+        '• Recriará as tabelas vazias\n' +
+        '• NÃO PODE SER DESFEITA\n\n' +
+        'Digite OK para continuar ou Cancelar para abortar.'
+    );
+    
+    if (!userConfirm) {
+        return false;
+    }
+    
+    // Adicionar loading ao botão
+    const submitBtn = document.querySelector('button[type="submit"]');
+    submitBtn.innerHTML = '⏳ Resetando banco...';
+    submitBtn.disabled = true;
+    
+    return true;
+}
+
+// Função para atualizar informações do banco via AJAX
+async function refreshDatabaseInfo() {
+    try {
+        const response = await fetch('/monitoring/database/info');
+        const data = await response.json();
+        
+        if (data.success) {
+            // Atualizar informações na UI
+            location.reload(); // Por simplicidade, recarregar a página
+        }
+    } catch (error) {
+        console.error('Erro ao atualizar informações do banco:', error);
+    }
+}
+
+// Atualizar a cada 5 segundos
+setInterval(updateSystemStatus, 5000);
+
+// Carregar dados iniciais e configurar event listeners
+document.addEventListener('DOMContentLoaded', function() {
+    updateSystemStatus();
+    
+    // Event listener para formulário de sincronização
+    const syncForm = document.querySelector('[data-action="sync-schema"]');
+    if (syncForm) {
+        syncForm.addEventListener('submit', function(e) {
+            if (!confirmSync()) {
+                e.preventDefault();
+            }
+        });
+    }
+
+    // Event listener para formulário de reset
+    const resetForm = document.querySelector('[data-action="reset-database"]');
+    if (resetForm) {
+        resetForm.addEventListener('submit', function(e) {
+            if (!confirmReset()) {
+                e.preventDefault();
+            }
+        });
+    }
+
+    console.log('✅ Event listeners do monitoring dashboard configurados');
+});
+</script>
+{% endblock %}

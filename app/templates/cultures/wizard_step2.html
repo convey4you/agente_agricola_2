@@ -1,0 +1,338 @@
+{% extends "base.html" %}
+
+{% block title %}Nova Cultura - Passo 2{% endblock %}
+
+{% block head %}
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<meta name="cache-version" content="{{ cache_version }}">
+{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-green-50 to-green-100 flex items-center justify-center px-4">
+    <div class="max-w-2xl w-full">
+        <!-- Progress Bar -->
+        <div class="mb-8">
+            <div class="flex justify-between items-center mb-2">
+                <span class="text-sm font-medium text-green-600">Passo 2 de 5</span>
+                <span class="text-sm text-gray-500">40%</span>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-2">
+                <div class="bg-green-600 h-2 rounded-full" style="width: 40%"></div>
+            </div>
+        </div>
+
+        <!-- Area Definition Card -->
+        <div class="bg-white rounded-lg shadow-xl p-8">
+            <!-- Header -->
+            <div class="text-center mb-6">
+                <div class="mx-auto h-16 w-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
+                    <svg class="h-8 w-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path>
+                    </svg>
+                </div>
+                <h1 class="text-2xl font-bold text-gray-900 mb-2">
+                    Defina a Área de Cultivo 📍
+                </h1>
+                <p class="text-gray-600">
+                    Configure o espaço onde sua cultura será plantada
+                </p>
+            </div>
+
+            <!-- Resumo da Etapa Anterior -->
+            <div id="resumo-anterior" class="bg-gray-50 rounded-lg p-4 mb-6">
+                <h3 class="font-medium text-gray-900 mb-2">📋 Cultura Selecionada:</h3>
+                <div id="resumo-conteudo" class="text-sm text-gray-600">
+                    Carregando...
+                </div>
+            </div>
+
+            <!-- Form -->
+            <form id="wizardStep2Form">
+                <div class="space-y-6">
+                    <!-- Área Plantada -->
+                    <div>
+                        <label for="area_plantada" class="block text-sm font-medium text-gray-700 mb-2">
+                            Área de Plantio *
+                        </label>
+                        <div class="flex space-x-2">
+                            <input 
+                                type="number" 
+                                id="area_plantada" 
+                                name="area_plantada" 
+                                class="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                                placeholder="Ex: 1000"
+                                min="0.1"
+                                step="0.1"
+                                required
+                            >
+                            <span class="px-3 py-2 bg-gray-100 text-gray-700 text-sm rounded-md border border-gray-300">
+                                m²
+                            </span>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-1">
+                            Área em metros quadrados que será destinada para esta cultura
+                        </p>
+                    </div>
+
+                    <!-- Localização Específica -->
+                    <div>
+                        <label for="localizacao" class="block text-sm font-medium text-gray-700 mb-2">
+                            Localização Específica
+                        </label>
+                        <input 
+                            type="text" 
+                            id="localizacao" 
+                            name="localizacao" 
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                            placeholder="Ex: Estufa 1, Canteiro A, Setor Leste"
+                        >
+                        <p class="text-xs text-gray-500 mt-1">
+                            Identificação específica do local dentro da sua propriedade
+                        </p>
+                    </div>
+
+                    <!-- Características do Local -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Exposição Solar -->
+                        <div>
+                            <label for="exposicao_solar" class="block text-sm font-medium text-gray-700 mb-2">
+                                Exposição Solar *
+                            </label>
+                            <select id="exposicao_solar" name="exposicao_solar" required
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                                <option value="">Selecione</option>
+                                <option value="sol_pleno">Sol Pleno (6+ horas/dia)</option>
+                                <option value="meia_sombra">Meia Sombra (4-6 horas/dia)</option>
+                                <option value="sombra">Sombra (2-4 horas/dia)</option>
+                                <option value="sombra_total">Sombra Total (0-2 horas/dia)</option>
+                            </select>
+                        </div>
+
+                        <!-- Tipo de Solo -->
+                        <div>
+                            <label for="tipo_solo" class="block text-sm font-medium text-gray-700 mb-2">
+                                Tipo de Solo *
+                            </label>
+                            <select id="tipo_solo" name="tipo_solo" required
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                                <option value="">Selecione</option>
+                                <option value="arenoso">Arenoso</option>
+                                <option value="argiloso">Argiloso</option>
+                                <option value="franco">Franco</option>
+                                <option value="humoso">Húmico</option>
+                                <option value="calcario">Calcário</option>
+                            </select>
+                        </div>
+
+                        <!-- Drenagem -->
+                        <div>
+                            <label for="drenagem" class="block text-sm font-medium text-gray-700 mb-2">
+                                Drenagem
+                            </label>
+                            <select id="drenagem" name="drenagem"
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                                <option value="">Selecione</option>
+                                <option value="excelente">Excelente</option>
+                                <option value="boa">Boa</option>
+                                <option value="regular">Regular</option>
+                                <option value="ruim">Ruim</option>
+                            </select>
+                        </div>
+
+                        <!-- Acesso à Água -->
+                        <div>
+                            <label for="acesso_agua" class="block text-sm font-medium text-gray-700 mb-2">
+                                Acesso à Água
+                            </label>
+                            <select id="acesso_agua" name="acesso_agua"
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                                <option value="">Selecione</option>
+                                <option value="irrigacao_automatica">Irrigação Automática</option>
+                                <option value="mangueira">Mangueira/Manual</option>
+                                <option value="perto">Próximo (< 50m)</option>
+                                <option value="longe">Distante (> 50m)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Coordenadas GPS (Opcional) -->
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <label class="block text-sm font-medium text-gray-700">
+                                Coordenadas GPS (Opcional)
+                            </label>
+                            <button type="button" id="obterLocalizacaoBtn" 
+                                    class="text-xs bg-blue-100 text-blue-700 px-3 py-1 rounded-md hover:bg-blue-200 transition duration-200">
+                                📍 Obter Localização Atual
+                            </button>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label for="latitude" class="block text-xs font-medium text-gray-600 mb-1">Latitude</label>
+                                <input type="number" id="latitude" name="latitude" step="any"
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent text-sm"
+                                       placeholder="Ex: -23.550520">
+                            </div>
+                            <div>
+                                <label for="longitude" class="block text-xs font-medium text-gray-600 mb-1">Longitude</label>
+                                <input type="number" id="longitude" name="longitude" step="any"
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent text-sm"
+                                       placeholder="Ex: -46.633309">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Navigation Buttons -->
+                <div class="flex justify-between mt-8">
+                    <a href="{{ url_for('culture.culture_wizard', step='1') }}" 
+                       class="px-6 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition duration-200">
+                        Voltar
+                    </a>
+                    <button type="submit"
+                            class="px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition duration-200">
+                        Próximo: Calendário
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Tips -->
+        <div class="text-center mt-6">
+            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <h4 class="font-medium text-blue-900 mb-2">💡 Dica</h4>
+                <p class="text-sm text-blue-800">
+                    Uma boa definição da área ajuda o sistema a calcular melhor as necessidades de irrigação, fertilização e produtividade esperada.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script nonce="{{ g.csp_nonce }}">
+// Carregar dados da etapa anterior
+async function carregarResumo() {
+    try {
+        console.log('Iniciando carregamento do resumo...');
+        
+        const response = await fetch('{{ url_for("culture.get_wizard_data") }}', {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            credentials: 'same-origin'  // Incluir cookies de sessão
+        });
+        
+        console.log('Response status:', response.status);
+        console.log('Response headers:', response.headers);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const result = await response.json();
+        console.log('Dados recebidos:', result);
+        
+        // Os dados estão em result.data devido à estrutura do ResponseHandler
+        const data = result.data || {};
+        
+        if (data.nome) {
+            const resumoDiv = document.getElementById('resumo-conteudo');
+            resumoDiv.innerHTML = `
+                <p><strong>Nome:</strong> ${data.nome}</p>
+                <p><strong>Tipo:</strong> ${data.tipo || 'Não especificado'}</p>
+                ${data.variedade ? `<p><strong>Variedade:</strong> ${data.variedade}</p>` : ''}
+            `;
+        } else {
+            // Se não há dados salvos, mostrar mensagem
+            const resumoDiv = document.getElementById('resumo-conteudo');
+            resumoDiv.innerHTML = '<p class="text-gray-500">Nenhuma cultura selecionada ainda. Volte ao Passo 1.</p>';
+        }
+    } catch (error) {
+        console.error('Erro ao carregar resumo:', error);
+        const resumoDiv = document.getElementById('resumo-conteudo');
+        resumoDiv.innerHTML = '<p class="text-red-500">Erro ao carregar dados da etapa anterior.</p>';
+    }
+}
+
+// Obter localização atual
+function obterLocalizacao() {
+    if ("geolocation" in navigator) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+            document.getElementById('latitude').value = position.coords.latitude.toFixed(6);
+            document.getElementById('longitude').value = position.coords.longitude.toFixed(6);
+            
+            alert('✅ Localização obtida com sucesso!');
+        }, function(error) {
+            alert('❌ Erro ao obter localização: ' + error.message);
+        });
+    } else {
+        alert('❌ Geolocalização não é suportada neste navegador.');
+    }
+}
+
+// Submissão do formulário
+document.getElementById('wizardStep2Form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const formData = {
+        step: '2',
+        area_plantada: parseFloat(document.getElementById('area_plantada').value),
+        localizacao: document.getElementById('localizacao').value.trim(),
+        exposicao_solar: document.getElementById('exposicao_solar').value,
+        tipo_solo: document.getElementById('tipo_solo').value,
+        drenagem: document.getElementById('drenagem').value,
+        acesso_agua: document.getElementById('acesso_agua').value,
+        coordenadas: {
+            latitude: document.getElementById('latitude').value ? parseFloat(document.getElementById('latitude').value) : null,
+            longitude: document.getElementById('longitude').value ? parseFloat(document.getElementById('longitude').value) : null
+        }
+    };
+    
+    if (!formData.area_plantada || formData.area_plantada <= 0) {
+        alert('Por favor, informe uma área válida.');
+        return;
+    }
+    
+    try {
+        const response = await fetch('{{ url_for("culture.save_wizard_step") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData)
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            // Backup dos dados no localStorage para fallback
+            const backupData = JSON.parse(localStorage.getItem('culture_wizard_backup') || '{}');
+            Object.assign(backupData, formData);
+            localStorage.setItem('culture_wizard_backup', JSON.stringify(backupData));
+            console.log('DEBUG: Step 2 - Dados salvos no localStorage backup:', backupData);
+            console.log('DEBUG: Cache version:', '{{ cache_version }}'); // Cache busting debug
+            
+            window.location.href = '{{ url_for("culture.culture_wizard", step="3") }}';
+        } else {
+            alert(result.error || 'Erro ao salvar dados');
+        }
+    } catch (error) {
+        alert('Erro de conexão: ' + error.message);
+    }
+});
+
+// Carregar resumo ao inicializar a página
+document.addEventListener('DOMContentLoaded', function() {
+    carregarResumo();
+    
+    // Adicionar event listener para o botão de localização
+    document.getElementById('obterLocalizacaoBtn').addEventListener('click', obterLocalizacao);
+});
+</script>
+{% endblock %}

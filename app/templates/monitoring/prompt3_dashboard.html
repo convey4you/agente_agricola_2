@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgroTech - Dashboard de Monitoramento PROMPT 3</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .status-card {
+            transition: all 0.3s ease;
+        }
+        .status-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .health-status {
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.875rem;
+            font-weight: bold;
+        }
+        .health-healthy { background-color: #d4edda; color: #155724; }
+        .health-warning { background-color: #fff3cd; color: #856404; }
+        .health-critical { background-color: #f8d7da; color: #721c24; }
+        .metric-value {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+        .chart-container {
+            position: relative;
+            height: 300px;
+        }
+        .log-container {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 0.375rem;
+            max-height: 400px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.875rem;
+        }
+        .log-entry {
+            padding: 0.25rem 0.5rem;
+            border-bottom: 1px solid #e9ecef;
+        }
+        .log-error { background-color: #f8d7da; }
+        .log-warning { background-color: #fff3cd; }
+        .log-info { background-color: #d1ecf1; }
+        .auto-refresh {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <!-- Auto Refresh Controls -->
+        <div class="auto-refresh">
+            <div class="card">
+                <div class="card-body p-2">
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="autoRefresh" checked>
+                        <label class="form-check-label" for="autoRefresh">
+                            Auto Refresh (30s)
+                        </label>
+                    </div>
+                    <small class="text-muted">Última atualização: <span id="lastUpdate">Nunca</span></small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Header -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h1 class="mb-0">
+                            <i class="fas fa-chart-line text-primary"></i>
+                            Dashboard de Monitoramento PROMPT 3
+                        </h1>
+                        <p class="text-muted mb-0">Sistema de Qualidade e Métricas AgroTech</p>
+                    </div>
+                    <div>
+                        <button class="btn btn-outline-primary me-2" data-action="refresh-all">
+                            <i class="fas fa-sync-alt"></i> Atualizar
+                        </button>
+                        <button class="btn btn-outline-secondary" data-action="export-metrics">
+                            <i class="fas fa-download"></i> Exportar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Health Status Overview -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-heartbeat text-danger"></i>
+                            Status de Saúde do Sistema
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row" id="healthStatusContainer">
+                            <!-- Health checks serão carregados aqui -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- System Metrics -->
+        <div class="row mb-4">
+            <div class="col-lg-3 col-md-6 mb-3">
+                <div class="card status-card h-100">
+                    <div class="card-body text-center">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <div>
+                                <h6 class="card-title text-muted">CPU Usage</h6>
+                                <div class="metric-value text-primary" id="cpuUsage">--</div>
+                            </div>
+                            <i class="fas fa-microchip fa-2x text-primary opacity-25"></i>
+                        </div>
+                        <div class="progress">
+                            <div class="progress-bar bg-primary" id="cpuProgress" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-3">
+                <div class="card status-card h-100">
+                    <div class="card-body text-center">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <div>
+                                <h6 class="card-title text-muted">Memory Usage</h6>
+                                <div class="metric-value text-success" id="memoryUsage">--</div>
+                            </div>
+                            <i class="fas fa-memory fa-2x text-success opacity-25"></i>
+                        </div>
+                        <div class="progress">
+                            <div class="progress-bar bg-success" id="memoryProgress" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-3">
+                <div class="card status-card h-100">
+                    <div class="card-body text-center">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <div>
+                                <h6 class="card-title text-muted">Disk Usage</h6>
+                                <div class="metric-value text-warning" id="diskUsage">--</div>
+                            </div>
+                            <i class="fas fa-hdd fa-2x text-warning opacity-25"></i>
+                        </div>
+                        <div class="progress">
+                            <div class="progress-bar bg-warning" id="diskProgress" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-3">
+                <div class="card status-card h-100">
+                    <div class="card-body text-center">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <div>
+                                <h6 class="card-title text-muted">Response Time</h6>
+                                <div class="metric-value text-info" id="responseTime">--</div>
+                            </div>
+                            <i class="fas fa-stopwatch fa-2x text-info opacity-25"></i>
+                        </div>
+                        <small class="text-muted">Average last 5min</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Application Metrics -->
+        <div class="row mb-4">
+            <div class="col-lg-6 mb-3">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-chart-bar text-primary"></i>
+                            Métricas da Aplicação
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container">
+                            <canvas id="requestsChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 mb-3">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-exclamation-triangle text-warning"></i>
+                            Alertas Ativos
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="alertsContainer">
+                            <!-- Alertas serão carregados aqui -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- System Resources Chart -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-chart-line text-success"></i>
+                            Recursos do Sistema (Últimas 24h)
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container">
+                            <canvas id="systemResourcesChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Logs -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">
+                                <i class="fas fa-file-alt text-secondary"></i>
+                                Logs Recentes
+                            </h5>
+                            <div>
+                                <select class="form-select form-select-sm" id="logType" data-action="load-logs">>
+                                    <option value="general">Geral</option>
+                                    <option value="errors">Erros</option>
+                                    <option value="audit">Auditoria</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="log-container" id="logsContainer">
+                            <!-- Logs serão carregados aqui -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script nonce="{{ g.csp_nonce }}">
+        // Variáveis globais
+        let autoRefreshInterval;
+        let requestsChart, systemResourcesChart;
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeCharts();
+            loadAllData();
+            setupAutoRefresh();
+            
+            // Event listeners para botões de ação
+            const refreshButton = document.querySelector('[data-action="refresh-all"]');
+            if (refreshButton) {
+                refreshButton.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    refreshAll();
+                });
+            }
+
+            const exportButton = document.querySelector('[data-action="export-metrics"]');
+            if (exportButton) {
+                exportButton.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    exportMetrics();
+                });
+            }
+
+            // Event listener para seletor de logs
+            const logTypeSelect = document.querySelector('[data-action="load-logs"]');
+            if (logTypeSelect) {
+                logTypeSelect.addEventListener('change', function() {
+                    loadLogs();
+                });
+            }
+
+            // Event delegation para botões de resolver alertas (gerados dinamicamente)
+            document.addEventListener('click', function(e) {
+                if (e.target.matches('[data-action="resolve-alert"]')) {
+                    e.preventDefault();
+                    const alertId = e.target.getAttribute('data-alert-id');
+                    if (alertId) {
+                        resolveAlert(alertId);
+                    }
+                }
+            });
+
+            console.log('✅ Event listeners do prompt3 dashboard configurados');
+        });
+
+        function initializeCharts() {
+            // Chart de Requests
+            const requestsCtx = document.getElementById('requestsChart').getContext('2d');
+            requestsChart = new Chart(requestsCtx, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Requests/min',
+                        data: [],
+                        borderColor: 'rgb(54, 162, 235)',
+                        backgroundColor: 'rgba(54, 162, 235, 0.1)',
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            // Chart de System Resources
+            const systemCtx = document.getElementById('systemResourcesChart').getContext('2d');
+            systemResourcesChart = new Chart(systemCtx, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [
+                        {
+                            label: 'CPU %',
+                            data: [],
+                            borderColor: 'rgb(255, 99, 132)',
+                            backgroundColor: 'rgba(255, 99, 132, 0.1)',
+                            tension: 0.1
+                        },
+                        {
+                            label: 'Memory %',
+                            data: [],
+                            borderColor: 'rgb(75, 192, 192)',
+                            backgroundColor: 'rgba(75, 192, 192, 0.1)',
+                            tension: 0.1
+                        },
+                        {
+                            label: 'Disk %',
+                            data: [],
+                            borderColor: 'rgb(255, 205, 86)',
+                            backgroundColor: 'rgba(255, 205, 86, 0.1)',
+                            tension: 0.1
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100
+                        }
+                    }
+                }
+            });
+        }
+
+        function setupAutoRefresh() {
+            const autoRefreshCheckbox = document.getElementById('autoRefresh');
+            
+            if (autoRefreshCheckbox.checked) {
+                autoRefreshInterval = setInterval(loadAllData, 30000);
+            }
+
+            autoRefreshCheckbox.addEventListener('change', function() {
+                if (this.checked) {
+                    autoRefreshInterval = setInterval(loadAllData, 30000);
+                } else {
+                    clearInterval(autoRefreshInterval);
+                }
+            });
+        }
+
+        async function loadAllData() {
+            try {
+                await Promise.all([
+                    loadHealthStatus(),
+                    loadMetrics(),
+                    loadAlerts(),
+                    loadLogs()
+                ]);
+                
+                document.getElementById('lastUpdate').textContent = new Date().toLocaleTimeString();
+            } catch (error) {
+                console.error('Erro ao carregar dados:', error);
+                showAlert('Erro ao carregar dados do dashboard', 'danger');
+            }
+        }
+
+        async function loadHealthStatus() {
+            try {
+                const response = await fetch('/monitoring/api/prompt3/health');
+                const data = await response.json();
+                
+                const container = document.getElementById('healthStatusContainer');
+                container.innerHTML = '';
+                
+                if (data.checks) {
+                    Object.entries(data.checks).forEach(([name, result]) => {
+                        const statusClass = result.status === 'healthy' ? 'health-healthy' : 
+                                          result.status === 'warning' ? 'health-warning' : 'health-critical';
+                        
+                        const icon = result.status === 'healthy' ? 'fa-check-circle' : 
+                                   result.status === 'warning' ? 'fa-exclamation-triangle' : 'fa-times-circle';
+                        
+                        container.innerHTML += `
+                            <div class="col-lg-2 col-md-4 col-sm-6 mb-2">
+                                <div class="text-center">
+                                    <i class="fas ${icon} fa-2x mb-2 ${result.status === 'healthy' ? 'text-success' : result.status === 'warning' ? 'text-warning' : 'text-danger'}"></i>
+                                    <h6 class="mb-1">${name}</h6>
+                                    <span class="health-status ${statusClass}">${result.status}</span>
+                                </div>
+                            </div>
+                        `;
+                    });
+                }
+            } catch (error) {
+                console.error('Erro ao carregar health status:', error);
+            }
+        }
+
+        async function loadMetrics() {
+            try {
+                const response = await fetch('/monitoring/api/prompt3/metrics');
+                const data = await response.json();
+                
+                if (data.system_metrics) {
+                    updateMetricDisplay('cpuUsage', data.system_metrics.cpu_percent, 'cpuProgress');
+                    updateMetricDisplay('memoryUsage', data.system_metrics.memory_percent, 'memoryProgress');
+                    updateMetricDisplay('diskUsage', data.system_metrics.disk_percent, 'diskProgress');
+                }
+                
+                if (data.application_metrics) {
+                    document.getElementById('responseTime').textContent = 
+                        (data.application_metrics.avg_response_time || 0).toFixed(0) + 'ms';
+                    
+                    // Atualizar charts
+                    updateRequestsChart(data.application_metrics);
+                    updateSystemResourcesChart(data.system_metrics);
+                }
+            } catch (error) {
+                console.error('Erro ao carregar métricas:', error);
+            }
+        }
+
+        function updateMetricDisplay(elementId, value, progressId) {
+            if (value !== undefined) {
+                document.getElementById(elementId).textContent = value.toFixed(1) + '%';
+                document.getElementById(progressId).style.width = value + '%';
+                
+                // Atualizar cor baseado no valor
+                const progressBar = document.getElementById(progressId);
+                progressBar.className = 'progress-bar ';
+                if (value < 70) progressBar.className += 'bg-success';
+                else if (value < 85) progressBar.className += 'bg-warning';
+                else progressBar.className += 'bg-danger';
+            }
+        }
+
+        function updateRequestsChart(metrics) {
+            // Simular dados de requests (em produção viriam das métricas reais)
+            const now = new Date();
+            const labels = requestsChart.data.labels;
+            const data = requestsChart.data.datasets[0].data;
+            
+            labels.push(now.toLocaleTimeString());
+            data.push(Math.floor(Math.random() * 100) + 50);
+            
+            // Manter apenas os últimos 20 pontos
+            if (labels.length > 20) {
+                labels.shift();
+                data.shift();
+            }
+            
+            requestsChart.update();
+        }
+
+        function updateSystemResourcesChart(systemMetrics) {
+            if (!systemMetrics) return;
+            
+            const now = new Date();
+            const labels = systemResourcesChart.data.labels;
+            
+            labels.push(now.toLocaleTimeString());
+            
+            systemResourcesChart.data.datasets[0].data.push(systemMetrics.cpu_percent || 0);
+            systemResourcesChart.data.datasets[1].data.push(systemMetrics.memory_percent || 0);
+            systemResourcesChart.data.datasets[2].data.push(systemMetrics.disk_percent || 0);
+            
+            // Manter apenas os últimos 20 pontos
+            if (labels.length > 20) {
+                labels.shift();
+                systemResourcesChart.data.datasets.forEach(dataset => dataset.data.shift());
+            }
+            
+            systemResourcesChart.update();
+        }
+
+        async function loadAlerts() {
+            try {
+                const response = await fetch('/monitoring/api/prompt3/alerts?type=active');
+                const data = await response.json();
+                
+                const container = document.getElementById('alertsContainer');
+                
+                if (data.alerts && data.alerts.length > 0) {
+                    container.innerHTML = data.alerts.map(alert => `
+                        <div class="alert alert-${alert.severity === 'critical' ? 'danger' : alert.severity === 'warning' ? 'warning' : 'info'} alert-dismissible">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <strong>${alert.rule_name}</strong><br>
+                                    <small>${alert.message}</small><br>
+                                    <small class="text-muted">
+                                        <i class="fas fa-clock"></i> ${new Date(alert.triggered_at).toLocaleString()}
+                                    </small>
+                                </div>
+                                <button type="button" class="btn-close" data-action="resolve-alert" data-alert-id="${alert.id}"></button>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    container.innerHTML = '<div class="text-center text-muted"><i class="fas fa-check-circle fa-3x mb-2"></i><br>Nenhum alerta ativo</div>';
+                }
+            } catch (error) {
+                console.error('Erro ao carregar alertas:', error);
+            }
+        }
+
+        async function loadLogs() {
+            try {
+                const logType = document.getElementById('logType').value;
+                const response = await fetch(`/monitoring/api/prompt3/logs/${logType}?lines=50`);
+                const data = await response.json();
+                
+                const container = document.getElementById('logsContainer');
+                
+                if (data.logs && data.logs.length > 0) {
+                    container.innerHTML = data.logs.map(log => {
+                        const levelClass = log.level === 'ERROR' ? 'log-error' : 
+                                         log.level === 'WARNING' ? 'log-warning' : 'log-info';
+                        return `
+                            <div class="log-entry ${levelClass}">
+                                <span class="text-muted">[${new Date(log.timestamp).toLocaleString()}]</span>
+                                <span class="badge bg-secondary">${log.level}</span>
+                                ${log.message}
+                            </div>
+                        `;
+                    }).join('');
+                } else {
+                    container.innerHTML = '<div class="text-center text-muted p-3">Nenhum log encontrado</div>';
+                }
+            } catch (error) {
+                console.error('Erro ao carregar logs:', error);
+            }
+        }
+
+        async function resolveAlert(alertId) {
+            try {
+                const response = await fetch(`/monitoring/api/prompt3/alerts/${alertId}/resolve`, {
+                    method: 'POST'
+                });
+                
+                if (response.ok) {
+                    showAlert('Alerta resolvido com sucesso', 'success');
+                    loadAlerts();
+                } else {
+                    showAlert('Erro ao resolver alerta', 'danger');
+                }
+            } catch (error) {
+                console.error('Erro ao resolver alerta:', error);
+                showAlert('Erro ao resolver alerta', 'danger');
+            }
+        }
+
+        function refreshAll() {
+            loadAllData();
+            showAlert('Dashboard atualizado', 'success');
+        }
+
+        function exportMetrics() {
+            // Implementar exportação de métricas
+            showAlert('Funcionalidade em desenvolvimento', 'info');
+        }
+
+        function showAlert(message, type) {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+            alertDiv.style.cssText = 'top: 100px; right: 20px; z-index: 1050; min-width: 300px;';
+            alertDiv.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            
+            document.body.appendChild(alertDiv);
+            
+            setTimeout(() => {
+                if (alertDiv.parentNode) {
+                    alertDiv.remove();
+                }
+            }, 5000);
+        }
+    </script>
+</body>
+</html>

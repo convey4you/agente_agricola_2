@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}Erro interno - Agente Agrícola{% endblock %}
+
+{% block content %}
+<div class="container-fluid h-100">
+    <div class="row h-100 justify-content-center align-items-center">
+        <div class="col-md-6 text-center">
+            <div class="error-page">
+                <div class="error-number">
+                    <h1 class="display-1 text-danger">500</h1>
+                </div>
+                <div class="error-message">
+                    <h2 class="h4 mb-3">Erro interno do servidor</h2>
+                    <p class="text-muted mb-4">
+                        Ocorreu um erro interno no servidor. Nossa equipe foi notificada e está trabalhando para resolver o problema.
+                    </p>
+                    <div class="error-actions">
+                        <a href="{{ url_for('dashboard.index') }}" class="btn btn-primary me-2">
+                            <i class="fas fa-home"></i> Ir para Dashboard
+                        </a>
+                        <a href="{{ url_for('auth.login') }}" class="btn btn-outline-secondary">
+                            <i class="fas fa-sign-in-alt"></i> Fazer Login
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.error-page {
+    padding: 2rem;
+}
+
+.error-number h1 {
+    font-weight: 300;
+    font-size: 8rem;
+    line-height: 1;
+    color: #dc3545;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+}
+
+.error-message h2 {
+    color: #333;
+    margin-bottom: 1rem;
+}
+
+.error-actions .btn {
+    min-width: 140px;
+    margin-bottom: 0.5rem;
+}
+
+@media (max-width: 768px) {
+    .error-number h1 {
+        font-size: 5rem;
+    }
+    
+    .error-actions .btn {
+        display: block;
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+}
+</style>
+{% endblock %}

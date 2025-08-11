@@ -1,0 +1,64 @@
+# Arquivos e diretórios a ignorar no build Docker
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Git
+.gitignore
+.git/
+
+# Documentation
+*.md
+docs/
+
+# Instance data
+instance/
+uploads/
+
+# Node.js (se houver)
+node_modules/
+npm-debug.log*
+
+# Backup files
+*.bak
+*.backup
+
+# Database files (development)
+*.db
+*.sqlite
+*.sqlite3

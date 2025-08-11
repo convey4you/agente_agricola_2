@@ -1,0 +1,348 @@
+<!-- Progress Bar -->
+<div class="mb-6">
+    <div class="flex justify-between items-center mb-2">
+        <span class="text-sm font-medium text-green-600">Passo 3 de 5</span>
+        <span class="text-sm text-gray-500">60%</span>
+    </div>
+    <div class="w-full bg-gray-200 rounded-full h-2">
+        <div class="bg-green-600 h-2 rounded-full" style="width: 60%"></div>
+    </div>
+</div>
+
+<!-- Header -->
+<div class="text-center mb-6">
+    <div class="mx-auto h-16 w-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
+        <svg class="h-8 w-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+        </svg>
+    </div>
+    <h1 class="text-2xl font-bold text-gray-900 mb-2">
+        Configure o Calendário 📅
+    </h1>
+    <p class="text-gray-600">
+        Defina as datas de plantio e colheita da sua cultura
+    </p>
+</div>
+
+<!-- Resumo das Etapas Anteriores -->
+<div id="resumo-anterior" class="bg-gray-50 rounded-lg p-4 mb-6">
+    <h3 class="font-medium text-gray-900 mb-2">📋 Resumo do Planejamento:</h3>
+    <div id="resumo-conteudo" class="text-sm text-gray-600">
+        Carregando...
+    </div>
+</div>
+
+<!-- Form -->
+<form id="wizardStep3Form">
+    <div class="space-y-6">
+        <!-- Data de Plantio -->
+        <div>
+            <label for="data_plantio" class="block text-sm font-medium text-gray-700 mb-2">
+                Data de Plantio *
+            </label>
+            <input 
+                type="date" 
+                id="data_plantio" 
+                name="data_plantio" 
+                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                required
+            >
+            <p class="text-xs text-gray-500 mt-1">
+                Data inicial do plantio ou semeadura
+            </p>
+        </div>
+
+        <!-- Ciclo da Cultura -->
+        <div>
+            <label for="ciclo_dias" class="block text-sm font-medium text-gray-700 mb-2">
+                Ciclo da Cultura (dias) *
+            </label>
+            <input 
+                type="number" 
+                id="ciclo_dias" 
+                name="ciclo_dias" 
+                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                placeholder="Ex: 90"
+                min="1"
+                max="365"
+                required
+            >
+            <p class="text-xs text-gray-500 mt-1">
+                Tempo do plantio até a primeira colheita
+            </p>
+        </div>
+
+        <!-- Data de Colheita Estimada -->
+        <div>
+            <label for="data_colheita" class="block text-sm font-medium text-gray-700 mb-2">
+                Data de Colheita Estimada
+            </label>
+            <input 
+                type="date" 
+                id="data_colheita" 
+                name="data_colheita" 
+                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent bg-gray-50"
+                readonly
+            >
+            <p class="text-xs text-gray-500 mt-1">
+                Calculada automaticamente com base no ciclo
+            </p>
+        </div>
+
+        <!-- Estação de Plantio -->
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-3">
+                Estação de Plantio *
+            </label>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <label class="relative flex flex-col items-center p-3 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
+                    <input type="radio" name="estacao_plantio" value="primavera" class="sr-only">
+                    <div class="w-4 h-4 border-2 border-gray-300 rounded-full mb-2 flex items-center justify-center">
+                        <div class="w-2 h-2 bg-green-600 rounded-full hidden"></div>
+                    </div>
+                    <div class="text-2xl mb-1">🌸</div>
+                    <div class="text-sm font-medium text-gray-900">Primavera</div>
+                </label>
+                
+                <label class="relative flex flex-col items-center p-3 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
+                    <input type="radio" name="estacao_plantio" value="verao" class="sr-only">
+                    <div class="w-4 h-4 border-2 border-gray-300 rounded-full mb-2 flex items-center justify-center">
+                        <div class="w-2 h-2 bg-green-600 rounded-full hidden"></div>
+                    </div>
+                    <div class="text-2xl mb-1">☀️</div>
+                    <div class="text-sm font-medium text-gray-900">Verão</div>
+                </label>
+                
+                <label class="relative flex flex-col items-center p-3 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
+                    <input type="radio" name="estacao_plantio" value="outono" class="sr-only">
+                    <div class="w-4 h-4 border-2 border-gray-300 rounded-full mb-2 flex items-center justify-center">
+                        <div class="w-2 h-2 bg-green-600 rounded-full hidden"></div>
+                    </div>
+                    <div class="text-2xl mb-1">🍂</div>
+                    <div class="text-sm font-medium text-gray-900">Outono</div>
+                </label>
+                
+                <label class="relative flex flex-col items-center p-3 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
+                    <input type="radio" name="estacao_plantio" value="inverno" class="sr-only">
+                    <div class="w-4 h-4 border-2 border-gray-300 rounded-full mb-2 flex items-center justify-center">
+                        <div class="w-2 h-2 bg-green-600 rounded-full hidden"></div>
+                    </div>
+                    <div class="text-2xl mb-1">❄️</div>
+                    <div class="text-sm font-medium text-gray-900">Inverno</div>
+                </label>
+            </div>
+        </div>
+
+        <!-- Período de Colheita -->
+        <div>
+            <label for="periodo_colheita" class="block text-sm font-medium text-gray-700 mb-2">
+                Período de Colheita (dias)
+            </label>
+            <input 
+                type="number" 
+                id="periodo_colheita" 
+                name="periodo_colheita" 
+                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                placeholder="Ex: 30"
+                min="1"
+                max="180"
+            >
+            <p class="text-xs text-gray-500 mt-1">
+                Duração estimada do período de colheita (opcional)
+            </p>
+        </div>
+
+        <!-- Frequência de Colheita -->
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-3">
+                Frequência de Colheita
+            </label>
+            <div class="space-y-2">
+                <label class="flex items-center">
+                    <input type="radio" name="frequencia_colheita" value="unica" class="mr-3 text-green-600">
+                    <span class="text-sm text-gray-700">Única (colheita em uma vez)</span>
+                </label>
+                <label class="flex items-center">
+                    <input type="radio" name="frequencia_colheita" value="continua" class="mr-3 text-green-600">
+                    <span class="text-sm text-gray-700">Contínua (múltiplas colheitas)</span>
+                </label>
+                <label class="flex items-center">
+                    <input type="radio" name="frequencia_colheita" value="semanal" class="mr-3 text-green-600">
+                    <span class="text-sm text-gray-700">Semanal</span>
+                </label>
+                <label class="flex items-center">
+                    <input type="radio" name="frequencia_colheita" value="quinzenal" class="mr-3 text-green-600">
+                    <span class="text-sm text-gray-700">Quinzenal</span>
+                </label>
+            </div>
+        </div>
+
+        <!-- Observações sobre Calendário -->
+        <div>
+            <label for="observacoes_calendario" class="block text-sm font-medium text-gray-700 mb-2">
+                Observações sobre o Calendário (opcional)
+            </label>
+            <textarea 
+                id="observacoes_calendario" 
+                name="observacoes_calendario" 
+                rows="4" 
+                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent resize-none"
+                placeholder="Ex: Plantio escalonado a cada 15 dias, colheita matinal..."
+            ></textarea>
+        </div>
+    </div>
+
+    <!-- Navigation Buttons -->
+    <div class="flex justify-between pt-6 border-t border-gray-200 mt-8">
+        <button 
+            type="button" 
+            id="voltarPasso2"
+            class="px-6 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-colors"
+        >
+            ← Voltar
+        </button>
+        
+        <button 
+            type="submit" 
+            class="px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 transition-colors"
+        >
+            Próximo Passo →
+        </button>
+    </div>
+</form>
+
+<script>
+// Calculate harvest date based on planting date and cycle
+function calculateHarvestDate() {
+    const plantingDate = document.getElementById('data_plantio').value;
+    const cycleDays = parseInt(document.getElementById('ciclo_dias').value);
+    
+    if (plantingDate && cycleDays) {
+        const planting = new Date(plantingDate);
+        const harvest = new Date(planting);
+        harvest.setDate(harvest.getDate() + cycleDays);
+        
+        document.getElementById('data_colheita').value = harvest.toISOString().split('T')[0];
+    }
+}
+
+// Event listeners for date calculation
+document.getElementById('data_plantio').addEventListener('change', calculateHarvestDate);
+document.getElementById('ciclo_dias').addEventListener('input', calculateHarvestDate);
+
+// Radio button styling for seasons
+document.querySelectorAll('input[name="estacao_plantio"]').forEach(radio => {
+    radio.addEventListener('change', function() {
+        // Reset all radio buttons in the same group
+        document.querySelectorAll('input[name="estacao_plantio"]').forEach(r => {
+            r.closest('label').classList.remove('bg-green-50', 'border-green-500');
+            r.parentNode.querySelector('.w-2.h-2').classList.add('hidden');
+        });
+        
+        // Style the selected radio button
+        if (this.checked) {
+            this.closest('label').classList.add('bg-green-50', 'border-green-500');
+            this.parentNode.querySelector('.w-2.h-2').classList.remove('hidden');
+        }
+    });
+});
+
+// Form handling
+document.getElementById('wizardStep3Form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    const data = {
+        step: '3',
+        data_plantio: formData.get('data_plantio'),
+        ciclo_dias: formData.get('ciclo_dias'),
+        data_colheita: formData.get('data_colheita'),
+        estacao_plantio: formData.get('estacao_plantio'),
+        periodo_colheita: formData.get('periodo_colheita') || null,
+        frequencia_colheita: formData.get('frequencia_colheita') || null,
+        observacoes_calendario: formData.get('observacoes_calendario') || null
+    };
+    
+    // Salvar dados
+    fetch('/cultures/wizard/save', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(result => {
+        if (result.success) {
+            // Ir para próximo passo
+            window.location.href = '/cultures/wizard?step=4&modal=true';
+        } else {
+            alert('Erro ao salvar dados: ' + (result.message || 'Erro desconhecido'));
+        }
+    })
+    .catch(error => {
+        console.error('Erro:', error);
+        alert('Erro ao processar solicitação.');
+    });
+});
+
+// Voltar para passo anterior
+document.getElementById('voltarPasso2').addEventListener('click', function() {
+    window.location.href = '/cultures/wizard?step=2&modal=true';
+});
+
+// Auto-detect season based on planting date
+document.getElementById('data_plantio').addEventListener('change', function() {
+    const date = new Date(this.value);
+    const month = date.getMonth() + 1; // JavaScript months are 0-based
+    
+    let season = '';
+    if (month >= 3 && month <= 5) season = 'outono';      // Mar-Mai
+    else if (month >= 6 && month <= 8) season = 'inverno'; // Jun-Ago
+    else if (month >= 9 && month <= 11) season = 'primavera'; // Set-Nov
+    else season = 'verao'; // Dez-Fev
+    
+    // Auto-select the season
+    const seasonRadio = document.querySelector(`input[name="estacao_plantio"][value="${season}"]`);
+    if (seasonRadio) {
+        seasonRadio.checked = true;
+        seasonRadio.dispatchEvent(new Event('change'));
+    }
+});
+
+// Load summary from previous steps
+document.addEventListener('DOMContentLoaded', function() {
+    fetch('/cultures/wizard/get-session-data')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success && data.data) {
+                const resumo = document.getElementById('resumo-conteudo');
+                let html = '';
+                
+                if (data.data.tipo_cultura) {
+                    html += `<strong>Cultura:</strong> ${data.data.tipo_cultura}`;
+                    if (data.data.variedade) html += ` (${data.data.variedade})`;
+                    html += '<br>';
+                }
+                
+                if (data.data.area_plantada) {
+                    html += `<strong>Área:</strong> ${data.data.area_plantada} ${data.data.unidade_area || 'hectares'}<br>`;
+                }
+                
+                if (data.data.metodo_plantio) {
+                    const metodo = data.data.metodo_plantio === 'direto' ? 'Semeadura Direta' : 'Transplantio de Mudas';
+                    html += `<strong>Método:</strong> ${metodo}`;
+                }
+                
+                resumo.innerHTML = html || 'Carregando...';
+                
+                // Pre-fill form with saved data
+                if (data.data.data_plantio) {
+                    document.getElementById('data_plantio').value = data.data.data_plantio;
+                }
+            }
+        })
+        .catch(error => console.error('Erro ao carregar resumo:', error));
+});
+</script>

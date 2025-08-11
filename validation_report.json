@@ -1,0 +1,104 @@
+{
+  "summary": {
+    "total_tests": 13,
+    "passed_tests": 10,
+    "failed_tests": 3,
+    "success_rate": 76.92307692307693,
+    "execution_time": 33.1616108417511,
+    "status": "FAILED"
+  },
+  "details": [
+    {
+      "test": "health_check_general",
+      "passed": true,
+      "message": "Health check geral funcionando",
+      "details": {},
+      "timestamp": "2025-08-01T16:38:45.131762"
+    },
+    {
+      "test": "health_check_alerts",
+      "passed": true,
+      "message": "Health check de alertas OK - 13 alertas no sistema",
+      "details": {},
+      "timestamp": "2025-08-01T16:38:47.168385"
+    },
+    {
+      "test": "login_test_user",
+      "passed": true,
+      "message": "Login realizado com sucesso",
+      "details": {},
+      "timestamp": "2025-08-01T16:38:55.664168"
+    },
+    {
+      "test": "alerts_widget",
+      "passed": true,
+      "message": "Widget funcionando - Total: 0, Não lidos: 0, Críticos: 0",
+      "details": {},
+      "timestamp": "2025-08-01T16:38:57.736199"
+    },
+    {
+      "test": "alerts_list",
+      "passed": true,
+      "message": "Listagem funcionando - 0 alertas encontrados",
+      "details": {},
+      "timestamp": "2025-08-01T16:38:59.804031"
+    },
+    {
+      "test": "alerts_create",
+      "passed": true,
+      "message": "Alerta criado com sucesso - ID: 14",
+      "details": {},
+      "timestamp": "2025-08-01T16:39:01.872782"
+    },
+    {
+      "test": "alerts_mark_read",
+      "passed": true,
+      "message": "Alerta 14 marcado como lido",
+      "details": {},
+      "timestamp": "2025-08-01T16:39:03.932011"
+    },
+    {
+      "test": "alerts_resolve",
+      "passed": true,
+      "message": "Alerta 14 resolvido",
+      "details": {},
+      "timestamp": "2025-08-01T16:39:05.996238"
+    },
+    {
+      "test": "alerts_generate",
+      "passed": true,
+      "message": "3 alertas de exemplo gerados",
+      "details": {},
+      "timestamp": "2025-08-01T16:39:08.053902"
+    },
+    {
+      "test": "alerts_bulk_read",
+      "passed": true,
+      "message": "3 alertas marcados como lidos em lote",
+      "details": {},
+      "timestamp": "2025-08-01T16:39:10.083494"
+    },
+    {
+      "test": "performance_widget",
+      "passed": false,
+      "message": "Widget muito lento: 2.05s (max: 2.0s)",
+      "details": {},
+      "timestamp": "2025-08-01T16:39:12.133377"
+    },
+    {
+      "test": "performance_listagem",
+      "passed": false,
+      "message": "Listagem muito lento: 2.05s (max: 2.0s)",
+      "details": {},
+      "timestamp": "2025-08-01T16:39:14.183854"
+    },
+    {
+      "test": "performance_health check",
+      "passed": false,
+      "message": "Health Check muito lento: 2.03s (max: 2.0s)",
+      "details": {},
+      "timestamp": "2025-08-01T16:39:16.215852"
+    }
+  ],
+  "timestamp": "2025-08-01T16:39:16.218292"
+}
