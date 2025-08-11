@@ -4,8 +4,37 @@ let currentSection = 'dashboard';
 
 // Verificar autenticação ao carregar a página
 document.addEventListener('DOMContentLoaded', function() {
+    setupMobileOptimizations();
     checkAuthentication();
+    
+    // Registrar Service Worker para PWA
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/static/js/service-worker.js')
+                .then(registration => {
+                    console.log('Service Worker registrado com sucesso:', registration.scope);
+                })
+                .catch(error => {
+                    console.log('Falha ao registrar Service Worker:', error);
+                });
+        });
+    }
 });
+
+// Configuração de otimizações para mobile
+function setupMobileOptimizations() {
+    // Configurar tema escuro/claro
+    setupThemeToggle();
+    
+    // Configurar navegação mobile
+    setupMobileNavigation();
+    
+    // Configurar animações de entrada
+    setupScrollAnimations();
+    
+    // Configurar dropdowns responsivos
+    setupResponsiveDropdowns();
+}
 
 // Verificar se o usuário está autenticado
 async function checkAuthentication() {
@@ -19,9 +48,12 @@ async function checkAuthentication() {
         }
         
         currentUser = data.user;
-        document.getElementById('user-email').textContent = currentUser.email;
-        if (currentUser.propriedade_nome) {
-            document.getElementById('propriedade-nome').textContent = currentUser.propriedade_nome;
+        const userEmailEl = document.getElementById('user-email');
+        if (userEmailEl) userEmailEl.textContent = currentUser.email;
+        
+        const propriedadeNomeEl = document.getElementById('propriedade-nome');
+        if (propriedadeNomeEl && currentUser.propriedade_nome) {
+            propriedadeNomeEl.textContent = currentUser.propriedade_nome;
         }
         
         // Carregar dados iniciais

@@ -1,0 +1,453 @@
+{% extends "base-portugal.html" %}
+
+{% block title %}Nova Cultura - AgroTech Portugal{% endblock %}
+
+{% block head %}
+<style>
+.form-section {
+    margin-bottom: 2rem;
+}
+
+.section-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--verde-agricultura);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+}
+
+.section-title i {
+    margin-right: 0.75rem;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.input-label {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    color: #333;
+}
+
+.required-label::after {
+    content: '*';
+    color: var(--vermelho-vinho);
+    margin-left: 4px;
+}
+
+.help-text {
+    font-size: 0.875rem;
+    color: #666;
+    margin-top: 0.375rem;
+}
+
+.culture-type-card {
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 1rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.culture-type-card:hover {
+    border-color: var(--verde-agricultura-light);
+    background-color: #f9f9f9;
+}
+
+.culture-type-card.selected {
+    border-color: var(--verde-agricultura);
+    background-color: #E8F5E9;
+}
+
+.culture-type-icon {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    color: #666;
+}
+
+.culture-type-card.selected .culture-type-icon {
+    color: var(--verde-agricultura);
+}
+
+.culture-type-label {
+    font-weight: 500;
+    color: #333;
+}
+
+.area-unit-toggle {
+    display: flex;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.unit-option {
+    flex: 1;
+    padding: 0.5rem;
+    text-align: center;
+    background-color: white;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.unit-option.active {
+    background-color: var(--verde-agricultura);
+    color: white;
+    font-weight: 500;
+}
+
+.wizard-progress {
+    display: flex;
+    margin-bottom: 2rem;
+    overflow-x: auto;
+    padding-bottom: 1rem;
+}
+
+.progress-step {
+    flex: 1;
+    text-align: center;
+    position: relative;
+    min-width: 120px;
+}
+
+.step-number {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: #e0e0e0;
+    color: #666;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 0.5rem;
+    font-weight: 600;
+    position: relative;
+    z-index: 1;
+}
+
+.progress-step.active .step-number {
+    background-color: var(--verde-agricultura);
+    color: white;
+}
+
+.progress-step.completed .step-number {
+    background-color: var(--verde-agricultura-light);
+    color: white;
+}
+
+.step-label {
+    font-size: 0.875rem;
+    color: #666;
+}
+
+.progress-step.active .step-label {
+    color: var(--verde-agricultura);
+    font-weight: 500;
+}
+
+.progress-line {
+    position: absolute;
+    top: 18px;
+    left: 50%;
+    width: 100%;
+    height: 2px;
+    background-color: #e0e0e0;
+    z-index: 0;
+}
+
+.progress-step.completed .progress-line {
+    background-color: var(--verde-agricultura-light);
+}
+
+.progress-step:last-child .progress-line {
+    display: none;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-6">
+    <!-- Cabeçalho da Página -->
+    <div class="page-header mb-8">
+        <h1 class="h1-portugal flex items-center">
+            <i class="fas fa-seedling text-verde-oliveira mr-4"></i>
+            Nova Cultura
+        </h1>
+        <p class="text-gray-600 mt-2">
+            Adicione uma nova cultura à sua exploração agrícola
+        </p>
+    </div>
+
+    <!-- Progresso do Wizard -->
+    <div class="wizard-progress">
+        <div class="progress-step active">
+            <div class="step-number">1</div>
+            <div class="progress-line"></div>
+            <div class="step-label">Informações Básicas</div>
+        </div>
+        <div class="progress-step">
+            <div class="step-number">2</div>
+            <div class="progress-line"></div>
+            <div class="step-label">Detalhes de Cultivo</div>
+        </div>
+        <div class="progress-step">
+            <div class="step-number">3</div>
+            <div class="progress-line"></div>
+            <div class="step-label">Calendário</div>
+        </div>
+        <div class="progress-step">
+            <div class="step-number">4</div>
+            <div class="step-label">Confirmação</div>
+        </div>
+    </div>
+
+    <!-- Formulário de Nova Cultura -->
+    <form id="culture-form" class="card-portugal">
+        <div class="card-header-pt">
+            <h2 class="h3-portugal">Passo 1: Informações Básicas</h2>
+        </div>
+        
+        <div class="card-body-pt">
+            <!-- Tipo de Cultura -->
+            <div class="form-section">
+                <div class="section-title">
+                    <i class="fas fa-seedling"></i>
+                    Tipo de Cultura
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="culture-type-card selected" data-type="oliveira">
+                        <div class="culture-type-icon">
+                            <i class="fas fa-tree"></i>
+                        </div>
+                        <div class="culture-type-label">Oliveira</div>
+                    </div>
+                    
+                    <div class="culture-type-card" data-type="vinha">
+                        <div class="culture-type-icon">
+                            <i class="fas fa-wine-bottle"></i>
+                        </div>
+                        <div class="culture-type-label">Vinha</div>
+                    </div>
+                    
+                    <div class="culture-type-card" data-type="horticola">
+                        <div class="culture-type-icon">
+                            <i class="fas fa-carrot"></i>
+                        </div>
+                        <div class="culture-type-label">Hortícola</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Informações Básicas -->
+            <div class="form-section">
+                <div class="section-title">
+                    <i class="fas fa-info-circle"></i>
+                    Informações Gerais
+                </div>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="culture_name" class="input-label required-label">Nome da Cultura</label>
+                        <input type="text" id="culture_name" name="culture_name" class="input-pt" placeholder="Ex: Oliveiras Galega" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="culture_variety" class="input-label required-label">Variedade</label>
+                        <select id="culture_variety" name="culture_variety" class="select-pt" required>
+                            <option value="">Selecione a variedade</option>
+                            <option value="galega">Galega</option>
+                            <option value="cobrancosa">Cobrançosa</option>
+                            <option value="cordovil">Cordovil</option>
+                            <option value="picual">Picual</option>
+                            <option value="arbequina">Arbequina</option>
+                            <option value="outra">Outra</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-group" id="other_variety_container" style="display: none;">
+                    <label for="other_variety" class="input-label required-label">Especifique a Variedade</label>
+                    <input type="text" id="other_variety" name="other_variety" class="input-pt" placeholder="Nome da variedade">
+                </div>
+                
+                <div class="form-group">
+                    <label for="culture_description" class="input-label">Descrição (opcional)</label>
+                    <textarea id="culture_description" name="culture_description" class="textarea-pt" rows="3" placeholder="Informações adicionais sobre a sua cultura"></textarea>
+                </div>
+            </div>
+            
+            <!-- Dimensões e Área -->
+            <div class="form-section">
+                <div class="section-title">
+                    <i class="fas fa-ruler-combined"></i>
+                    Área e Dimensões
+                </div>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="culture_area" class="input-label required-label">Área Total</label>
+                        <div class="flex">
+                            <input type="number" id="culture_area" name="culture_area" class="input-pt flex-grow" min="0.01" step="0.01" placeholder="0.5" required>
+                            <div class="area-unit-toggle ml-2" style="width: 120px;">
+                                <div class="unit-option active" data-unit="ha">ha</div>
+                                <div class="unit-option" data-unit="m2">m²</div>
+                            </div>
+                            <input type="hidden" name="area_unit" id="area_unit" value="ha">
+                        </div>
+                        <p class="help-text">Insira a área total ocupada pela cultura</p>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="plant_count" class="input-label">Número de Plantas (opcional)</label>
+                        <input type="number" id="plant_count" name="plant_count" class="input-pt" min="1" placeholder="Ex: 50">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="culture_location" class="input-label">Localização na Propriedade (opcional)</label>
+                    <input type="text" id="culture_location" name="culture_location" class="input-pt" placeholder="Ex: Terreno Norte, próximo ao ribeiro">
+                </div>
+            </div>
+            
+            <!-- Botões de Navegação -->
+            <div class="flex justify-between mt-8">
+                <a href="/gestao/culturas" class="btn-outline-pt">
+                    <i class="fas fa-arrow-left mr-2"></i>
+                    Cancelar
+                </a>
+                
+                <button type="button" id="next-step" class="btn-primary-pt">
+                    Próximo Passo
+                    <i class="fas fa-arrow-right ml-2"></i>
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🇵🇹 Nova Cultura AgroTech Portugal carregado');
+    
+    // Seleção de tipo de cultura
+    const cultureTypeCards = document.querySelectorAll('.culture-type-card');
+    cultureTypeCards.forEach(card => {
+        card.addEventListener('click', function() {
+            cultureTypeCards.forEach(c => c.classList.remove('selected'));
+            this.classList.add('selected');
+            
+            // Atualiza as variedades baseado no tipo
+            const selectedType = this.getAttribute('data-type');
+            const varietySelect = document.getElementById('culture_variety');
+            varietySelect.innerHTML = '';
+            
+            let options = [];
+            if (selectedType === 'oliveira') {
+                options = [
+                    {value: '', text: 'Selecione a variedade'},
+                    {value: 'galega', text: 'Galega'},
+                    {value: 'cobrancosa', text: 'Cobrançosa'},
+                    {value: 'cordovil', text: 'Cordovil'},
+                    {value: 'picual', text: 'Picual'},
+                    {value: 'arbequina', text: 'Arbequina'},
+                    {value: 'outra', text: 'Outra'}
+                ];
+            } else if (selectedType === 'vinha') {
+                options = [
+                    {value: '', text: 'Selecione a variedade'},
+                    {value: 'touriga_nacional', text: 'Touriga Nacional'},
+                    {value: 'touriga_franca', text: 'Touriga Franca'},
+                    {value: 'tinta_roriz', text: 'Tinta Roriz'},
+                    {value: 'alvarinho', text: 'Alvarinho'},
+                    {value: 'loureiro', text: 'Loureiro'},
+                    {value: 'outra', text: 'Outra'}
+                ];
+            } else if (selectedType === 'horticola') {
+                options = [
+                    {value: '', text: 'Selecione a variedade'},
+                    {value: 'tomate', text: 'Tomate'},
+                    {value: 'alface', text: 'Alface'},
+                    {value: 'couve', text: 'Couve'},
+                    {value: 'cenoura', text: 'Cenoura'},
+                    {value: 'batata', text: 'Batata'},
+                    {value: 'outra', text: 'Outra'}
+                ];
+            }
+            
+            options.forEach(opt => {
+                const option = document.createElement('option');
+                option.value = opt.value;
+                option.textContent = opt.text;
+                varietySelect.appendChild(option);
+            });
+        });
+    });
+    
+    // Mostrar/esconder campo de outra variedade
+    const varietySelect = document.getElementById('culture_variety');
+    const otherVarietyContainer = document.getElementById('other_variety_container');
+    
+    varietySelect.addEventListener('change', function() {
+        if (this.value === 'outra') {
+            otherVarietyContainer.style.display = 'block';
+            document.getElementById('other_variety').setAttribute('required', 'required');
+        } else {
+            otherVarietyContainer.style.display = 'none';
+            document.getElementById('other_variety').removeAttribute('required');
+        }
+    });
+    
+    // Alternar unidades de área
+    const unitOptions = document.querySelectorAll('.unit-option');
+    const areaUnitInput = document.getElementById('area_unit');
+    const areaInput = document.getElementById('culture_area');
+    
+    unitOptions.forEach(option => {
+        option.addEventListener('click', function() {
+            unitOptions.forEach(opt => opt.classList.remove('active'));
+            this.classList.add('active');
+            
+            const oldUnit = areaUnitInput.value;
+            const newUnit = this.getAttribute('data-unit');
+            areaUnitInput.value = newUnit;
+            
+            // Converter valor se necessário
+            if (areaInput.value && !isNaN(areaInput.value)) {
+                const currentValue = parseFloat(areaInput.value);
+                if (oldUnit === 'ha' && newUnit === 'm2') {
+                    // Converter hectares para metros quadrados
+                    areaInput.value = (currentValue * 10000).toFixed(2);
+                } else if (oldUnit === 'm2' && newUnit === 'ha') {
+                    // Converter metros quadrados para hectares
+                    areaInput.value = (currentValue / 10000).toFixed(4);
+                }
+            }
+        });
+    });
+    
+    // Botão próximo passo
+    document.getElementById('next-step').addEventListener('click', function() {
+        // Aqui você implementaria a validação e navegação para o próximo passo
+        alert("Implementação em andamento. Este seria o próximo passo do wizard.");
+        // Exemplo de navegação para o próximo passo (apenas simulação)
+        const steps = document.querySelectorAll('.progress-step');
+        steps[0].classList.remove('active');
+        steps[0].classList.add('completed');
+        steps[1].classList.add('active');
+    });
+});
+</script>
+{% endblock %}

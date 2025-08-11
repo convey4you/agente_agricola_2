@@ -1,0 +1,354 @@
+{% extends "base-portugal.html" %}
+
+{% block title %}Previsão IPMA - AgroTech Portugal{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-6">
+    <!-- Cabeçalho da Página -->
+    <div class="page-header flex flex-col md:flex-row md:items-center justify-between mb-8">
+        <div>
+            <h1 class="h1-portugal flex items-center">
+                <i class="fas fa-cloud-sun text-azul-oceano mr-4"></i>
+                Previsão Meteorológica IPMA
+            </h1>
+            <p class="text-gray-600 mt-2">
+                Dados meteorológicos oficiais do Instituto Português do Mar e da Atmosfera
+            </p>
+        </div>
+        <div class="mt-4 md:mt-0">
+            <span class="badge-success">
+                <i class="fas fa-check-circle mr-2"></i>
+                Dados Atualizados
+            </span>
+        </div>
+    </div>
+
+    <!-- Widget Principal de Clima -->
+    <div class="card-portugal mb-8">
+        <div class="card-header-pt flex justify-between items-center">
+            <h2 class="h3-portugal flex items-center">
+                <i class="fas fa-map-marker-alt text-vermelho-vinho mr-2"></i>
+                {{ weather_data.location_name or 'Sertã, Portugal' }}
+            </h2>
+            <div class="flex items-center">
+                <img src="/static/img/ipma-logo.png" alt="IPMA" class="h-6 mr-2">
+                <span class="text-xs text-gray-500">Fonte: IPMA</span>
+            </div>
+        </div>
+        
+        <div class="card-body-pt">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Condições Atuais -->
+                <div class="current-weather col-span-1 flex flex-col items-center justify-center p-6 bg-blue-50 rounded-lg">
+                    <div class="text-6xl text-azul-oceano mb-4">
+                        <i class="fas fa-sun"></i>
+                    </div>
+                    <div class="text-5xl font-bold text-azul-oceano-dark mb-2">
+                        {{ weather_data.temperature or '21' }}°C
+                    </div>
+                    <div class="text-xl text-azul-oceano mb-4">
+                        {{ weather_data.condition or 'Céu limpo' }}
+                    </div>
+                    <div class="text-sm text-gray-600">
+                        Atualizado: {{ weather_data.updated_at or 'Hoje, 18:30' }}
+                    </div>
+                </div>
+                
+                <!-- Detalhes das Condições -->
+                <div class="col-span-1 lg:col-span-2">
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div class="p-4 bg-gray-50 rounded-lg">
+                            <div class="text-sm text-gray-500 mb-1">Sensação Térmica</div>
+                            <div class="text-xl font-semibold text-gray-800">
+                                {{ weather_data.feels_like or '21' }}°C
+                            </div>
+                        </div>
+                        
+                        <div class="p-4 bg-gray-50 rounded-lg">
+                            <div class="text-sm text-gray-500 mb-1">Humidade</div>
+                            <div class="text-xl font-semibold text-gray-800">
+                                {{ weather_data.humidity or '55' }}%
+                            </div>
+                        </div>
+                        
+                        <div class="p-4 bg-gray-50 rounded-lg">
+                            <div class="text-sm text-gray-500 mb-1">Vento</div>
+                            <div class="text-xl font-semibold text-gray-800">
+                                {{ weather_data.wind_speed or '2.56' }} m/s
+                            </div>
+                        </div>
+                        
+                        <div class="p-4 bg-gray-50 rounded-lg">
+                            <div class="text-sm text-gray-500 mb-1">Pressão</div>
+                            <div class="text-xl font-semibold text-gray-800">
+                                {{ weather_data.pressure or '1019' }} hPa
+                            </div>
+                        </div>
+                        
+                        <div class="p-4 bg-gray-50 rounded-lg">
+                            <div class="text-sm text-gray-500 mb-1">Visibilidade</div>
+                            <div class="text-xl font-semibold text-gray-800">
+                                {{ weather_data.visibility or '10.0' }} km
+                            </div>
+                        </div>
+                        
+                        <div class="p-4 bg-gray-50 rounded-lg">
+                            <div class="text-sm text-gray-500 mb-1">UV Index</div>
+                            <div class="text-xl font-semibold text-gray-800">
+                                {{ weather_data.uv_index or '6' }} (Alto)
+                            </div>
+                        </div>
+                        
+                        <div class="p-4 bg-gray-50 rounded-lg">
+                            <div class="text-sm text-gray-500 mb-1">Nascer do Sol</div>
+                            <div class="text-xl font-semibold text-gray-800">
+                                {{ weather_data.sunrise or '06:21' }}
+                            </div>
+                        </div>
+                        
+                        <div class="p-4 bg-gray-50 rounded-lg">
+                            <div class="text-sm text-gray-500 mb-1">Pôr do Sol</div>
+                            <div class="text-xl font-semibold text-gray-800">
+                                {{ weather_data.sunset or '20:42' }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Previsão dos Próximos Dias -->
+    <div class="card-portugal mb-8">
+        <div class="card-header-pt">
+            <h2 class="h3-portugal flex items-center">
+                <i class="fas fa-calendar-alt text-azul-oceano mr-2"></i>
+                Previsão dos Próximos Dias
+            </h2>
+        </div>
+        
+        <div class="card-body-pt overflow-x-auto">
+            <div class="daily-forecast grid grid-cols-5 gap-4 min-w-max">
+                {% for day in forecast %}
+                <div class="forecast-day-card bg-gray-50 rounded-lg p-4 text-center transition-all hover:bg-blue-50">
+                    <div class="text-sm font-medium text-gray-800 mb-2">{{ day.day_name or 'Segunda' }}</div>
+                    <div class="text-3xl text-azul-oceano mb-3">
+                        <i class="fas {{ day.icon or 'fa-sun' }}"></i>
+                    </div>
+                    <div class="flex justify-center gap-3">
+                        <span class="text-xl font-bold">{{ day.temp_max or '26' }}°</span>
+                        <span class="text-xl text-gray-500">{{ day.temp_min or '18' }}°</span>
+                    </div>
+                    <div class="mt-2 text-sm text-gray-600">{{ day.condition or 'Céu limpo' }}</div>
+                    <div class="mt-1 text-xs text-gray-500">
+                        <i class="fas fa-tint mr-1"></i> {{ day.precip or '0' }}%
+                    </div>
+                </div>
+                {% else %}
+                <!-- Dados de exemplo -->
+                <div class="forecast-day-card bg-gray-50 rounded-lg p-4 text-center transition-all hover:bg-blue-50">
+                    <div class="text-sm font-medium text-gray-800 mb-2">Hoje</div>
+                    <div class="text-3xl text-azul-oceano mb-3">
+                        <i class="fas fa-sun"></i>
+                    </div>
+                    <div class="flex justify-center gap-3">
+                        <span class="text-xl font-bold">26°</span>
+                        <span class="text-xl text-gray-500">18°</span>
+                    </div>
+                    <div class="mt-2 text-sm text-gray-600">Céu limpo</div>
+                    <div class="mt-1 text-xs text-gray-500">
+                        <i class="fas fa-tint mr-1"></i> 0%
+                    </div>
+                </div>
+                
+                <div class="forecast-day-card bg-gray-50 rounded-lg p-4 text-center transition-all hover:bg-blue-50">
+                    <div class="text-sm font-medium text-gray-800 mb-2">Amanhã</div>
+                    <div class="text-3xl text-azul-oceano mb-3">
+                        <i class="fas fa-cloud-sun"></i>
+                    </div>
+                    <div class="flex justify-center gap-3">
+                        <span class="text-xl font-bold">24°</span>
+                        <span class="text-xl text-gray-500">17°</span>
+                    </div>
+                    <div class="mt-2 text-sm text-gray-600">Parcialmente nublado</div>
+                    <div class="mt-1 text-xs text-gray-500">
+                        <i class="fas fa-tint mr-1"></i> 10%
+                    </div>
+                </div>
+                
+                <div class="forecast-day-card bg-gray-50 rounded-lg p-4 text-center transition-all hover:bg-blue-50">
+                    <div class="text-sm font-medium text-gray-800 mb-2">Quarta</div>
+                    <div class="text-3xl text-azul-oceano mb-3">
+                        <i class="fas fa-cloud"></i>
+                    </div>
+                    <div class="flex justify-center gap-3">
+                        <span class="text-xl font-bold">22°</span>
+                        <span class="text-xl text-gray-500">16°</span>
+                    </div>
+                    <div class="mt-2 text-sm text-gray-600">Nublado</div>
+                    <div class="mt-1 text-xs text-gray-500">
+                        <i class="fas fa-tint mr-1"></i> 20%
+                    </div>
+                </div>
+                
+                <div class="forecast-day-card bg-gray-50 rounded-lg p-4 text-center transition-all hover:bg-blue-50">
+                    <div class="text-sm font-medium text-gray-800 mb-2">Quinta</div>
+                    <div class="text-3xl text-azul-oceano mb-3">
+                        <i class="fas fa-cloud-sun"></i>
+                    </div>
+                    <div class="flex justify-center gap-3">
+                        <span class="text-xl font-bold">23°</span>
+                        <span class="text-xl text-gray-500">15°</span>
+                    </div>
+                    <div class="mt-2 text-sm text-gray-600">Parcialmente nublado</div>
+                    <div class="mt-1 text-xs text-gray-500">
+                        <i class="fas fa-tint mr-1"></i> 10%
+                    </div>
+                </div>
+                
+                <div class="forecast-day-card bg-gray-50 rounded-lg p-4 text-center transition-all hover:bg-blue-50">
+                    <div class="text-sm font-medium text-gray-800 mb-2">Sexta</div>
+                    <div class="text-3xl text-azul-oceano mb-3">
+                        <i class="fas fa-sun"></i>
+                    </div>
+                    <div class="flex justify-center gap-3">
+                        <span class="text-xl font-bold">25°</span>
+                        <span class="text-xl text-gray-500">17°</span>
+                    </div>
+                    <div class="mt-2 text-sm text-gray-600">Céu limpo</div>
+                    <div class="mt-1 text-xs text-gray-500">
+                        <i class="fas fa-tint mr-1"></i> 0%
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Avisos Meteorológicos -->
+    <div class="card-portugal mb-8">
+        <div class="card-header-pt">
+            <h2 class="h3-portugal flex items-center">
+                <i class="fas fa-exclamation-triangle text-vermelho-vinho mr-2"></i>
+                Avisos IPMA
+            </h2>
+        </div>
+        
+        <div class="card-body-pt">
+            <div class="alert-portugal alert-aviso mb-4">
+                <i class="alert-icon-pt fas fa-exclamation-circle"></i>
+                <div class="alert-content-pt">
+                    <div class="alert-title-pt">Aviso Amarelo: Temperaturas Elevadas</div>
+                    <div class="alert-description">
+                        Temperaturas máximas acima de 30°C previstas para interior centro e sul.
+                        Válido de 12/08 a 14/08.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="warning-level flex flex-col items-center p-4 bg-gray-50 rounded-lg">
+                    <div class="warning-color w-6 h-6 rounded-full bg-green-500 mb-2"></div>
+                    <div class="text-center">
+                        <div class="font-medium">Verde</div>
+                        <div class="text-sm text-gray-500">Sem avisos</div>
+                    </div>
+                </div>
+                
+                <div class="warning-level flex flex-col items-center p-4 bg-yellow-50 rounded-lg border border-yellow-200">
+                    <div class="warning-color w-6 h-6 rounded-full bg-yellow-500 mb-2"></div>
+                    <div class="text-center">
+                        <div class="font-medium">Amarelo</div>
+                        <div class="text-sm text-gray-500">Estar atento</div>
+                    </div>
+                </div>
+                
+                <div class="warning-level flex flex-col items-center p-4 bg-gray-50 rounded-lg">
+                    <div class="warning-color w-6 h-6 rounded-full bg-orange-500 mb-2"></div>
+                    <div class="text-center">
+                        <div class="font-medium">Laranja</div>
+                        <div class="text-sm text-gray-500">Estar preparado</div>
+                    </div>
+                </div>
+                
+                <div class="warning-level flex flex-col items-center p-4 bg-gray-50 rounded-lg">
+                    <div class="warning-color w-6 h-6 rounded-full bg-red-600 mb-2"></div>
+                    <div class="text-center">
+                        <div class="font-medium">Vermelho</div>
+                        <div class="text-sm text-gray-500">Situação perigosa</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Impacto na Agricultura -->
+    <div class="card-portugal">
+        <div class="card-header-pt">
+            <h2 class="h3-portugal flex items-center">
+                <i class="fas fa-leaf text-verde-agricultura mr-2"></i>
+                Impacto na Agricultura
+            </h2>
+        </div>
+        
+        <div class="card-body-pt">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="impact-card p-5 bg-gray-50 rounded-lg border-l-4 border-verde-agricultura">
+                    <h3 class="font-semibold mb-2 text-verde-agricultura">Oliveiras</h3>
+                    <p class="text-gray-700">
+                        Condições favoráveis para desenvolvimento. Recomendada irrigação suplementar devido às temperaturas elevadas.
+                    </p>
+                </div>
+                
+                <div class="impact-card p-5 bg-gray-50 rounded-lg border-l-4 border-azul-oceano">
+                    <h3 class="font-semibold mb-2 text-azul-oceano">Vinhas</h3>
+                    <p class="text-gray-700">
+                        Boas condições para maturação. Monitorizar níveis de hidratação durante a onda de calor.
+                    </p>
+                </div>
+                
+                <div class="impact-card p-5 bg-gray-50 rounded-lg border-l-4 border-dourado-tradicional">
+                    <h3 class="font-semibold mb-2 text-dourado-tradicional">Hortícolas</h3>
+                    <p class="text-gray-700">
+                        Aumentar frequência de rega. Considerar sombreamento para culturas sensíveis ao calor.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="mt-6 text-center">
+                <a href="/agroconselho" class="btn-primary-pt">
+                    <i class="fas fa-list-ul mr-2"></i>
+                    Ver Recomendações Detalhadas
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🇵🇹 Previsão IPMA AgroTech Portugal carregada');
+    
+    // Destacar aviso atual
+    const warningLevels = document.querySelectorAll('.warning-level');
+    warningLevels[1].classList.add('ring-2', 'ring-yellow-400');
+    
+    // Animação de entrada para cartões de previsão
+    const forecastCards = document.querySelectorAll('.forecast-day-card');
+    forecastCards.forEach((card, index) => {
+        setTimeout(() => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            card.style.transition = 'all 0.4s ease';
+            
+            setTimeout(() => {
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, 100);
+        }, index * 100);
+    });
+});
+</script>
+{% endblock %}

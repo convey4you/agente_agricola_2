@@ -18,6 +18,9 @@ dashboard_bp = Blueprint('dashboard', __name__)
 def index():
     """Dashboard principal"""
     try:
+        # Importar datetime para fornecer a data atual
+        from datetime import datetime, timedelta
+        
         # Obter dados básicos do dashboard
         result = DashboardService.get_dashboard_data()
         
@@ -40,6 +43,9 @@ def index():
             # Garantir que cultures está disponível no contexto principal
             if 'cultures' in context:
                 context['cultures'] = context['cultures']
+        
+        # Adicionar a variável hoje para o template
+        context['hoje'] = 0  # Começa com 0 para o dia atual
         
         # Tentar obter dados de clima do novo serviço
         try:

@@ -1,0 +1,306 @@
+/* ===== MOBILE FIRST DESIGN SYSTEM ===== */
+
+/* Otimização para dispositivos móveis e responsividade */
+:root {
+  /* Viewport-based sizes */
+  --vh: 1vh;
+  --vw: 1vw;
+}
+
+/* Mobile First Base */
+html {
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  overscroll-behavior-y: contain; /* Previne o efeito "pull-to-refresh" */
+  touch-action: manipulation; /* Melhora a responsividade de toque */
+}
+
+/* Melhorias de acessibilidade */
+:focus-visible {
+  outline: 3px solid var(--color-primary-400);
+  outline-offset: 2px;
+}
+
+/* Componentes com design Mobile First */
+
+/* Cards */
+.card-mobile {
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  background: light-dark(var(--color-neutral-50), var(--color-neutral-900));
+  padding: var(--space-md);
+  margin-bottom: var(--space-md);
+  width: 100%;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Botões adaptados para toque */
+.btn-touch {
+  min-height: 44px; /* Área de toque recomendada */
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-md);
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+/* Formulários adaptados */
+.form-field-mobile {
+  margin-bottom: var(--space-md);
+}
+
+.form-input-mobile {
+  width: 100%;
+  padding: 0.75rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-neutral-300);
+  font-size: var(--font-size-base);
+  min-height: 44px; /* Altura mínima para área de toque adequada */
+}
+
+/* Layout para sidebars e navegação mobile */
+.mobile-sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  max-width: 300px;
+  z-index: 50;
+  transform: translateX(-100%);
+  transition: transform 0.3s ease-in-out;
+}
+
+.mobile-sidebar.open {
+  transform: translateX(0);
+}
+
+.mobile-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 40;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease;
+}
+
+.mobile-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Tabelas responsivas */
+.table-responsive {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin-bottom: var(--space-md);
+}
+
+.table-mobile {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table-mobile th,
+.table-mobile td {
+  padding: var(--space-sm);
+  text-align: left;
+  white-space: nowrap;
+}
+
+/* Grid adaptativo */
+.grid-mobile {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--space-md);
+}
+
+/* Feedback tátil */
+@media (hover: hover) {
+  .btn-touch:hover {
+    transform: translateY(-2px);
+  }
+}
+
+.btn-touch:active {
+  transform: translateY(1px);
+}
+
+/* Melhorias de performance */
+.will-change-transform {
+  will-change: transform;
+}
+
+/* Animation utilities */
+.animate-fade-in {
+  animation: fadeIn 0.5s ease forwards;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.3s ease forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+/* Adaptações para diferentes tamanhos de tela */
+/* Small (sm) */
+@media (min-width: 640px) {
+  .card-mobile {
+    padding: var(--space-md) var(--space-lg);
+  }
+}
+
+/* Medium (md) */
+@media (min-width: 768px) {
+  .grid-mobile {
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  }
+}
+
+/* Large (lg) */
+@media (min-width: 1024px) {
+  .mobile-sidebar {
+    position: sticky;
+    transform: none;
+  }
+}
+
+/* Suporte para safe areas no iOS */
+@supports (padding: max(0px)) {
+  .safe-padding-bottom {
+    padding-bottom: max(var(--space-md), env(safe-area-inset-bottom));
+  }
+  
+  .safe-padding-top {
+    padding-top: max(var(--space-md), env(safe-area-inset-top));
+  }
+}
+
+/* Utilitários para tamanhos de fonte responsivos */
+.text-responsive-sm {
+  font-size: clamp(0.875rem, 0.8rem + 0.375vw, 1rem);
+}
+
+.text-responsive-base {
+  font-size: clamp(1rem, 0.9rem + 0.5vw, 1.125rem);
+}
+
+.text-responsive-lg {
+  font-size: clamp(1.125rem, 1rem + 0.625vw, 1.25rem);
+}
+
+.text-responsive-xl {
+  font-size: clamp(1.25rem, 1.1rem + 0.75vw, 1.5rem);
+}
+
+.text-responsive-2xl {
+  font-size: clamp(1.5rem, 1.3rem + 1vw, 2rem);
+}
+
+/* Skeleton Loading para melhor UX */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    rgba(226, 232, 240, 0.6) 25%,
+    rgba(203, 213, 225, 0.6) 37%,
+    rgba(226, 232, 240, 0.6) 63%
+  );
+  background-size: 400% 100%;
+  animation: skeleton-loading 1.4s ease infinite;
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0 50%;
+  }
+}
+
+/* Classes de utilidade para otimizações mobile */
+.touch-target {
+  min-width: 44px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Bottom Navigation para Mobile */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: light-dark(var(--color-neutral-50), var(--color-neutral-900));
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: var(--space-xs) 0;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+  z-index: 40;
+}
+
+.bottom-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--space-xs) 0;
+  color: var(--color-neutral-600);
+}
+
+.bottom-nav-item.active {
+  color: var(--color-primary-600);
+}
+
+.bottom-nav-icon {
+  font-size: 1.25rem;
+  margin-bottom: var(--space-xs);
+}
+
+.bottom-nav-label {
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+/* Adiciona espaço para bottom navigation */
+.has-bottom-nav {
+  padding-bottom: 70px;
+}
+
+@media (min-width: 1024px) {
+  .bottom-nav {
+    display: none;
+  }
+  
+  .has-bottom-nav {
+    padding-bottom: initial;
+  }
+}

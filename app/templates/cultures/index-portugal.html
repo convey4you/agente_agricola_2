@@ -1,0 +1,419 @@
+{% extends "base-portugal.html" %}
+
+{% block title %}Gestão de Culturas - AgroTech Portugal{% endblock %}
+
+{% block head %}
+<style>
+/* Estilos específicos para a página de culturas */
+.culture-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid #E0E0E0;
+    position: relative;
+    overflow: hidden;
+}
+
+.culture-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 20px rgba(0, 0, 0, 0.2);
+}
+
+.culture-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: var(--gradiente-agricultura);
+}
+
+.culture-card.oliveira::before {
+    background: var(--gradiente-oliveira);
+}
+
+.culture-card.vinha::before {
+    background: var(--gradiente-tradicional);
+}
+
+.culture-card.horticolas::before {
+    background: linear-gradient(135deg, var(--verde-agricultura) 0%, var(--verde-agricultura-light) 100%);
+}
+
+.culture-data-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.culture-data-item:last-child {
+    border-bottom: none;
+}
+
+.culture-data-label {
+    color: #666;
+    font-size: 0.875rem;
+}
+
+.culture-data-value {
+    font-weight: 500;
+    color: #333;
+}
+
+.badge-status {
+    padding: 0.25rem 0.75rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.badge-ativa {
+    background-color: #E8F5E9;
+    color: var(--verde-agricultura);
+}
+
+.badge-inativa {
+    background-color: #FFEBEE;
+    color: var(--vermelho-vinho);
+}
+
+.badge-planejada {
+    background-color: #E3F2FD;
+    color: var(--azul-oceano);
+}
+
+.culture-empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+    background-color: #f9f9f9;
+    border-radius: 12px;
+    margin: 2rem 0;
+}
+
+.empty-icon {
+    font-size: 3rem;
+    color: #9E9E9E;
+    margin-bottom: 1rem;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-6">
+    <!-- Cabeçalho da Página -->
+    <div class="page-header flex flex-col md:flex-row md:items-center justify-between mb-8">
+        <div>
+            <h1 class="h1-portugal flex items-center">
+                <i class="fas fa-seedling text-verde-oliveira mr-4"></i>
+                Gestão de Culturas
+            </h1>
+            <p class="text-gray-600 mt-2">
+                Gerencie suas culturas, variedades e ciclos de plantio
+            </p>
+        </div>
+        <div class="mt-4 md:mt-0">
+            <a href="/gestao/culturas/nova" class="btn-primary-pt">
+                <i class="fas fa-plus mr-2"></i>
+                Nova Cultura
+            </a>
+        </div>
+    </div>
+
+    <!-- Filtros e pesquisa -->
+    <div class="card-portugal mb-8">
+        <div class="card-header-pt flex flex-col lg:flex-row lg:items-center lg:justify-between">
+            <h2 class="h4-portugal mb-4 lg:mb-0">Filtrar Culturas</h2>
+            
+            <div class="flex flex-col sm:flex-row gap-4">
+                <div class="search-container">
+                    <input type="text" placeholder="Pesquisar culturas..." class="search-input-pt">
+                    <button type="button" class="search-button-pt">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+                
+                <select class="select-pt">
+                    <option value="all">Todas as culturas</option>
+                    <option value="active">Culturas ativas</option>
+                    <option value="planned">Planejadas</option>
+                    <option value="inactive">Inativas</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lista de Culturas -->
+    <div class="cultures-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Culturas dinâmicas - para quando tivermos dados reais -->
+        {% for culture in cultures %}
+        <div class="culture-card {{ culture.type|lower }}">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-semibold text-verde-agricultura">
+                    <i class="fas fa-{{ culture.icon or 'seedling' }} mr-2"></i>
+                    {{ culture.name }}
+                </h3>
+                <span class="badge-status badge-{{ culture.status|lower }}">{{ culture.status }}</span>
+            </div>
+            
+            <div class="space-y-2">
+                <div class="culture-data-item">
+                    <span class="culture-data-label">Área:</span>
+                    <span class="culture-data-value">{{ culture.area }} {{ culture.area_unit }}</span>
+                </div>
+                <div class="culture-data-item">
+                    <span class="culture-data-label">Variedade:</span>
+                    <span class="culture-data-value">{{ culture.variety }}</span>
+                </div>
+                <div class="culture-data-item">
+                    <span class="culture-data-label">Plantio:</span>
+                    <span class="culture-data-value">{{ culture.planting_date }}</span>
+                </div>
+                <div class="culture-data-item">
+                    <span class="culture-data-label">Ciclo:</span>
+                    <span class="culture-data-value">{{ culture.cycle_type }}</span>
+                </div>
+            </div>
+            
+            <div class="mt-6 flex gap-2">
+                <a href="/culturas/{{ culture.id }}" class="btn-primary-pt flex-1 text-center">
+                    Ver Detalhes
+                </a>
+                <button class="btn-icon-pt">
+                    <i class="fas fa-edit"></i>
+                </button>
+            </div>
+        </div>
+        {% else %}
+        
+        <!-- Dados de exemplo - remova quando tiver culturas reais -->
+        <div class="culture-card oliveira">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-semibold text-verde-oliveira">
+                    <i class="fas fa-tree mr-2"></i>
+                    Oliveiras
+                </h3>
+                <span class="badge-status badge-ativa">Ativa</span>
+            </div>
+            
+            <div class="space-y-2">
+                <div class="culture-data-item">
+                    <span class="culture-data-label">Área:</span>
+                    <span class="culture-data-value">0.5 hectares</span>
+                </div>
+                <div class="culture-data-item">
+                    <span class="culture-data-label">Variedade:</span>
+                    <span class="culture-data-value">Galega</span>
+                </div>
+                <div class="culture-data-item">
+                    <span class="culture-data-label">Plantio:</span>
+                    <span class="culture-data-value">Março 2023</span>
+                </div>
+                <div class="culture-data-item">
+                    <span class="culture-data-label">Ciclo:</span>
+                    <span class="culture-data-value">Perene</span>
+                </div>
+            </div>
+            
+            <div class="mt-6 flex gap-2">
+                <a href="/culturas/1" class="btn-primary-pt flex-1 text-center">
+                    Ver Detalhes
+                </a>
+                <button class="btn-icon-pt">
+                    <i class="fas fa-edit"></i>
+                </button>
+            </div>
+        </div>
+        
+        <div class="culture-card vinha">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-semibold text-dourado-tradicional">
+                    <i class="fas fa-wine-bottle mr-2"></i>
+                    Vinha
+                </h3>
+                <span class="badge-status badge-ativa">Ativa</span>
+            </div>
+            
+            <div class="space-y-2">
+                <div class="culture-data-item">
+                    <span class="culture-data-label">Área:</span>
+                    <span class="culture-data-value">0.75 hectares</span>
+                </div>
+                <div class="culture-data-item">
+                    <span class="culture-data-label">Variedade:</span>
+                    <span class="culture-data-value">Touriga Nacional</span>
+                </div>
+                <div class="culture-data-item">
+                    <span class="culture-data-label">Plantio:</span>
+                    <span class="culture-data-value">Fevereiro 2022</span>
+                </div>
+                <div class="culture-data-item">
+                    <span class="culture-data-label">Ciclo:</span>
+                    <span class="culture-data-value">Perene</span>
+                </div>
+            </div>
+            
+            <div class="mt-6 flex gap-2">
+                <a href="/culturas/2" class="btn-primary-pt flex-1 text-center">
+                    Ver Detalhes
+                </a>
+                <button class="btn-icon-pt">
+                    <i class="fas fa-edit"></i>
+                </button>
+            </div>
+        </div>
+        
+        <div class="culture-card horticolas">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-semibold text-verde-agricultura">
+                    <i class="fas fa-carrot mr-2"></i>
+                    Hortícolas
+                </h3>
+                <span class="badge-status badge-planejada">Planejada</span>
+            </div>
+            
+            <div class="space-y-2">
+                <div class="culture-data-item">
+                    <span class="culture-data-label">Área:</span>
+                    <span class="culture-data-value">0.25 hectares</span>
+                </div>
+                <div class="culture-data-item">
+                    <span class="culture-data-label">Variedade:</span>
+                    <span class="culture-data-value">Diversas</span>
+                </div>
+                <div class="culture-data-item">
+                    <span class="culture-data-label">Plantio:</span>
+                    <span class="culture-data-value">Setembro 2025 (Previsto)</span>
+                </div>
+                <div class="culture-data-item">
+                    <span class="culture-data-label">Ciclo:</span>
+                    <span class="culture-data-value">Sazonal</span>
+                </div>
+            </div>
+            
+            <div class="mt-6 flex gap-2">
+                <a href="/culturas/3" class="btn-primary-pt flex-1 text-center">
+                    Ver Detalhes
+                </a>
+                <button class="btn-icon-pt">
+                    <i class="fas fa-edit"></i>
+                </button>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <!-- Estado vazio (quando não houver culturas) -->
+    {% if not cultures and not true %}
+    <div class="culture-empty-state">
+        <div class="empty-icon">
+            <i class="fas fa-seedling"></i>
+        </div>
+        <h3 class="text-xl font-semibold text-gray-700 mb-2">Nenhuma cultura cadastrada</h3>
+        <p class="text-gray-600 mb-6">Comece a adicionar suas culturas para gerenciar seu plantio</p>
+        <a href="/gestao/culturas/nova" class="btn-primary-pt">
+            <i class="fas fa-plus mr-2"></i>
+            Adicionar Primeira Cultura
+        </a>
+    </div>
+    {% endif %}
+    
+    <!-- Dicas Agrícolas -->
+    <div class="card-portugal mt-12">
+        <div class="card-header-pt">
+            <h2 class="h3-portugal flex items-center">
+                <i class="fas fa-lightbulb text-dourado-tradicional mr-2"></i>
+                Dicas de Cultivo
+            </h2>
+        </div>
+        
+        <div class="card-body-pt">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-gray-50 p-4 rounded-lg border-l-4 border-verde-agricultura">
+                    <h3 class="font-semibold mb-2">Melhores Práticas para Oliveiras</h3>
+                    <p>A poda de formação é essencial nos primeiros 4-5 anos para garantir uma estrutura saudável. Evite podas severas no período que antecede o inverno.</p>
+                </div>
+                
+                <div class="bg-gray-50 p-4 rounded-lg border-l-4 border-dourado-tradicional">
+                    <h3 class="font-semibold mb-2">Gestão da Vinha</h3>
+                    <p>O controlo da carga de uvas é determinante para a qualidade do vinho. Considere a poda em verde para limitar a produção e aumentar a concentração.</p>
+                </div>
+            </div>
+            
+            <div class="text-center mt-6">
+                <a href="/academia" class="text-verde-agricultura hover:underline font-medium">
+                    Ver mais dicas na Academia AgroTech
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🇵🇹 Gestão de Culturas AgroTech Portugal carregada');
+    
+    // Animação de entrada para cartões de cultura
+    const cultureCards = document.querySelectorAll('.culture-card');
+    cultureCards.forEach((card, index) => {
+        setTimeout(() => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            card.style.transition = 'all 0.4s ease';
+            
+            setTimeout(() => {
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, 100);
+        }, index * 150);
+    });
+    
+    // Filtro de pesquisa
+    const searchInput = document.querySelector('.search-input-pt');
+    if (searchInput) {
+        searchInput.addEventListener('input', function() {
+            const query = this.value.toLowerCase();
+            const cards = document.querySelectorAll('.culture-card');
+            
+            cards.forEach(card => {
+                const title = card.querySelector('h3').textContent.toLowerCase();
+                const visible = title.includes(query);
+                card.style.display = visible ? 'block' : 'none';
+            });
+        });
+    }
+    
+    // Filtro de dropdown
+    const selectFilter = document.querySelector('.select-pt');
+    if (selectFilter) {
+        selectFilter.addEventListener('change', function() {
+            const value = this.value;
+            const cards = document.querySelectorAll('.culture-card');
+            
+            cards.forEach(card => {
+                const badge = card.querySelector('.badge-status');
+                const status = badge.textContent.toLowerCase();
+                
+                if (value === 'all') {
+                    card.style.display = 'block';
+                } else if (value === 'active' && status === 'ativa') {
+                    card.style.display = 'block';
+                } else if (value === 'planned' && status === 'planejada') {
+                    card.style.display = 'block';
+                } else if (value === 'inactive' && status === 'inativa') {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+    }
+});
+</script>
+{% endblock %}

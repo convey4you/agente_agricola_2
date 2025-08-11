@@ -33,7 +33,8 @@ def login():
     """Rota de login - Refatorada com rate limiting e validação robusta"""
     if request.method == 'GET':
         LoggingHelper.log_request('auth.login', 'GET')
-        return render_template('auth/login.html')
+        # Modificando para não esperar um objeto form no template
+        return render_template('auth/login.html', form=None)
     
     # Rate limiting aplicado via decorador (forma correta)
     # O rate limiting já é aplicado automaticamente pelo middleware

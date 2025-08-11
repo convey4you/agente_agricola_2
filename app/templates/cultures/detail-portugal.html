@@ -1,0 +1,907 @@
+{% extends "base-portugal.html" %}
+
+{% block title %}Detalhes da Cultura - AgroTech Portugal{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.css">
+<style>
+.detail-header {
+    background: var(--gradiente-agricultura);
+    border-radius: var(--raio-medio);
+    padding: 2rem;
+    color: white;
+    margin-bottom: 2rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.detail-header::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 150px;
+    height: 150px;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M20,20 Q50,5 80,20 Q95,50 80,80 Q50,95 20,80 Q5,50 20,20' fill='none' stroke='rgba(255,255,255,0.1)' stroke-width='2'/%3E%3C/svg%3E") no-repeat;
+    background-size: contain;
+    opacity: 0.3;
+}
+
+.culture-icon {
+    width: 80px;
+    height: 80px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    margin-bottom: 1rem;
+}
+
+.culture-status {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 9999px;
+    font-weight: 600;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    background: rgba(255, 255, 255, 0.9);
+    color: var(--verde-agricultura);
+}
+
+.detail-tabs {
+    display: flex;
+    border-bottom: 2px solid #e5e7eb;
+    margin-bottom: 2rem;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.detail-tabs::-webkit-scrollbar {
+    display: none;
+}
+
+.tab-button {
+    padding: 1rem 1.5rem;
+    font-weight: 500;
+    border-bottom: 3px solid transparent;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+    color: #666;
+}
+
+.tab-button:hover {
+    color: var(--verde-agricultura);
+}
+
+.tab-button.active {
+    color: var(--verde-agricultura);
+    border-bottom-color: var(--verde-agricultura);
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+.data-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.data-card {
+    background: white;
+    border-radius: var(--raio-pequeno);
+    padding: 1.5rem;
+    box-shadow: var(--sombra-suave);
+    border: 1px solid #e5e7eb;
+}
+
+.data-label {
+    font-size: 0.875rem;
+    color: #666;
+    margin-bottom: 0.5rem;
+}
+
+.data-value {
+    font-size: 1.25rem;
+    font-weight: 500;
+    color: #333;
+}
+
+.activity-timeline {
+    position: relative;
+    padding-left: 2rem;
+}
+
+.activity-timeline::before {
+    content: '';
+    position: absolute;
+    left: 7px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: #e5e7eb;
+}
+
+.timeline-item {
+    position: relative;
+    margin-bottom: 1.5rem;
+}
+
+.timeline-point {
+    position: absolute;
+    left: -2rem;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--verde-agricultura);
+}
+
+.timeline-point::before {
+    content: '';
+    position: absolute;
+    top: -3px;
+    left: -3px;
+    right: -3px;
+    bottom: -3px;
+    border-radius: 50%;
+    border: 2px solid var(--verde-agricultura-light);
+    opacity: 0.5;
+}
+
+.timeline-date {
+    font-size: 0.875rem;
+    color: #666;
+    margin-bottom: 0.25rem;
+}
+
+.timeline-content {
+    background: #f9f9f9;
+    padding: 1rem;
+    border-radius: var(--raio-pequeno);
+}
+
+.timeline-title {
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+.chart-container {
+    height: 300px;
+    margin-bottom: 2rem;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-6">
+    <!-- Cabeçalho de Detalhes da Cultura -->
+    <div class="detail-header">
+        <div class="culture-status">Ativa</div>
+        <div class="culture-icon">
+            <i class="fas fa-tree"></i>
+        </div>
+        <h1 class="text-3xl font-bold mb-2">Oliveiras - Galega</h1>
+        <p class="opacity-90">Cultura perene, plantada em Março 2023</p>
+    </div>
+
+    <!-- Navegação por Abas -->
+    <div class="detail-tabs">
+        <button class="tab-button active" data-tab="overview">
+            <i class="fas fa-info-circle mr-2"></i>
+            Visão Geral
+        </button>
+        <button class="tab-button" data-tab="calendar">
+            <i class="fas fa-calendar-alt mr-2"></i>
+            Calendário
+        </button>
+        <button class="tab-button" data-tab="tasks">
+            <i class="fas fa-tasks mr-2"></i>
+            Tarefas
+        </button>
+        <button class="tab-button" data-tab="costs">
+            <i class="fas fa-euro-sign mr-2"></i>
+            Custos e Receitas
+        </button>
+        <button class="tab-button" data-tab="health">
+            <i class="fas fa-heartbeat mr-2"></i>
+            Saúde da Cultura
+        </button>
+        <button class="tab-button" data-tab="notes">
+            <i class="fas fa-sticky-note mr-2"></i>
+            Notas
+        </button>
+    </div>
+
+    <!-- Conteúdo das Abas -->
+    <div id="overview" class="tab-content active">
+        <!-- Dados Gerais -->
+        <div class="data-grid">
+            <div class="data-card">
+                <div class="data-label">Área Total</div>
+                <div class="data-value">0.5 hectares</div>
+            </div>
+            
+            <div class="data-card">
+                <div class="data-label">Número de Plantas</div>
+                <div class="data-value">50 oliveiras</div>
+            </div>
+            
+            <div class="data-card">
+                <div class="data-label">Idade da Plantação</div>
+                <div class="data-value">2 anos e 5 meses</div>
+            </div>
+            
+            <div class="data-card">
+                <div class="data-label">Próxima Intervenção</div>
+                <div class="data-value text-verde-agricultura">Poda (Setembro 2025)</div>
+            </div>
+        </div>
+        
+        <!-- Detalhes da Cultura -->
+        <div class="card-portugal mb-8">
+            <div class="card-header-pt">
+                <h2 class="h3-portugal">Detalhes da Cultura</h2>
+            </div>
+            
+            <div class="card-body-pt">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <h3 class="font-semibold mb-3">Informações Gerais</h3>
+                        <div class="space-y-2">
+                            <div class="flex justify-between py-2 border-b border-gray-100">
+                                <span class="text-gray-600">Variedade:</span>
+                                <span class="font-medium">Galega</span>
+                            </div>
+                            <div class="flex justify-between py-2 border-b border-gray-100">
+                                <span class="text-gray-600">Tipo de Ciclo:</span>
+                                <span class="font-medium">Perene</span>
+                            </div>
+                            <div class="flex justify-between py-2 border-b border-gray-100">
+                                <span class="text-gray-600">Data de Plantio:</span>
+                                <span class="font-medium">15/03/2023</span>
+                            </div>
+                            <div class="flex justify-between py-2 border-b border-gray-100">
+                                <span class="text-gray-600">Localização:</span>
+                                <span class="font-medium">Terreno Norte</span>
+                            </div>
+                            <div class="flex justify-between py-2">
+                                <span class="text-gray-600">Modo de Produção:</span>
+                                <span class="font-medium">Tradicional</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h3 class="font-semibold mb-3">Dados de Produção</h3>
+                        <div class="space-y-2">
+                            <div class="flex justify-between py-2 border-b border-gray-100">
+                                <span class="text-gray-600">Produção Estimada:</span>
+                                <span class="font-medium">500 kg/ha</span>
+                            </div>
+                            <div class="flex justify-between py-2 border-b border-gray-100">
+                                <span class="text-gray-600">Preço Médio:</span>
+                                <span class="font-medium">4,50 €/kg</span>
+                            </div>
+                            <div class="flex justify-between py-2 border-b border-gray-100">
+                                <span class="text-gray-600">Receita Esperada:</span>
+                                <span class="font-medium">1.125,00 €</span>
+                            </div>
+                            <div class="flex justify-between py-2 border-b border-gray-100">
+                                <span class="text-gray-600">Primeira Colheita:</span>
+                                <span class="font-medium">Prevista para Novembro 2025</span>
+                            </div>
+                            <div class="flex justify-between py-2">
+                                <span class="text-gray-600">Período de Plena Produção:</span>
+                                <span class="font-medium">A partir de 2028</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Descrição -->
+                <div class="mt-6">
+                    <h3 class="font-semibold mb-3">Descrição</h3>
+                    <p class="text-gray-700">
+                        Olival tradicional de variedade Galega, com espaçamento de 7x7m. Plantado em Março de 2023, 
+                        em terreno com ligeira inclinação para sul. Objetivo de produção de azeite de alta qualidade. 
+                        Plantas adquiridas no Viveiro Central do Oeste.
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Histórico de Atividades -->
+        <div class="card-portugal mb-8">
+            <div class="card-header-pt">
+                <h2 class="h3-portugal">Histórico de Atividades</h2>
+            </div>
+            
+            <div class="card-body-pt">
+                <div class="activity-timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-point"></div>
+                        <div class="timeline-date">15/03/2023</div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">Plantação</div>
+                            <p class="text-gray-700">Plantação inicial de 50 oliveiras da variedade Galega.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="timeline-point"></div>
+                        <div class="timeline-date">05/05/2023</div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">Instalação Sistema de Rega</div>
+                            <p class="text-gray-700">Instalação de sistema de rega gota-a-gota com programador automático.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="timeline-point"></div>
+                        <div class="timeline-date">20/09/2023</div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">Primeira Poda de Formação</div>
+                            <p class="text-gray-700">Poda leve para formação da estrutura principal das árvores jovens.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="timeline-point"></div>
+                        <div class="timeline-date">10/03/2024</div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">Fertilização</div>
+                            <p class="text-gray-700">Aplicação de adubo orgânico para fortalecimento das plantas.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="timeline-point"></div>
+                        <div class="timeline-date">05/06/2024</div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">Tratamento Preventivo</div>
+                            <p class="text-gray-700">Aplicação de tratamento preventivo contra mosca da azeitona.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="calendar" class="tab-content">
+        <div class="card-portugal mb-8">
+            <div class="card-header-pt">
+                <h2 class="h3-portugal">Calendário Anual</h2>
+            </div>
+            
+            <div class="card-body-pt">
+                <p class="text-gray-700 mb-6">
+                    Calendário de operações culturais para oliveiras, variedade Galega.
+                </p>
+                
+                <div class="overflow-x-auto">
+                    <table class="w-full min-w-max table-portugal">
+                        <thead>
+                            <tr>
+                                <th>Operação</th>
+                                <th>Jan</th>
+                                <th>Fev</th>
+                                <th>Mar</th>
+                                <th>Abr</th>
+                                <th>Mai</th>
+                                <th>Jun</th>
+                                <th>Jul</th>
+                                <th>Ago</th>
+                                <th>Set</th>
+                                <th>Out</th>
+                                <th>Nov</th>
+                                <th>Dez</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Poda</td>
+                                <td class="bg-green-100"></td>
+                                <td class="bg-green-100"></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td class="bg-green-100"></td>
+                                <td class="bg-green-100"></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>Fertilização</td>
+                                <td></td>
+                                <td class="bg-green-100"></td>
+                                <td class="bg-green-100"></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td class="bg-green-100"></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>Controle de Pragas</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td class="bg-green-100"></td>
+                                <td class="bg-green-100"></td>
+                                <td class="bg-green-100"></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>Monitorização</td>
+                                <td class="bg-green-100"></td>
+                                <td class="bg-green-100"></td>
+                                <td class="bg-green-100"></td>
+                                <td class="bg-green-100"></td>
+                                <td class="bg-green-100"></td>
+                                <td class="bg-green-100"></td>
+                                <td class="bg-green-100"></td>
+                                <td class="bg-green-100"></td>
+                                <td class="bg-green-100"></td>
+                                <td class="bg-green-100"></td>
+                                <td class="bg-green-100"></td>
+                                <td class="bg-green-100"></td>
+                            </tr>
+                            <tr>
+                                <td>Rega</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td class="bg-green-100"></td>
+                                <td class="bg-green-100"></td>
+                                <td class="bg-green-100"></td>
+                                <td class="bg-green-100"></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>Colheita</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td class="bg-green-100"></td>
+                                <td class="bg-green-100"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="tasks" class="tab-content">
+        <div class="card-portugal mb-8">
+            <div class="card-header-pt flex justify-between items-center">
+                <h2 class="h3-portugal">Tarefas</h2>
+                <button class="btn-primary-pt">
+                    <i class="fas fa-plus mr-2"></i>
+                    Nova Tarefa
+                </button>
+            </div>
+            
+            <div class="card-body-pt">
+                <div class="task-list space-y-4">
+                    <div class="task-item bg-gray-50 p-4 rounded-lg">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h3 class="font-medium mb-1">Poda de Formação</h3>
+                                <p class="text-gray-600 text-sm mb-2">
+                                    Poda de formação para definir a estrutura das árvores jovens.
+                                </p>
+                                <div class="flex items-center text-sm text-gray-500">
+                                    <span class="flex items-center mr-4">
+                                        <i class="fas fa-calendar mr-1"></i>
+                                        15/09/2025
+                                    </span>
+                                    <span class="flex items-center">
+                                        <i class="fas fa-user mr-1"></i>
+                                        Manuel Silva
+                                    </span>
+                                </div>
+                            </div>
+                            <div>
+                                <span class="badge-status badge-planejada">Agendada</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="task-item bg-gray-50 p-4 rounded-lg">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h3 class="font-medium mb-1">Monitorização de Pragas</h3>
+                                <p class="text-gray-600 text-sm mb-2">
+                                    Verificação mensal de sinais de pragas e doenças.
+                                </p>
+                                <div class="flex items-center text-sm text-gray-500">
+                                    <span class="flex items-center mr-4">
+                                        <i class="fas fa-calendar mr-1"></i>
+                                        Mensal
+                                    </span>
+                                    <span class="flex items-center">
+                                        <i class="fas fa-user mr-1"></i>
+                                        Francisco Rosa
+                                    </span>
+                                </div>
+                            </div>
+                            <div>
+                                <span class="badge-status badge-ativa">Recorrente</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="task-item bg-gray-50 p-4 rounded-lg">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h3 class="font-medium mb-1 line-through text-gray-500">Fertilização de Primavera</h3>
+                                <p class="text-gray-500 text-sm mb-2 line-through">
+                                    Aplicação de adubo orgânico para fortalecimento das plantas.
+                                </p>
+                                <div class="flex items-center text-sm text-gray-500">
+                                    <span class="flex items-center mr-4">
+                                        <i class="fas fa-calendar mr-1"></i>
+                                        10/03/2024
+                                    </span>
+                                    <span class="flex items-center mr-4">
+                                        <i class="fas fa-user mr-1"></i>
+                                        Francisco Rosa
+                                    </span>
+                                    <span class="flex items-center">
+                                        <i class="fas fa-check-circle text-verde-agricultura mr-1"></i>
+                                        Concluída em 12/03/2024
+                                    </span>
+                                </div>
+                            </div>
+                            <div>
+                                <span class="badge-status badge-ativa bg-gray-200 text-gray-600">Concluída</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="costs" class="tab-content">
+        <div class="card-portugal mb-8">
+            <div class="card-header-pt">
+                <h2 class="h3-portugal">Análise Financeira</h2>
+            </div>
+            
+            <div class="card-body-pt">
+                <div class="chart-container">
+                    <canvas id="financialChart"></canvas>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <h3 class="font-semibold mb-3">Custos</h3>
+                        <div class="space-y-2">
+                            <div class="flex justify-between py-2 border-b border-gray-100">
+                                <span class="text-gray-600">Investimento Inicial:</span>
+                                <span class="font-medium">2.500,00 €</span>
+                            </div>
+                            <div class="flex justify-between py-2 border-b border-gray-100">
+                                <span class="text-gray-600">Manutenção Anual:</span>
+                                <span class="font-medium">450,00 €/ano</span>
+                            </div>
+                            <div class="flex justify-between py-2 border-b border-gray-100">
+                                <span class="text-gray-600">Custos Acumulados:</span>
+                                <span class="font-medium">3.400,00 €</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h3 class="font-semibold mb-3">Receitas</h3>
+                        <div class="space-y-2">
+                            <div class="flex justify-between py-2 border-b border-gray-100">
+                                <span class="text-gray-600">Receita Esperada (5 anos):</span>
+                                <span class="font-medium">5.625,00 €</span>
+                            </div>
+                            <div class="flex justify-between py-2 border-b border-gray-100">
+                                <span class="text-gray-600">Retorno Estimado:</span>
+                                <span class="font-medium">2.225,00 €</span>
+                            </div>
+                            <div class="flex justify-between py-2 border-b border-gray-100">
+                                <span class="text-gray-600">Ponto de Equilíbrio:</span>
+                                <span class="font-medium">Ano 7 (2030)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="health" class="tab-content">
+        <div class="card-portugal mb-8">
+            <div class="card-header-pt">
+                <h2 class="h3-portugal">Saúde da Cultura</h2>
+            </div>
+            
+            <div class="card-body-pt">
+                <div class="flex flex-wrap gap-4 mb-6">
+                    <div class="health-indicator bg-green-100 text-verde-agricultura px-4 py-2 rounded-full flex items-center">
+                        <i class="fas fa-check-circle mr-2"></i>
+                        Estado Geral: Excelente
+                    </div>
+                    
+                    <div class="health-indicator bg-blue-100 text-blue-700 px-4 py-2 rounded-full flex items-center">
+                        <i class="fas fa-tint mr-2"></i>
+                        Hidratação: Adequada
+                    </div>
+                    
+                    <div class="health-indicator bg-yellow-100 text-yellow-700 px-4 py-2 rounded-full flex items-center">
+                        <i class="fas fa-bug mr-2"></i>
+                        Pragas: Baixo Risco
+                    </div>
+                </div>
+                
+                <div class="mb-6">
+                    <h3 class="font-semibold mb-3">Histórico de Saúde</h3>
+                    <div class="chart-container">
+                        <canvas id="healthChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="mb-6">
+                    <h3 class="font-semibold mb-3">Pragas e Doenças Comuns</h3>
+                    <div class="space-y-4">
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <h4 class="font-medium mb-1">Mosca da Azeitona (Bactrocera oleae)</h4>
+                            <p class="text-gray-700 text-sm">
+                                Principal praga da oliveira. Monitorar regularmente durante os meses quentes.
+                                Tratamentos preventivos recomendados em maio-julho.
+                            </p>
+                        </div>
+                        
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <h4 class="font-medium mb-1">Olho de Pavão (Spilocaea oleagina)</h4>
+                            <p class="text-gray-700 text-sm">
+                                Doença fúngica que causa manchas nas folhas. Tratamentos preventivos 
+                                recomendados na primavera e outono.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="notes" class="tab-content">
+        <div class="card-portugal mb-8">
+            <div class="card-header-pt flex justify-between items-center">
+                <h2 class="h3-portugal">Notas</h2>
+                <button class="btn-primary-pt">
+                    <i class="fas fa-plus mr-2"></i>
+                    Nova Nota
+                </button>
+            </div>
+            
+            <div class="card-body-pt">
+                <div class="space-y-4">
+                    <div class="note-item bg-yellow-50 p-4 rounded-lg border-l-4 border-yellow-400">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h3 class="font-medium mb-1">Visita Técnico DRAP</h3>
+                                <p class="text-gray-700 mb-2">
+                                    Visita técnica da Direção Regional de Agricultura realizada hoje. Avaliação positiva do desenvolvimento 
+                                    das árvores. Recomendação para considerar sistema de irrigação mais eficiente no próximo ano.
+                                </p>
+                                <div class="text-sm text-gray-500">
+                                    <i class="fas fa-calendar mr-1"></i>
+                                    15/06/2024
+                                </div>
+                            </div>
+                            <div>
+                                <button class="text-gray-400 hover:text-gray-600">
+                                    <i class="fas fa-ellipsis-v"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="note-item bg-blue-50 p-4 rounded-lg border-l-4 border-blue-400">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h3 class="font-medium mb-1">Análise de Solo</h3>
+                                <p class="text-gray-700 mb-2">
+                                    Resultados da análise de solo recebidos. pH ligeiramente baixo (5.8). 
+                                    Recomendada aplicação de calcário dolomítico para correção. 
+                                    Níveis de potássio adequados para oliveiras.
+                                </p>
+                                <div class="text-sm text-gray-500">
+                                    <i class="fas fa-calendar mr-1"></i>
+                                    03/02/2024
+                                </div>
+                            </div>
+                            <div>
+                                <button class="text-gray-400 hover:text-gray-600">
+                                    <i class="fas fa-ellipsis-v"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Barra de Ações -->
+    <div class="flex flex-wrap gap-4 justify-between mt-8">
+        <div>
+            <a href="/gestao/culturas" class="btn-outline-pt">
+                <i class="fas fa-arrow-left mr-2"></i>
+                Voltar
+            </a>
+        </div>
+        
+        <div class="flex gap-3">
+            <button class="btn-outline-pt">
+                <i class="fas fa-edit mr-2"></i>
+                Editar
+            </button>
+            <button class="btn-outline-pt text-vermelho-vinho border-vermelho-vinho hover:bg-vermelho-vinho hover:text-white">
+                <i class="fas fa-trash-alt mr-2"></i>
+                Eliminar
+            </button>
+            <button class="btn-primary-pt">
+                <i class="fas fa-file-pdf mr-2"></i>
+                Exportar
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🇵🇹 Detalhes da Cultura AgroTech Portugal carregado');
+    
+    // Tab Navigation
+    const tabButtons = document.querySelectorAll('.tab-button');
+    const tabContents = document.querySelectorAll('.tab-content');
+    
+    tabButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const tabId = this.getAttribute('data-tab');
+            
+            tabButtons.forEach(btn => btn.classList.remove('active'));
+            tabContents.forEach(content => content.classList.remove('active'));
+            
+            this.classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+        });
+    });
+    
+    // Financial Chart
+    const financialCtx = document.getElementById('financialChart');
+    if (financialCtx) {
+        new Chart(financialCtx, {
+            type: 'bar',
+            data: {
+                labels: ['2023', '2024', '2025', '2026', '2027', '2028'],
+                datasets: [
+                    {
+                        label: 'Custos',
+                        data: [2500, 450, 450, 450, 450, 450],
+                        backgroundColor: 'rgba(239, 68, 68, 0.7)',
+                        borderColor: 'rgba(239, 68, 68, 1)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Receitas',
+                        data: [0, 0, 0, 1125, 1875, 2625],
+                        backgroundColor: 'rgba(16, 185, 129, 0.7)',
+                        borderColor: 'rgba(16, 185, 129, 1)',
+                        borderWidth: 1
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Euros (€)'
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Ano'
+                        }
+                    }
+                }
+            }
+        });
+    }
+    
+    // Health Chart
+    const healthCtx = document.getElementById('healthChart');
+    if (healthCtx) {
+        new Chart(healthCtx, {
+            type: 'line',
+            data: {
+                labels: ['Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez', 'Jan', 'Fev', 'Mar'],
+                datasets: [
+                    {
+                        label: 'Estado Geral',
+                        data: [85, 87, 90, 92, 91, 89, 88, 86, 84, 83, 86, 89],
+                        borderColor: 'rgba(16, 185, 129, 1)',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    },
+                    {
+                        label: 'Risco de Pragas',
+                        data: [10, 15, 25, 35, 40, 30, 20, 15, 10, 5, 10, 15],
+                        borderColor: 'rgba(245, 158, 11, 1)',
+                        backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        title: {
+                            display: true,
+                            text: 'Percentagem (%)'
+                        }
+                    }
+                }
+            }
+        });
+    }
+});
+</script>
+{% endblock %}
