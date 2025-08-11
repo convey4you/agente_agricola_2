@@ -1,0 +1,775 @@
+/* ===== SISTEMA DE DESIGN AGROTECH PORTUGAL ===== */
+
+/* Importação da fonte Inter otimizada para português */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+/* ===== VARIÁVEIS CSS - PALETA PORTUGUESA ===== */
+:root {
+  /* Cores Principais - Identidade Portuguesa */
+  --verde-agricultura: #2E7D32;
+  --verde-oliveira: #689F38;
+  --azul-oceano: #1976D2;
+  --dourado-tradicional: #FFB300;
+  --castanho-terra: #5D4037;
+  --vermelho-vinho: #C62828;
+  
+  /* Variações de Tom */
+  --verde-agricultura-light: #4CAF50;
+  --verde-agricultura-dark: #1B5E20;
+  --verde-oliveira-light: #8BC34A;
+  --verde-oliveira-dark: #33691E;
+  --azul-oceano-light: #42A5F5;
+  --azul-oceano-dark: #0D47A1;
+  
+  /* Cores Neutras */
+  --branco-puro: #FFFFFF;
+  --cinza-claro: #F5F5F5;
+  --cinza-medio: #9E9E9E;
+  --cinza-escuro: #424242;
+  --preto-texto: #212121;
+  
+  /* Cores de Estado */
+  --sucesso: var(--verde-agricultura);
+  --aviso: var(--dourado-tradicional);
+  --erro: var(--vermelho-vinho);
+  --info: var(--azul-oceano);
+  
+  /* Gradientes Portugueses */
+  --gradiente-agricultura: linear-gradient(135deg, var(--verde-agricultura) 0%, var(--verde-agricultura-light) 100%);
+  --gradiente-oliveira: linear-gradient(135deg, var(--verde-oliveira) 0%, var(--verde-oliveira-light) 100%);
+  --gradiente-oceano: linear-gradient(135deg, var(--azul-oceano) 0%, var(--azul-oceano-light) 100%);
+  --gradiente-tradicional: linear-gradient(135deg, var(--dourado-tradicional) 0%, #FFC107 100%);
+  
+  /* Sombras */
+  --sombra-suave: 0 2px 4px rgba(0, 0, 0, 0.1);
+  --sombra-media: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --sombra-forte: 0 8px 15px rgba(0, 0, 0, 0.15);
+  --sombra-hover: 0 12px 20px rgba(0, 0, 0, 0.2);
+  
+  /* Raios de Borda */
+  --raio-pequeno: 8px;
+  --raio-medio: 12px;
+  --raio-grande: 16px;
+  --raio-completo: 50%;
+  
+  /* Espaçamentos */
+  --espaco-xs: 4px;
+  --espaco-sm: 8px;
+  --espaco-md: 16px;
+  --espaco-lg: 24px;
+  --espaco-xl: 32px;
+  --espaco-2xl: 48px;
+  
+  /* Transições */
+  --transicao-rapida: 0.15s ease-in-out;
+  --transicao-normal: 0.3s ease-in-out;
+  --transicao-lenta: 0.5s ease-in-out;
+}
+
+/* ===== TIPOGRAFIA PORTUGUESA ===== */
+.typography-portugal {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-feature-settings: 'kern' 1, 'liga' 1, 'calt' 1, 'ss01' 1;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-variant-numeric: oldstyle-nums;
+}
+
+/* Hierarquia Tipográfica */
+.h1-portugal {
+  font-size: 2.5rem;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+  color: var(--verde-agricultura);
+  margin-bottom: var(--espaco-lg);
+}
+
+.h2-portugal {
+  font-size: 2rem;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.02em;
+  color: var(--verde-agricultura);
+  margin-bottom: var(--espaco-md);
+}
+
+.h3-portugal {
+  font-size: 1.5rem;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--castanho-terra);
+  margin-bottom: var(--espaco-md);
+}
+
+.h4-portugal {
+  font-size: 1.25rem;
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--cinza-escuro);
+  margin-bottom: var(--espaco-sm);
+}
+
+.body-portugal {
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.6;
+  color: var(--preto-texto);
+  margin-bottom: var(--espaco-md);
+}
+
+.small-portugal {
+  font-size: 0.875rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--cinza-escuro);
+}
+
+.caption-portugal {
+  font-size: 0.75rem;
+  font-weight: 400;
+  line-height: 1.4;
+  color: var(--cinza-medio);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* ===== CLASSES UTILITÁRIAS DE CORES ===== */
+.text-verde-agricultura { color: var(--verde-agricultura) !important; }
+.bg-verde-agricultura { background-color: var(--verde-agricultura) !important; }
+.border-verde-agricultura { border-color: var(--verde-agricultura) !important; }
+
+.text-verde-oliveira { color: var(--verde-oliveira) !important; }
+.bg-verde-oliveira { background-color: var(--verde-oliveira) !important; }
+.border-verde-oliveira { border-color: var(--verde-oliveira) !important; }
+
+.text-azul-oceano { color: var(--azul-oceano) !important; }
+.bg-azul-oceano { background-color: var(--azul-oceano) !important; }
+.border-azul-oceano { border-color: var(--azul-oceano) !important; }
+
+.text-dourado-tradicional { color: var(--dourado-tradicional) !important; }
+.bg-dourado-tradicional { background-color: var(--dourado-tradicional) !important; }
+.border-dourado-tradicional { border-color: var(--dourado-tradicional) !important; }
+
+.text-castanho-terra { color: var(--castanho-terra) !important; }
+.bg-castanho-terra { background-color: var(--castanho-terra) !important; }
+
+.text-vermelho-vinho { color: var(--vermelho-vinho) !important; }
+.bg-vermelho-vinho { background-color: var(--vermelho-vinho) !important; }
+
+/* ===== BOTÕES PORTUGUESES ===== */
+.btn-base-pt {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--espaco-md) var(--espaco-xl);
+  border-radius: var(--raio-medio);
+  font-weight: 500;
+  font-size: 1rem;
+  line-height: 1.5;
+  text-decoration: none;
+  transition: all var(--transicao-normal);
+  cursor: pointer;
+  border: none;
+  font-family: inherit;
+  min-height: 44px; /* Acessibilidade touch */
+  gap: var(--espaco-sm);
+}
+
+.btn-primary-pt {
+  background: var(--gradiente-agricultura);
+  color: var(--branco-puro);
+  box-shadow: var(--sombra-media);
+}
+
+.btn-primary-pt:hover {
+  background: var(--verde-agricultura-dark);
+  box-shadow: var(--sombra-hover);
+  transform: translateY(-2px);
+  color: var(--branco-puro);
+  text-decoration: none;
+}
+
+.btn-primary-pt:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.3);
+}
+
+.btn-secondary-pt {
+  background-color: transparent;
+  color: var(--verde-agricultura);
+  border: 2px solid var(--verde-agricultura);
+}
+
+.btn-secondary-pt:hover {
+  background-color: var(--verde-agricultura);
+  color: var(--branco-puro);
+  text-decoration: none;
+}
+
+.btn-outline-pt {
+  background-color: transparent;
+  color: var(--azul-oceano);
+  border: 1px solid var(--azul-oceano);
+}
+
+.btn-outline-pt:hover {
+  background-color: var(--azul-oceano);
+  color: var(--branco-puro);
+  text-decoration: none;
+}
+
+.btn-warning-pt {
+  background: var(--gradiente-tradicional);
+  color: var(--preto-texto);
+  box-shadow: var(--sombra-media);
+}
+
+.btn-warning-pt:hover {
+  background-color: #E65100;
+  color: var(--branco-puro);
+  text-decoration: none;
+}
+
+.btn-danger-pt {
+  background-color: var(--vermelho-vinho);
+  color: var(--branco-puro);
+  box-shadow: var(--sombra-media);
+}
+
+.btn-danger-pt:hover {
+  background-color: #B71C1C;
+  text-decoration: none;
+}
+
+/* Tamanhos de botões */
+.btn-sm-pt {
+  padding: var(--espaco-sm) var(--espaco-md);
+  font-size: 0.875rem;
+  min-height: 36px;
+}
+
+.btn-lg-pt {
+  padding: var(--espaco-lg) var(--espaco-2xl);
+  font-size: 1.125rem;
+  min-height: 52px;
+}
+
+/* ===== CARDS PORTUGUESES ===== */
+.card-portugal {
+  background: var(--branco-puro);
+  border-radius: var(--raio-grande);
+  box-shadow: var(--sombra-media);
+  border: 1px solid #E0E0E0;
+  overflow: hidden;
+  transition: all var(--transicao-normal);
+}
+
+.card-portugal:hover {
+  box-shadow: var(--sombra-hover);
+  transform: translateY(-4px);
+}
+
+.card-header-pt {
+  padding: var(--espaco-lg);
+  border-bottom: 1px solid #E0E0E0;
+  background: linear-gradient(135deg, #F8F9FA 0%, #FFFFFF 100%);
+}
+
+.card-body-pt {
+  padding: var(--espaco-lg);
+}
+
+.card-footer-pt {
+  padding: var(--espaco-lg);
+  border-top: 1px solid #E0E0E0;
+  background: #FAFAFA;
+}
+
+/* Cards especializados */
+.card-agricultura {
+  border-top: 4px solid var(--verde-agricultura);
+}
+
+.card-clima {
+  border-top: 4px solid var(--azul-oceano);
+  background: var(--gradiente-oceano);
+  color: var(--branco-puro);
+}
+
+.card-alerta {
+  border-left: 4px solid var(--dourado-tradicional);
+  background: #FFF8E1;
+}
+
+.card-sucesso {
+  border-left: 4px solid var(--verde-agricultura);
+  background: #E8F5E8;
+}
+
+.card-erro {
+  border-left: 4px solid var(--vermelho-vinho);
+  background: #FFEBEE;
+}
+
+/* ===== FORMULÁRIOS PORTUGUESES ===== */
+.form-group-pt {
+  margin-bottom: var(--espaco-lg);
+}
+
+.form-label-pt {
+  display: block;
+  font-weight: 500;
+  color: var(--castanho-terra);
+  margin-bottom: var(--espaco-sm);
+  font-size: 0.875rem;
+}
+
+.form-input-pt {
+  width: 100%;
+  padding: var(--espaco-md);
+  border: 2px solid #E0E0E0;
+  border-radius: var(--raio-medio);
+  font-size: 1rem;
+  font-family: inherit;
+  transition: all var(--transicao-normal);
+  background-color: var(--branco-puro);
+}
+
+.form-input-pt:focus {
+  outline: none;
+  border-color: var(--verde-agricultura);
+  box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
+}
+
+.form-input-pt:invalid {
+  border-color: var(--vermelho-vinho);
+}
+
+.form-select-pt {
+  width: 100%;
+  padding: var(--espaco-md);
+  border: 2px solid #E0E0E0;
+  border-radius: var(--raio-medio);
+  font-size: 1rem;
+  font-family: inherit;
+  background-color: var(--branco-puro);
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 12px center;
+  background-repeat: no-repeat;
+  background-size: 16px;
+  padding-right: 40px;
+  appearance: none;
+}
+
+.form-textarea-pt {
+  width: 100%;
+  padding: var(--espaco-md);
+  border: 2px solid #E0E0E0;
+  border-radius: var(--raio-medio);
+  font-size: 1rem;
+  font-family: inherit;
+  resize: vertical;
+  min-height: 120px;
+}
+
+.form-help-pt {
+  font-size: 0.75rem;
+  color: var(--cinza-medio);
+  margin-top: var(--espaco-xs);
+}
+
+.form-error-pt {
+  font-size: 0.75rem;
+  color: var(--vermelho-vinho);
+  margin-top: var(--espaco-xs);
+}
+
+/* ===== NAVEGAÇÃO PORTUGUESA ===== */
+.navbar-portugal {
+  background: var(--gradiente-agricultura);
+  box-shadow: var(--sombra-media);
+  padding: var(--espaco-md) 0;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.navbar-brand-pt {
+  display: flex;
+  align-items: center;
+  gap: var(--espaco-md);
+  color: var(--branco-puro);
+  font-weight: 700;
+  font-size: 1.25rem;
+  text-decoration: none;
+}
+
+.navbar-brand-pt:hover {
+  color: var(--branco-puro);
+  text-decoration: none;
+}
+
+.nav-link-pt {
+  display: flex;
+  align-items: center;
+  gap: var(--espaco-sm);
+  padding: var(--espaco-md) var(--espaco-lg);
+  color: var(--branco-puro);
+  text-decoration: none;
+  border-radius: var(--raio-medio);
+  transition: all var(--transicao-normal);
+  font-weight: 500;
+}
+
+.nav-link-pt:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: var(--branco-puro);
+  text-decoration: none;
+  transform: translateX(4px);
+}
+
+.nav-link-pt.active {
+  background-color: rgba(255, 255, 255, 0.2);
+  color: var(--branco-puro);
+}
+
+.nav-icon-pt {
+  font-size: 1.1em;
+  width: 20px;
+  text-align: center;
+}
+
+/* ===== DROPDOWN PORTUGUÊS ===== */
+.dropdown-portugal {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-trigger-pt {
+  background: none;
+  border: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: var(--espaco-sm);
+  padding: var(--espaco-md) var(--espaco-lg);
+  border-radius: var(--raio-medio);
+  transition: all var(--transicao-normal);
+}
+
+.dropdown-menu-pt {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: var(--branco-puro);
+  border-radius: var(--raio-medio);
+  box-shadow: var(--sombra-forte);
+  min-width: 250px;
+  padding: var(--espaco-sm) 0;
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: all var(--transicao-normal);
+}
+
+.dropdown-portugal:hover .dropdown-menu-pt,
+.dropdown-portugal.active .dropdown-menu-pt {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.dropdown-item-pt {
+  display: flex;
+  align-items: center;
+  gap: var(--espaco-md);
+  padding: var(--espaco-md) var(--espaco-lg);
+  color: var(--preto-texto);
+  text-decoration: none;
+  transition: all var(--transicao-rapida);
+}
+
+.dropdown-item-pt:hover {
+  background-color: #F5F5F5;
+  color: var(--verde-agricultura);
+  text-decoration: none;
+}
+
+/* ===== ALERTAS PORTUGUESES ===== */
+.alert-portugal {
+  padding: var(--espaco-lg);
+  border-radius: var(--raio-medio);
+  margin-bottom: var(--espaco-lg);
+  display: flex;
+  align-items: flex-start;
+  gap: var(--espaco-md);
+}
+
+.alert-sucesso {
+  background-color: #E8F5E8;
+  border: 1px solid var(--verde-agricultura);
+  color: var(--verde-agricultura-dark);
+}
+
+.alert-aviso {
+  background-color: #FFF8E1;
+  border: 1px solid var(--dourado-tradicional);
+  color: #E65100;
+}
+
+.alert-erro {
+  background-color: #FFEBEE;
+  border: 1px solid var(--vermelho-vinho);
+  color: var(--vermelho-vinho);
+}
+
+.alert-info {
+  background-color: #E3F2FD;
+  border: 1px solid var(--azul-oceano);
+  color: var(--azul-oceano-dark);
+}
+
+.alert-icon-pt {
+  font-size: 1.25rem;
+  margin-top: 2px;
+}
+
+.alert-content-pt {
+  flex: 1;
+}
+
+.alert-title-pt {
+  font-weight: 600;
+  margin-bottom: var(--espaco-xs);
+}
+
+/* ===== BADGES PORTUGUESES ===== */
+.badge-portugal {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--espaco-xs) var(--espaco-md);
+  border-radius: var(--raio-completo);
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.badge-sucesso {
+  background-color: var(--verde-agricultura);
+  color: var(--branco-puro);
+}
+
+.badge-aviso {
+  background-color: var(--dourado-tradicional);
+  color: var(--preto-texto);
+}
+
+.badge-erro {
+  background-color: var(--vermelho-vinho);
+  color: var(--branco-puro);
+}
+
+.badge-info {
+  background-color: var(--azul-oceano);
+  color: var(--branco-puro);
+}
+
+/* ===== RESPONSIVIDADE PORTUGUESA ===== */
+@media (max-width: 1024px) {
+  .h1-portugal { font-size: 2rem; }
+  .h2-portugal { font-size: 1.75rem; }
+  .h3-portugal { font-size: 1.25rem; }
+  
+  .btn-base-pt {
+    padding: var(--espaco-md) var(--espaco-lg);
+  }
+  
+  .card-body-pt {
+    padding: var(--espaco-md);
+  }
+}
+
+@media (max-width: 768px) {
+  .h1-portugal { font-size: 1.75rem; }
+  .h2-portugal { font-size: 1.5rem; }
+  .h3-portugal { font-size: 1.125rem; }
+  
+  .btn-base-pt {
+    padding: var(--espaco-sm) var(--espaco-md);
+    font-size: 0.875rem;
+  }
+  
+  .card-portugal {
+    margin: var(--espaco-md);
+  }
+  
+  .navbar-portugal {
+    padding: var(--espaco-sm) 0;
+  }
+  
+  .dropdown-menu-pt {
+    position: fixed;
+    top: auto;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    min-width: auto;
+    border-radius: var(--raio-grande) var(--raio-grande) 0 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .h1-portugal { font-size: 1.5rem; }
+  .h2-portugal { font-size: 1.25rem; }
+  
+  .btn-base-pt {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .card-body-pt {
+    padding: var(--espaco-sm);
+  }
+}
+
+/* ===== ANIMAÇÕES PORTUGUESAS ===== */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+.fade-in-up {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.slide-in-right {
+  animation: slideInRight 0.6s ease-out;
+}
+
+.pulse-animation {
+  animation: pulse 2s infinite;
+}
+
+/* ===== UTILITÁRIOS PORTUGUESES ===== */
+.text-center-pt { text-align: center !important; }
+.text-left-pt { text-align: left !important; }
+.text-right-pt { text-align: right !important; }
+
+.d-flex-pt { display: flex !important; }
+.d-block-pt { display: block !important; }
+.d-none-pt { display: none !important; }
+
+.justify-center-pt { justify-content: center !important; }
+.justify-between-pt { justify-content: space-between !important; }
+.align-center-pt { align-items: center !important; }
+
+.gap-sm-pt { gap: var(--espaco-sm) !important; }
+.gap-md-pt { gap: var(--espaco-md) !important; }
+.gap-lg-pt { gap: var(--espaco-lg) !important; }
+
+.m-0-pt { margin: 0 !important; }
+.mb-sm-pt { margin-bottom: var(--espaco-sm) !important; }
+.mb-md-pt { margin-bottom: var(--espaco-md) !important; }
+.mb-lg-pt { margin-bottom: var(--espaco-lg) !important; }
+
+.p-sm-pt { padding: var(--espaco-sm) !important; }
+.p-md-pt { padding: var(--espaco-md) !important; }
+.p-lg-pt { padding: var(--espaco-lg) !important; }
+
+.rounded-pt { border-radius: var(--raio-medio) !important; }
+.rounded-lg-pt { border-radius: var(--raio-grande) !important; }
+
+.shadow-pt { box-shadow: var(--sombra-media) !important; }
+.shadow-lg-pt { box-shadow: var(--sombra-forte) !important; }
+
+/* ===== MODO ESCURO PORTUGUÊS ===== */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --branco-puro: #121212;
+    --cinza-claro: #1E1E1E;
+    --cinza-medio: #757575;
+    --cinza-escuro: #BDBDBD;
+    --preto-texto: #FFFFFF;
+  }
+  
+  .card-portugal {
+    background: #1E1E1E;
+    border-color: #333333;
+  }
+  
+  .form-input-pt,
+  .form-select-pt,
+  .form-textarea-pt {
+    background-color: #1E1E1E;
+    border-color: #333333;
+    color: #FFFFFF;
+  }
+  
+  .dropdown-menu-pt {
+    background: #1E1E1E;
+    border: 1px solid #333333;
+  }
+}
+
+/* ===== ACESSIBILIDADE ===== */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Foco visível para navegação por teclado */
+*:focus-visible {
+  outline: 2px solid var(--verde-agricultura);
+  outline-offset: 2px;
+}
+
+/* Redução de movimento para usuários sensíveis */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+

@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="pt-PT" class="typography-portugal">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="color-scheme" content="light dark">
+    <meta name="theme-color" content="#2E7D32">
+    <meta name="description" content="AgroTech Portugal - Plataforma digital para agricultura familiar portuguesa">
+    <meta name="keywords" content="agricultura familiar, Portugal, tecnologia agrícola, IPMA, olivicultura, viticultura">
+    <title>{% block title %}AgroTech Portugal - Inovação para a Agricultura Familiar{% endblock %}</title>
+    
+    <!-- Tailwind CSS (Base) -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://use.fontawesome.com/releases/v6.0.0/css/all.css" rel="stylesheet">
+    <!-- Google Fonts - Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Sistema de Design Português -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/portugal-design-system.css') }}">
+    <!-- CSS Customizados -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/design-system-v2.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/components.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/tailwind-overrides.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/icon-fixes.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/visual-improvements.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+    
+    {% block head %}{% endblock %}
+</head>
+<body class="typography-portugal">
+    <div class="app-container">
+        <!-- Header Português -->
+        <header class="navbar-portugal">
+            <div class="container mx-auto px-4">
+                <div class="flex justify-between items-center">
+                    <div class="flex items-center">
+                        <button id="sidebar-toggle" class="nav-icon-pt mr-4 lg:hidden text-white">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                        <a href="{{ url_for('dashboard.index') if current_user.is_authenticated else url_for('auth.login') }}" 
+                           class="navbar-brand-pt">
+                            🌱 AgroTech Portugal
+                        </a>
+                        <div class="ml-4 hidden md:flex items-center">
+                            <span class="badge-sucesso">Integração IPMA</span>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center space-x-4">
+                        <!-- Widget Clima Rápido -->
+                        <div class="hidden md:flex items-center text-white bg-white bg-opacity-20 rounded-lg px-3 py-1">
+                            <i class="fas fa-cloud-sun mr-2"></i>
+                            <span class="text-sm">23°C • Serta</span>
+                        </div>
+                        
+                        <!-- Toggle Dark Mode -->
+                        <button id="theme-toggle" class="text-white hover:text-green-200 p-2 rounded-lg transition-colors" 
+                                aria-label="Alternar tema escuro/claro">
+                            <i class="fas fa-moon" id="theme-icon"></i>
+                        </button>
+                        
+                        {% if current_user.is_authenticated %}
+                            <div class="relative dropdown-portugal">
+                                <button class="dropdown-trigger-pt text-white hover:text-green-200">
+                                    <i class="fas fa-user mr-2"></i>
+                                    <span class="hidden md:inline">{{ current_user.nome_completo or current_user.email }}</span>
+                                    <i class="fas fa-chevron-down text-sm ml-1"></i>
+                                </button>
+                                <div class="dropdown-menu-pt">
+                                    <a href="#" class="dropdown-item-pt">
+                                        <i class="fas fa-user"></i>
+                                        Perfil
+                                    </a>
+                                    <a href="#" class="dropdown-item-pt">
+                                        <i class="fas fa-cog"></i>
+                                        Configurações
+                                    </a>
+                                    <hr class="my-2">
+                                    <a href="#" class="dropdown-item-pt text-vermelho-vinho" id="logout-btn">
+                                        <i class="fas fa-sign-out-alt"></i>
+                                        Sair
+                                    </a>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="app-layout">
+            {% if current_user.is_authenticated %}
+            <!-- Sidebar Portuguesa -->
+            <aside class="app-sidebar bg-white shadow-lg">
+                <nav class="sidebar-nav p-4" role="navigation" aria-label="Navegação principal">
+                    <ul class="nav-list space-y-2">
+                        <li class="nav-item">
+                            <a href="{{ url_for('dashboard.index') }}" 
+                               class="nav-link-pt {{ 'active' if request.endpoint == 'dashboard.index' }}">
+                                <i class="nav-icon-pt fas fa-home text-verde-agricultura"></i>
+                                <span>Início</span>
+                            </a>
+                        </li>
+                        
+                        <li class="nav-item">
+                            <div class="dropdown-portugal">
+                                <button class="dropdown-trigger-pt nav-link-pt w-full text-left justify-between" 
+                                        aria-haspopup="true" aria-expanded="false">
+                                    <div class="flex items-center">
+                                        <i class="nav-icon-pt fas fa-cloud-sun text-azul-oceano"></i>
+                                        <span>Central Climática</span>
+                                    </div>
+                                    <i class="fas fa-chevron-down text-sm"></i>
+                                </button>
+                                <div class="dropdown-menu-pt">
+                                    <a href="/clima/previsao" class="dropdown-item-pt">
+                                        <i class="fas fa-sun text-dourado-tradicional"></i>
+                                        Previsão IPMA
+                                    </a>
+                                    <a href="/clima/alertas" class="dropdown-item-pt">
+                                        <i class="fas fa-exclamation-triangle text-vermelho-vinho"></i>
+                                        Alertas Meteorológicos
+                                    </a>
+                                    <a href="/clima/historico" class="dropdown-item-pt">
+                                        <i class="fas fa-chart-line text-azul-oceano"></i>
+                                        Dados Históricos
+                                    </a>
+                                </div>
+                            </div>
+                        </li>
+                        
+                        <li class="nav-item">
+                            <div class="dropdown-portugal">
+                                <button class="dropdown-trigger-pt nav-link-pt w-full text-left justify-between" 
+                                        aria-haspopup="true" aria-expanded="false">
+                                    <div class="flex items-center">
+                                        <i class="nav-icon-pt fas fa-newspaper text-castanho-terra"></i>
+                                        <span>Observatório Agrícola</span>
+                                    </div>
+                                    <i class="fas fa-chevron-down text-sm"></i>
+                                </button>
+                                <div class="dropdown-menu-pt">
+                                    <a href="/noticias/pac" class="dropdown-item-pt">
+                                        <i class="fas fa-euro-sign text-dourado-tradicional"></i>
+                                        Notícias PAC
+                                    </a>
+                                    <a href="/noticias/mercados" class="dropdown-item-pt">
+                                        <i class="fas fa-chart-line text-verde-agricultura"></i>
+                                        Mercados Locais
+                                    </a>
+                                    <a href="/noticias/programas" class="dropdown-item-pt">
+                                        <i class="fas fa-hand-holding-usd text-azul-oceano"></i>
+                                        Programas de Apoio
+                                    </a>
+                                </div>
+                            </div>
+                        </li>
+                        
+                        <li class="nav-item">
+                            <div class="dropdown-portugal">
+                                <button class="dropdown-trigger-pt nav-link-pt w-full text-left justify-between" 
+                                        aria-haspopup="true" aria-expanded="false">
+                                    <div class="flex items-center">
+                                        <i class="nav-icon-pt fas fa-shield-alt text-verde-oliveira"></i>
+                                        <span>Proteção Fitossanitária</span>
+                                    </div>
+                                    <i class="fas fa-chevron-down text-sm"></i>
+                                </button>
+                                <div class="dropdown-menu-pt">
+                                    <a href="/protecao/diagnostico" class="dropdown-item-pt">
+                                        <i class="fas fa-camera text-azul-oceano"></i>
+                                        Diagnóstico por Imagem
+                                    </a>
+                                    <a href="/protecao/produtos" class="dropdown-item-pt">
+                                        <i class="fas fa-flask text-verde-agricultura"></i>
+                                        Produtos Autorizados
+                                    </a>
+                                    <a href="/protecao/calendario" class="dropdown-item-pt">
+                                        <i class="fas fa-calendar-alt text-dourado-tradicional"></i>
+                                        Calendário de Tratamentos
+                                    </a>
+                                </div>
+                            </div>
+                        </li>
+                        
+                        <li class="nav-item">
+                            <a href="/academia" class="nav-link-pt">
+                                <i class="nav-icon-pt fas fa-graduation-cap text-azul-oceano"></i>
+                                <span>Academia AgroTech</span>
+                            </a>
+                        </li>
+                        
+                        <li class="nav-item">
+                            <div class="dropdown-portugal">
+                                <button class="dropdown-trigger-pt nav-link-pt w-full text-left justify-between" 
+                                        aria-haspopup="true" aria-expanded="false">
+                                    <div class="flex items-center">
+                                        <i class="nav-icon-pt fas fa-tractor text-castanho-terra"></i>
+                                        <span>Gestão da Exploração</span>
+                                    </div>
+                                    <i class="fas fa-chevron-down text-sm"></i>
+                                </button>
+                                <div class="dropdown-menu-pt">
+                                    <a href="{{ url_for('culture.list_cultures') }}" class="dropdown-item-pt">
+                                        <i class="fas fa-seedling text-verde-oliveira"></i>
+                                        Gestão de Culturas
+                                    </a>
+                                    <a href="/gestao/parcelas" class="dropdown-item-pt">
+                                        <i class="fas fa-map text-azul-oceano"></i>
+                                        Gestão de Parcelas
+                                    </a>
+                                    <a href="/gestao/registos" class="dropdown-item-pt">
+                                        <i class="fas fa-clipboard-list text-castanho-terra"></i>
+                                        Registos Obrigatórios
+                                    </a>
+                                </div>
+                            </div>
+                        </li>
+                        
+                        <li class="nav-item">
+                            <a href="{{ url_for('agent.index') }}" 
+                               class="nav-link-pt {{ 'active' if request.endpoint and request.endpoint.startswith('agent') }}">
+                                <i class="nav-icon-pt fas fa-robot text-verde-agricultura"></i>
+                                <span>Assistente IA</span>
+                            </a>
+                        </li>
+                        
+                        <li class="nav-item">
+                            <a href="{{ url_for('reports.index') }}" 
+                               class="nav-link-pt {{ 'active' if request.endpoint and request.endpoint.startswith('reports') }}">
+                                <i class="nav-icon-pt fas fa-chart-bar text-azul-oceano"></i>
+                                <span>Relatórios</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </aside>
+            {% endif %}
+
+            <!-- Main Content -->
+            <main class="app-content">
+                <!-- Flash Messages Portuguesas -->
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        <div class="mb-6">
+                            {% for category, message in messages %}
+                                <div class="alert-portugal {{ 'alert-erro' if category == 'error' else 'alert-info' if category == 'info' else 'alert-sucesso' if category == 'success' else 'alert-aviso' }}">
+                                    <i class="alert-icon-pt fas {{ 'fa-exclamation-triangle' if category == 'error' else 'fa-info-circle' if category == 'info' else 'fa-check-circle' if category == 'success' else 'fa-exclamation-circle' }}"></i>
+                                    <div class="alert-content-pt">
+                                        <div class="alert-title-pt">{{ message }}</div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                {% endwith %}
+
+                <!-- Page Content -->
+                {% block content %}{% endblock %}
+            </main>
+        </div>
+    </div>
+
+    <!-- JavaScript - V2.0 Enhanced -->
+    <script src="{{ url_for('static', filename='js/icon-fallback.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/theme-manager.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/loading-manager.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/notification-system.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/portugal-interactions.js') }}"></script>
+    {% block scripts %}{% endblock %}
+
+    <!-- Modal de Logout Português -->
+    <div id="logoutModal" class="modal">
+        <div class="modal-content card-portugal">
+            <div class="flex items-center justify-center w-16 h-16 mx-auto mb-4 bg-red-100 rounded-full">
+                <svg class="w-8 h-8 text-vermelho-vinho" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                </svg>
+            </div>
+            <h3 class="h3-portugal text-center mb-3">Confirmar Saída</h3>
+            <p class="body-portugal text-center mb-6">
+                Tem certeza que deseja sair da sua conta? 
+                <br><span class="small-portugal">Será redirecionado para a página de login.</span>
+            </p>
+            <div class="flex gap-4 justify-center">
+                <button type="button" id="modal-cancel-btn" class="btn-secondary-pt">
+                    Cancelar
+                </button>
+                <button type="button" id="modal-confirm-btn" class="btn-danger-pt">
+                    Sair
+                </button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

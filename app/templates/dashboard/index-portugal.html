@@ -1,0 +1,401 @@
+{% extends "base-portugal.html" %}
+
+{% block title %}Painel de Controlo - AgroTech Portugal{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-6">
+    <!-- Hero Section Português -->
+    <div class="hero-section-portugal mb-8 fade-in-up">
+        <div class="bg-gradient-to-r from-verde-agricultura to-verde-oliveira rounded-lg p-8 text-white">
+            <div class="flex flex-col lg:flex-row items-center justify-between">
+                <div class="lg:w-2/3 mb-6 lg:mb-0">
+                    <h1 class="text-3xl lg:text-4xl font-bold mb-4">
+                        Bem-vindo ao AgroTech Portugal
+                    </h1>
+                    <p class="text-lg opacity-90 mb-6">
+                        Plataforma digital especializada para a agricultura familiar portuguesa. 
+                        Integração oficial com IPMA e conformidade com o Estatuto da Agricultura Familiar.
+                    </p>
+                    <div class="flex flex-wrap gap-4">
+                        <a href="/gestao/culturas" class="btn-primary-pt bg-white text-verde-agricultura hover:bg-gray-100">
+                            <i class="fas fa-seedling mr-2"></i>
+                            Gerir Culturas
+                        </a>
+                        <a href="/clima/previsao" class="btn-outline-pt border-white text-white hover:bg-white hover:text-verde-agricultura">
+                            <i class="fas fa-cloud-sun mr-2"></i>
+                            Ver Previsão IPMA
+                        </a>
+                    </div>
+                </div>
+                <div class="lg:w-1/3 text-center">
+                    <div class="bg-white bg-opacity-20 rounded-lg p-6">
+                        <i class="fas fa-certificate text-4xl mb-3"></i>
+                        <h3 class="font-semibold mb-2">Certificado IPMA</h3>
+                        <p class="text-sm opacity-90">Dados meteorológicos oficiais</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Métricas Principais -->
+    <div class="dashboard-metrics mb-8 slide-in-right">
+        <div class="metric-card culturas card-agricultura">
+            <div class="flex items-center justify-between">
+                <div>
+                    <div class="metric-label">Culturas Ativas</div>
+                    <div class="metric-value text-verde-agricultura">{{ culturas_ativas or 1 }}</div>
+                    <div class="text-sm text-gray-600">
+                        <i class="fas fa-seedling mr-1"></i>
+                        Oliveiras, Vinhas, Hortícolas
+                    </div>
+                </div>
+                <div class="text-verde-agricultura">
+                    <i class="fas fa-seedling text-3xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="metric-card area card-agricultura">
+            <div class="flex items-center justify-between">
+                <div>
+                    <div class="metric-label">Área Total</div>
+                    <div class="metric-value text-azul-oceano">{{ area_total or '1.0' }}m²</div>
+                    <div class="text-sm text-gray-600">
+                        <i class="fas fa-map mr-1"></i>
+                        Registado no SIGPAC
+                    </div>
+                </div>
+                <div class="text-azul-oceano">
+                    <i class="fas fa-map text-3xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="metric-card receita card-agricultura">
+            <div class="flex items-center justify-between">
+                <div>
+                    <div class="metric-label">Receita Prevista</div>
+                    <div class="metric-value text-dourado-tradicional">€{{ receita_prevista or '0' }}</div>
+                    <div class="text-sm text-gray-600">
+                        <i class="fas fa-euro-sign mr-1"></i>
+                        Estimativa anual
+                    </div>
+                </div>
+                <div class="text-dourado-tradicional">
+                    <i class="fas fa-euro-sign text-3xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="metric-card tarefas card-agricultura">
+            <div class="flex items-center justify-between">
+                <div>
+                    <div class="metric-label">Tarefas Pendentes</div>
+                    <div class="metric-value text-vermelho-vinho">{{ tarefas_pendentes or 0 }}</div>
+                    <div class="text-sm text-gray-600">
+                        <i class="fas fa-tasks mr-1"></i>
+                        Próximos 7 dias
+                    </div>
+                </div>
+                <div class="text-vermelho-vinho">
+                    <i class="fas fa-tasks text-3xl"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Grid Principal -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Coluna Esquerda -->
+        <div class="lg:col-span-2 space-y-6">
+            <!-- Alertas Agrícolas -->
+            <div class="alerts-section card-portugal">
+                <div class="alerts-header">
+                    <h2 class="alerts-title h3-portugal">
+                        <i class="fas fa-bell text-dourado-tradicional mr-3"></i>
+                        Alertas Agrícolas
+                    </h2>
+                    <span class="alerts-count">{{ alertas_count or 1 }} não lidos</span>
+                </div>
+                
+                <div class="space-y-4">
+                    <div class="alert-item">
+                        <div class="alert-content">
+                            <div class="alert-title">
+                                <i class="fas fa-seedling text-verde-oliveira mr-2"></i>
+                                Oportunidades de Plantio - Agosto
+                            </div>
+                            <div class="alert-message">
+                                Este é o mês ideal para plantar: Cenoura. 
+                                Aproveite as condições favoráveis de Agosto para começar novas culturas!
+                            </div>
+                            <div class="alert-time">10/08, 21:07</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="text-center mt-4">
+                    <a href="/alertas" class="text-verde-agricultura hover:underline font-medium">
+                        Ver todos os alertas
+                    </a>
+                    <span class="mx-2">•</span>
+                    <button class="text-gray-500 hover:text-gray-700">
+                        Marcar todos como lidos
+                    </button>
+                </div>
+            </div>
+
+            <!-- Culturas Ativas -->
+            <div class="cultures-section card-portugal">
+                <div class="cultures-header">
+                    <h2 class="cultures-title h3-portugal">
+                        <i class="fas fa-seedling text-verde-oliveira mr-3"></i>
+                        Culturas Ativas
+                    </h2>
+                    <a href="/gestao/culturas/nova" class="btn-new-culture">
+                        <i class="fas fa-plus mr-2"></i>
+                        Nova Cultura
+                    </a>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Exemplo de cultura -->
+                    <div class="culture-card bg-gray-50 rounded-lg p-4 hover:shadow-md transition-shadow">
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="font-semibold text-verde-agricultura">
+                                <i class="fas fa-seedling mr-2"></i>
+                                Oliveiras
+                            </h3>
+                            <span class="badge-sucesso">Ativa</span>
+                        </div>
+                        <div class="space-y-2 text-sm">
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Área:</span>
+                                <span class="font-medium">0.5 hectares</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Plantio:</span>
+                                <span class="font-medium">Março 2023</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Próxima tarefa:</span>
+                                <span class="font-medium text-dourado-tradicional">Poda (Set)</span>
+                            </div>
+                        </div>
+                        <div class="mt-4 flex gap-2">
+                            <a href="/culturas/1" class="btn-sm-pt btn-primary-pt flex-1 text-center">
+                                Ver Detalhes
+                            </a>
+                            <button class="btn-sm-pt btn-outline-pt">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="text-center mt-6">
+                    <a href="/gestao/culturas" class="text-verde-agricultura hover:underline font-medium">
+                        Ver todas as culturas
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Coluna Direita -->
+        <div class="space-y-6">
+            <!-- Widget Clima IPMA -->
+            <div class="weather-widget card-clima">
+                <div class="weather-header">
+                    <h3 class="weather-title">
+                        <i class="fas fa-cloud-sun mr-2"></i>
+                        Clima
+                    </h3>
+                    <div class="flex items-center">
+                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Ctext x='10' y='15' text-anchor='middle' fill='white' font-size='12'%3EIPMA%3C/text%3E%3C/svg%3E" alt="IPMA" class="mr-1">
+                        <span class="text-xs opacity-75">Oficial</span>
+                    </div>
+                </div>
+                
+                <div class="weather-main">
+                    <div class="weather-icon">
+                        <i class="fas fa-sun"></i>
+                    </div>
+                    <div class="weather-temp">21°C</div>
+                    <div class="weather-location">Serta, Portugal</div>
+                    <div class="weather-feels">Sensação térmica 21°C</div>
+                </div>
+                
+                <div class="weather-details">
+                    <div class="weather-detail">
+                        <span><i class="fas fa-tint mr-1"></i>Umidade:</span>
+                        <span>55%</span>
+                    </div>
+                    <div class="weather-detail">
+                        <span><i class="fas fa-wind mr-1"></i>Vento:</span>
+                        <span>2.56 m/s</span>
+                    </div>
+                    <div class="weather-detail">
+                        <span><i class="fas fa-thermometer mr-1"></i>Pressão:</span>
+                        <span>1019 hPa</span>
+                    </div>
+                    <div class="weather-detail">
+                        <span><i class="fas fa-eye mr-1"></i>Visibilidade:</span>
+                        <span>10.0 km</span>
+                    </div>
+                </div>
+                
+                <div class="weather-updated">
+                    Atualizado: 10/08/2025, 21:39
+                </div>
+            </div>
+
+            <!-- Previsão dos Próximos Dias -->
+            <div class="forecast-section card-portugal">
+                <h3 class="forecast-title">
+                    <i class="fas fa-calendar-alt text-azul-oceano mr-2"></i>
+                    Previsão dos Próximos Dias
+                </h3>
+                
+                <div class="space-y-3">
+                    <div class="forecast-item">
+                        <div class="forecast-day font-medium">Hoje</div>
+                        <div class="forecast-weather">
+                            <i class="fas fa-sun text-dourado-tradicional"></i>
+                            <span class="forecast-temp">21°</span>
+                        </div>
+                    </div>
+                    <div class="forecast-item">
+                        <div class="forecast-day">Amanhã</div>
+                        <div class="forecast-weather">
+                            <i class="fas fa-cloud-sun text-azul-oceano"></i>
+                            <span class="forecast-temp">26°</span>
+                        </div>
+                    </div>
+                    <div class="forecast-item">
+                        <div class="forecast-day">Quarta</div>
+                        <div class="forecast-weather">
+                            <i class="fas fa-cloud-sun text-azul-oceano"></i>
+                            <span class="forecast-temp">23°</span>
+                        </div>
+                    </div>
+                    <div class="forecast-item">
+                        <div class="forecast-day">Quinta</div>
+                        <div class="forecast-weather">
+                            <i class="fas fa-sun text-dourado-tradicional"></i>
+                            <span class="forecast-temp">21°</span>
+                        </div>
+                    </div>
+                    <div class="forecast-item">
+                        <div class="forecast-day">Sexta</div>
+                        <div class="forecast-weather">
+                            <i class="fas fa-sun text-dourado-tradicional"></i>
+                            <span class="forecast-temp">25°</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="text-center mt-4">
+                    <a href="/clima/previsao" class="text-azul-oceano hover:underline font-medium">
+                        Ver previsão completa
+                    </a>
+                </div>
+            </div>
+
+            <!-- Próximas Tarefas -->
+            <div class="tasks-section card-portugal">
+                <div class="tasks-header">
+                    <h3 class="tasks-title">
+                        <i class="fas fa-tasks text-castanho-terra mr-2"></i>
+                        Próximas Tarefas
+                    </h3>
+                    <a href="/tarefas" class="tasks-link">Ver todas</a>
+                </div>
+                
+                <div class="no-tasks">
+                    <i class="fas fa-check-circle text-verde-agricultura text-3xl mb-3"></i>
+                    <p class="font-medium mb-2">Nenhuma tarefa pendente</p>
+                    <p class="text-sm">Todas as tarefas estão em dia!</p>
+                </div>
+            </div>
+
+            <!-- Links Rápidos -->
+            <div class="card-portugal">
+                <div class="card-header-pt">
+                    <h3 class="h4-portugal">
+                        <i class="fas fa-external-link-alt text-azul-oceano mr-2"></i>
+                        Links Úteis
+                    </h3>
+                </div>
+                <div class="card-body-pt">
+                    <div class="space-y-3">
+                        <a href="https://www.ipma.pt" target="_blank" 
+                           class="flex items-center p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                            <i class="fas fa-cloud text-azul-oceano mr-3"></i>
+                            <div>
+                                <div class="font-medium">IPMA</div>
+                                <div class="text-sm text-gray-600">Instituto Português do Mar e da Atmosfera</div>
+                            </div>
+                        </a>
+                        <a href="https://www.iniav.pt" target="_blank" 
+                           class="flex items-center p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                            <i class="fas fa-seedling text-verde-agricultura mr-3"></i>
+                            <div>
+                                <div class="font-medium">INIAV</div>
+                                <div class="text-sm text-gray-600">Instituto Nacional de Investigação Agrária</div>
+                            </div>
+                        </a>
+                        <a href="https://www.dgav.pt" target="_blank" 
+                           class="flex items-center p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                            <i class="fas fa-shield-alt text-verde-oliveira mr-3"></i>
+                            <div>
+                                <div class="font-medium">DGAV</div>
+                                <div class="text-sm text-gray-600">Direção-Geral de Alimentação e Veterinária</div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Scripts específicos do dashboard -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Animações de entrada
+    const cards = document.querySelectorAll('.metric-card');
+    cards.forEach((card, index) => {
+        setTimeout(() => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            card.style.transition = 'all 0.6s ease';
+            
+            setTimeout(() => {
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, 100);
+        }, index * 100);
+    });
+    
+    // Atualização automática do clima (simulada)
+    setInterval(() => {
+        const temp = document.querySelector('.weather-temp');
+        if (temp) {
+            const currentTemp = parseInt(temp.textContent);
+            const variation = Math.random() > 0.5 ? 1 : -1;
+            const newTemp = currentTemp + variation;
+            temp.textContent = newTemp + '°C';
+        }
+    }, 30000); // Atualiza a cada 30 segundos
+});
+</script>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Funcionalidades específicas do dashboard português
+console.log('🇵🇹 Dashboard AgroTech Portugal carregado');
+</script>
+{% endblock %}
+
