@@ -1,0 +1,285 @@
+/* ===== CORREÇÕES VISUAIS ESPECÍFICAS - AGTECH V2.0 ===== */
+
+/* Forçar fonte Inter em todos os elementos */
+* {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+}
+
+/* Melhorar cards de métricas */
+.metric-card {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%) !important;
+  border-radius: 16px !important;
+  padding: 24px !important;
+  border: 1px solid #e2e8f0 !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+  transition: all 0.3s ease !important;
+  margin-bottom: 16px !important;
+}
+
+.metric-card:hover {
+  transform: translateY(-4px) !important;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
+}
+
+/* Melhorar navegação da sidebar */
+.nav-link {
+  display: flex !important;
+  align-items: center !important;
+  padding: 12px 16px !important;
+  margin: 4px 8px !important;
+  border-radius: 12px !important;
+  color: #64748b !important;
+  text-decoration: none !important;
+  font-weight: 500 !important;
+  transition: all 0.2s ease !important;
+  font-size: 14px !important;
+}
+
+.nav-link:hover {
+  background: #f1f5f9 !important;
+  color: #16a34a !important;
+  transform: translateX(4px) !important;
+  text-decoration: none !important;
+}
+
+.nav-link.active {
+  background: linear-gradient(135deg, #16a34a 0%, #15803d 100%) !important;
+  color: white !important;
+  box-shadow: 0 4px 6px -1px rgba(22, 163, 74, 0.3) !important;
+}
+
+.nav-link i {
+  width: 20px !important;
+  text-align: center !important;
+  margin-right: 12px !important;
+}
+
+/* Melhorar header */
+.app-header {
+  background: linear-gradient(135deg, #16a34a 0%, #15803d 100%) !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+  padding: 16px 24px !important;
+}
+
+.app-header h1 {
+  font-size: 20px !important;
+  font-weight: 600 !important;
+  color: white !important;
+}
+
+/* Melhorar sidebar */
+.app-sidebar {
+  background: #ffffff !important;
+  border-right: 1px solid #e2e8f0 !important;
+  box-shadow: 2px 0 4px rgba(0, 0, 0, 0.05) !important;
+  width: 280px !important;
+}
+
+/* Melhorar cards gerais */
+.card {
+  background: #ffffff !important;
+  border-radius: 16px !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+  border: 1px solid #f1f5f9 !important;
+  transition: all 0.3s ease !important;
+  margin-bottom: 24px !important;
+}
+
+.card:hover {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+  transform: translateY(-2px) !important;
+}
+
+/* Melhorar grid do dashboard */
+.dashboard-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)) !important;
+  gap: 24px !important;
+  margin-bottom: 32px !important;
+}
+
+/* Melhorar tipografia */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Inter', sans-serif !important;
+  font-weight: 600 !important;
+  color: #1e293b !important;
+  line-height: 1.2 !important;
+}
+
+.text-2xl {
+  font-size: 24px !important;
+  font-weight: 700 !important;
+}
+
+.text-lg {
+  font-size: 18px !important;
+  font-weight: 600 !important;
+}
+
+.text-3xl {
+  font-size: 32px !important;
+  font-weight: 700 !important;
+}
+
+/* Melhorar cores dos ícones nas métricas */
+.text-green-600 {
+  color: #16a34a !important;
+}
+
+.text-blue-600 {
+  color: #2563eb !important;
+}
+
+.text-yellow-600 {
+  color: #d97706 !important;
+}
+
+.text-red-600 {
+  color: #dc2626 !important;
+}
+
+/* Melhorar widget do clima */
+.weather-widget {
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%) !important;
+  border-radius: 16px !important;
+  color: white !important;
+  box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.3) !important;
+}
+
+/* Melhorar alertas */
+.alert {
+  border-radius: 12px !important;
+  border-left: 4px solid !important;
+  padding: 20px !important;
+  margin-bottom: 16px !important;
+  background: #f0fdf4 !important;
+  border-left-color: #16a34a !important;
+}
+
+.alert h4 {
+  font-weight: 600 !important;
+  color: #15803d !important;
+  margin-bottom: 8px !important;
+}
+
+.alert p {
+  color: #166534 !important;
+  line-height: 1.5 !important;
+}
+
+/* Melhorar espaçamentos gerais */
+.app-content {
+  padding: 24px !important;
+  background: #f8fafc !important;
+  min-height: calc(100vh - 80px) !important;
+}
+
+/* Melhorar botão de tema */
+#theme-toggle {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  border-radius: 8px !important;
+  padding: 8px 12px !important;
+  color: white !important;
+  transition: all 0.2s ease !important;
+}
+
+#theme-toggle:hover {
+  background: rgba(255, 255, 255, 0.2) !important;
+  transform: scale(1.05) !important;
+}
+
+/* Responsividade mobile */
+@media (max-width: 768px) {
+  .app-sidebar {
+    position: fixed !important;
+    top: 80px !important;
+    left: -280px !important;
+    height: calc(100vh - 80px) !important;
+    z-index: 1000 !important;
+    transition: left 0.3s ease !important;
+  }
+  
+  .app-sidebar.open {
+    left: 0 !important;
+  }
+  
+  .app-content {
+    margin-left: 0 !important;
+    padding: 16px !important;
+  }
+  
+  .dashboard-grid {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+  
+  .metric-card {
+    padding: 20px !important;
+  }
+  
+  .app-header {
+    padding: 12px 16px !important;
+  }
+  
+  .app-header h1 {
+    font-size: 18px !important;
+  }
+}
+
+/* Animações suaves */
+.fade-in {
+  animation: fadeIn 0.5s ease-out !important;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Melhorar previsão do tempo */
+.card h3 {
+  display: flex !important;
+  align-items: center !important;
+  font-size: 18px !important;
+  font-weight: 600 !important;
+  margin-bottom: 16px !important;
+}
+
+.card h3 i {
+  margin-right: 8px !important;
+  color: #16a34a !important;
+}
+
+/* Overlay para mobile sidebar */
+.sidebar-overlay {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  background: rgba(0, 0, 0, 0.5) !important;
+  z-index: 999 !important;
+  display: none !important;
+}
+
+.sidebar-overlay.active {
+  display: block !important;
+}
+
+/* Melhorar user info no header */
+.app-header .flex.items-center.space-x-4 {
+  gap: 16px !important;
+}
+
+.app-header .text-white {
+  font-weight: 500 !important;
+  font-size: 14px !important;
+}
+

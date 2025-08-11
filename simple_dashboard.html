@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="light dark">
+    <meta name="theme-color" content="#16a34a">
+    <title>AgTech Portugal v2.0 - Dashboard</title>
+    
+    <!-- Tailwind CSS (Base) -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts - Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Custom CSS - V2.0 Enhanced (Override Tailwind) -->
+    <link rel="stylesheet" href="/static/css/design-system-v2.css">
+    <link rel="stylesheet" href="/static/css/components.css">
+    <link rel="stylesheet" href="/static/css/tailwind-overrides.css">
+    <link rel="stylesheet" href="/static/css/visual-fixes.css">
+    <link rel="stylesheet" href="/static/css/main.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center">
+                    <button id="sidebar-toggle" class="lg:hidden mr-4 text-white">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h1 class="text-xl font-semibold">
+                        <i class="fas fa-seedling mr-2"></i>
+                        AgTech Portugal
+                    </h1>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button id="theme-toggle" class="text-white hover:text-gray-200">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                    <div class="text-white">
+                        <span class="font-medium">Francis Rosa</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="app-main">
+            <!-- Sidebar -->
+            <aside class="app-sidebar">
+                <nav class="p-4">
+                    <ul class="space-y-2">
+                        <li>
+                            <a href="#" class="nav-link active">
+                                <i class="fas fa-tachometer-alt mr-3"></i>
+                                Dashboard
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="nav-link">
+                                <i class="fas fa-seedling mr-3"></i>
+                                Culturas
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="nav-link">
+                                <i class="fas fa-robot mr-3"></i>
+                                Agente IA
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="nav-link">
+                                <i class="fas fa-chart-bar mr-3"></i>
+                                Relatórios
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </aside>
+
+            <!-- Main Content -->
+            <main class="app-content">
+                <div class="p-6">
+                    <!-- Dashboard Header -->
+                    <div class="mb-6">
+                        <h2 class="text-2xl font-bold text-gray-900 mb-2">Visão Geral</h2>
+                        <p class="text-gray-600">Acompanhe o progresso das suas culturas</p>
+                    </div>
+
+                    <!-- Metrics Grid -->
+                    <div class="dashboard-grid mb-8 fade-in">
+                        <div class="metric-card">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm text-gray-600">Culturas Ativas</p>
+                                    <p class="text-3xl font-bold text-green-600">1</p>
+                                </div>
+                                <div class="text-green-600">
+                                    <i class="fas fa-seedling text-2xl"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="metric-card">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm text-gray-600">Área Total</p>
+                                    <p class="text-3xl font-bold text-blue-600">1.0m²</p>
+                                </div>
+                                <div class="text-blue-600">
+                                    <i class="fas fa-map text-2xl"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="metric-card">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm text-gray-600">Receita Prevista</p>
+                                    <p class="text-3xl font-bold text-yellow-600">€0</p>
+                                </div>
+                                <div class="text-yellow-600">
+                                    <i class="fas fa-euro-sign text-2xl"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="metric-card">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm text-gray-600">Tarefas Pendentes</p>
+                                    <p class="text-3xl font-bold text-red-600">0</p>
+                                </div>
+                                <div class="text-red-600">
+                                    <i class="fas fa-tasks text-2xl"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Content Grid -->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <!-- Alerts -->
+                        <div class="lg:col-span-2">
+                            <div class="card p-6">
+                                <div class="flex items-center justify-between mb-4">
+                                    <h3 class="text-lg font-semibold">
+                                        <i class="fas fa-bell mr-2"></i>
+                                        Alertas
+                                    </h3>
+                                    <span class="text-sm text-gray-500">1 não lidos</span>
+                                </div>
+                                <div class="alert alert-success">
+                                    <div class="flex items-start">
+                                        <i class="fas fa-info-circle mr-3 mt-1"></i>
+                                        <div>
+                                            <h4 class="font-medium">Oportunidades de Plantio - Agosto</h4>
+                                            <p class="text-sm mt-1">Este é o mês ideal para plantar: Cenoura. Aproveite as condições favoráveis de Agosto para começar novas culturas!</p>
+                                            <p class="text-xs text-gray-500 mt-2">10/08, 21:07</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Weather -->
+                        <div>
+                            <div class="weather-widget p-6 text-white">
+                                <div class="flex items-center justify-between mb-4">
+                                    <h3 class="text-lg font-semibold">
+                                        <i class="fas fa-cloud-sun mr-2"></i>
+                                        Clima
+                                    </h3>
+                                </div>
+                                <div class="text-center mb-4">
+                                    <div class="text-4xl mb-2">☀️</div>
+                                    <div class="text-2xl font-bold">21°C</div>
+                                    <div class="text-sm opacity-90">Serta, Portugal</div>
+                                    <div class="text-sm opacity-75">Sensação térmica 21°C</div>
+                                </div>
+                                <div class="space-y-2 text-sm">
+                                    <div class="flex justify-between">
+                                        <span>💧 Umidade:</span>
+                                        <span>55%</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span>💨 Vento:</span>
+                                        <span>2.56 m/s</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span>📊 Pressão:</span>
+                                        <span>1019 hPa</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span>👁️ Visibilidade:</span>
+                                        <span>10.0 km</span>
+                                    </div>
+                                </div>
+                                <div class="text-xs opacity-75 mt-4">
+                                    Atualizado: 10/08/2025, 21:39
+                                </div>
+                            </div>
+
+                            <!-- Weather Forecast -->
+                            <div class="card p-6 mt-6">
+                                <h3 class="text-lg font-semibold mb-4">
+                                    <i class="fas fa-calendar-alt mr-2"></i>
+                                    Previsão dos Próximos Dias
+                                </h3>
+                                <div class="space-y-3">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-sm">Hoje</span>
+                                        <div class="flex items-center">
+                                            <span class="mr-2">☀️</span>
+                                            <span class="text-sm">21°</span>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-sm">Amanhã</span>
+                                        <div class="flex items-center">
+                                            <span class="mr-2">⛅</span>
+                                            <span class="text-sm">20°</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- JavaScript - V2.0 Enhanced -->
+    <script src="/static/js/theme-manager.js"></script>
+    <script src="/static/js/loading-manager.js"></script>
+    <script src="/static/js/notification-system.js"></script>
+    <script src="/static/js/main.js"></script>
+
+    <script>
+        // Simple sidebar toggle for mobile
+        document.getElementById('sidebar-toggle')?.addEventListener('click', function() {
+            document.querySelector('.app-sidebar').classList.toggle('open');
+        });
+    </script>
+</body>
+</html>
+
