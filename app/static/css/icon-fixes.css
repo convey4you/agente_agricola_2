@@ -1,0 +1,265 @@
+/* ===== CORREÇÃO DE ÍCONES - AGTECH V2.0 ===== */
+
+/* Fallback para ícones quando Font Awesome não carrega */
+.icon-fallback {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  text-align: center;
+  line-height: 1;
+  font-style: normal;
+  font-weight: normal;
+  font-size: inherit;
+}
+
+/* Ícones de fallback usando Unicode/Emoji */
+.fa-seedling::before,
+.fas.fa-seedling::before {
+  content: "🌱" !important;
+  font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif !important;
+}
+
+.fa-tachometer-alt::before,
+.fas.fa-tachometer-alt::before {
+  content: "📊" !important;
+  font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif !important;
+}
+
+.fa-robot::before,
+.fas.fa-robot::before {
+  content: "🤖" !important;
+  font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif !important;
+}
+
+.fa-chart-bar::before,
+.fas.fa-chart-bar::before {
+  content: "📈" !important;
+  font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif !important;
+}
+
+.fa-bell::before,
+.fas.fa-bell::before {
+  content: "🔔" !important;
+  font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif !important;
+}
+
+.fa-cloud-sun::before,
+.fas.fa-cloud-sun::before {
+  content: "🌤️" !important;
+  font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif !important;
+}
+
+.fa-calendar-alt::before,
+.fas.fa-calendar-alt::before {
+  content: "📅" !important;
+  font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif !important;
+}
+
+.fa-map::before,
+.fas.fa-map::before {
+  content: "🗺️" !important;
+  font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif !important;
+}
+
+.fa-euro-sign::before,
+.fas.fa-euro-sign::before {
+  content: "💰" !important;
+  font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif !important;
+}
+
+.fa-tasks::before,
+.fas.fa-tasks::before {
+  content: "✅" !important;
+  font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif !important;
+}
+
+.fa-info-circle::before,
+.fas.fa-info-circle::before {
+  content: "ℹ️" !important;
+  font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif !important;
+}
+
+.fa-moon::before,
+.fas.fa-moon::before {
+  content: "🌙" !important;
+  font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif !important;
+}
+
+.fa-sun::before,
+.fas.fa-sun::before {
+  content: "☀️" !important;
+  font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif !important;
+}
+
+.fa-bars::before,
+.fas.fa-bars::before {
+  content: "☰" !important;
+  font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif !important;
+}
+
+.fa-chevron-down::before,
+.fas.fa-chevron-down::before {
+  content: "▼" !important;
+  font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif !important;
+}
+
+.fa-plus::before,
+.fas.fa-plus::before {
+  content: "➕" !important;
+  font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif !important;
+}
+
+.fa-sign-out-alt::before,
+.fas.fa-sign-out-alt::before {
+  content: "🚪" !important;
+  font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif !important;
+}
+
+.fa-user::before,
+.fas.fa-user::before {
+  content: "👤" !important;
+  font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif !important;
+}
+
+.fa-cog::before,
+.fas.fa-cog::before {
+  content: "⚙️" !important;
+  font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif !important;
+}
+
+.fa-refresh::before,
+.fas.fa-refresh::before,
+.fa-sync::before,
+.fas.fa-sync::before {
+  content: "🔄" !important;
+  font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif !important;
+}
+
+/* Garantir que os ícones tenham tamanho consistente */
+.fa, .fas, .far, .fal, .fab {
+  font-size: 1em !important;
+  line-height: 1 !important;
+  vertical-align: baseline !important;
+}
+
+/* Melhorar espaçamento dos ícones */
+.fa + span,
+.fas + span,
+.far + span,
+.fal + span,
+.fab + span {
+  margin-left: 0.5em !important;
+}
+
+/* Ícones no header */
+.app-header .fa,
+.app-header .fas {
+  color: white !important;
+  font-size: 1.1em !important;
+}
+
+/* Ícones na navegação */
+.nav-link .fa,
+.nav-link .fas {
+  width: 20px !important;
+  text-align: center !important;
+  margin-right: 12px !important;
+  font-size: 1em !important;
+}
+
+/* Ícones nos cards */
+.metric-card .fa,
+.metric-card .fas {
+  font-size: 1.5em !important;
+}
+
+/* Ícones nos alertas */
+.alert .fa,
+.alert .fas {
+  font-size: 1.2em !important;
+  margin-right: 8px !important;
+}
+
+/* Ícones no clima */
+.weather-widget .fa,
+.weather-widget .fas {
+  font-size: 1.1em !important;
+  margin-right: 8px !important;
+}
+
+/* Forçar carregamento de Font Awesome alternativo */
+@import url('https://use.fontawesome.com/releases/v6.0.0/css/all.css');
+
+/* Fallback adicional se CDN falhar */
+@font-face {
+  font-family: 'FontAwesome';
+  src: url('https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/fonts/fontawesome-webfont.woff2') format('woff2'),
+       url('https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/fonts/fontawesome-webfont.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* Garantir que os emojis sejam coloridos */
+.fa::before,
+.fas::before,
+.far::before,
+.fal::before,
+.fab::before {
+  font-variant-emoji: emoji !important;
+  text-rendering: auto !important;
+}
+
+/* Melhorar contraste dos ícones */
+.text-green-600 .fa,
+.text-green-600 .fas {
+  color: #16a34a !important;
+}
+
+.text-blue-600 .fa,
+.text-blue-600 .fas {
+  color: #2563eb !important;
+}
+
+.text-yellow-600 .fa,
+.text-yellow-600 .fas {
+  color: #d97706 !important;
+}
+
+.text-red-600 .fa,
+.text-red-600 .fas {
+  color: #dc2626 !important;
+}
+
+/* Animações para ícones */
+.fa-spin {
+  animation: fa-spin 2s infinite linear !important;
+}
+
+@keyframes fa-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Hover effects para ícones interativos */
+.nav-link:hover .fa,
+.nav-link:hover .fas {
+  transform: scale(1.1) !important;
+  transition: transform 0.2s ease !important;
+}
+
+/* Ícones responsivos */
+@media (max-width: 768px) {
+  .fa, .fas, .far, .fal, .fab {
+    font-size: 0.9em !important;
+  }
+  
+  .metric-card .fa,
+  .metric-card .fas {
+    font-size: 1.3em !important;
+  }
+}
+
