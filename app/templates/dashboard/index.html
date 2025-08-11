@@ -3,35 +3,40 @@
 {% block title %}Painel de Controlo - AgroTech Portugal{% endblock %}
 
 {% block content %}
-<div class="container mx-auto px-4 py-6">
+<div class="container mx-auto px-2 sm:px-4 py-4 sm:py-6">
+    <!-- Skeleton para Hero Section (desaparece quando o conteúdo carrega) -->
+    <div class="skeleton-loader mb-8 rounded-lg h-56 sm:h-64"></div>
+    
     <!-- Hero Section Português -->
-    <div class="hero-section-portugal mb-8 fade-in-up">
-        <div class="bg-gradient-to-r from-verde-agricultura to-verde-oliveira rounded-lg p-8 text-white">
+    <div class="hero-section-portugal mb-6 sm:mb-8 animate-slide-up">
+        <div class="bg-gradient-to-r from-verde-agricultura to-verde-oliveira rounded-xl p-4 sm:p-6 md:p-8 text-white shadow-lg">
             <div class="flex flex-col lg:flex-row items-center justify-between">
                 <div class="lg:w-2/3 mb-6 lg:mb-0">
-                    <h1 class="text-3xl lg:text-4xl font-bold mb-4">
+                    <h1 class="text-responsive-xl sm:text-responsive-2xl font-bold mb-2 sm:mb-4">
                         Bem-vindo ao AgroTech Portugal
                     </h1>
-                    <p class="text-lg opacity-90 mb-6">
+                    <p class="text-responsive-sm sm:text-responsive-base opacity-90 mb-4 sm:mb-6">
                         Plataforma digital especializada para a agricultura familiar portuguesa. 
                         Integração oficial com IPMA e conformidade com o Estatuto da Agricultura Familiar.
                     </p>
-                    <div class="flex flex-wrap gap-4">
-                        <a href="/gestao/culturas" class="btn-primary-pt bg-white text-verde-agricultura hover:bg-gray-100">
+                    <div class="flex flex-wrap gap-2 sm:gap-4">
+                        <a href="/gestao/culturas" class="btn-touch bg-white text-verde-agricultura hover:bg-gray-100 shadow-md">
                             <i class="fas fa-seedling mr-2"></i>
-                            Gerir Culturas
+                            <span class="text-responsive-sm">Gerir Culturas</span>
                         </a>
-                        <a href="/clima/previsao" class="btn-outline-pt border-white text-white hover:bg-white hover:text-verde-agricultura">
+                        <a href="/clima/previsao" class="btn-touch border border-white text-white hover:bg-white hover:text-verde-agricultura">
                             <i class="fas fa-cloud-sun mr-2"></i>
-                            Ver Previsão IPMA
+                            <span class="text-responsive-sm">Ver Previsão</span>
                         </a>
                     </div>
                 </div>
-                <div class="lg:w-1/3 text-center">
-                    <div class="bg-white bg-opacity-20 rounded-lg p-6">
-                        <i class="fas fa-certificate text-4xl mb-3"></i>
-                        <h3 class="font-semibold mb-2">Certificado IPMA</h3>
-                        <p class="text-sm opacity-90">Dados meteorológicos oficiais</p>
+                <div class="w-full lg:w-1/3 text-center mt-6 lg:mt-0">
+                    <div class="bg-white bg-opacity-20 backdrop-filter backdrop-blur-sm rounded-xl p-4 sm:p-6 shadow-inner transform transition-transform hover:scale-105">
+                        <div class="flex items-center justify-center w-16 h-16 mx-auto rounded-full bg-white bg-opacity-30 mb-3">
+                            <i class="fas fa-certificate text-3xl text-white"></i>
+                        </div>
+                        <h3 class="font-semibold mb-1 text-responsive-base">Certificado IPMA</h3>
+                        <p class="text-xs sm:text-sm opacity-90">Dados meteorológicos oficiais</p>
                     </div>
                 </div>
             </div>
@@ -39,74 +44,197 @@
     </div>
 
     <!-- Métricas Principais -->
-    <div class="dashboard-metrics mb-8 slide-in-right">
-        <div class="metric-card culturas card-agricultura">
-            <div class="flex items-center justify-between">
-                <div>
-                    <div class="metric-label">Culturas Ativas</div>
-                    <div class="metric-value text-verde-agricultura">{{ culturas_ativas or 1 }}</div>
-                    <div class="text-sm text-gray-600">
-                        <i class="fas fa-seedling mr-1"></i>
-                        Oliveiras, Vinhas, Hortícolas
+    <div class="grid-mobile mb-6 sm:mb-8 gap-3 sm:gap-4 animate-fade-in">
+        <!-- Card Culturas -->
+        <div class="card-mobile bg-white shadow-sm hover:shadow rounded-xl overflow-hidden border-l-4 border-verde-agricultura will-change-transform">
+            <div class="flex items-center justify-between p-4 sm:p-5">
+                <div class="flex items-center">
+                    <div class="rounded-lg bg-green-50 p-3 mr-4">
+                        <i class="fas fa-seedling text-verde-agricultura text-xl"></i>
+                    </div>
+                    <div>
+                        <div class="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Culturas Ativas</div>
+                        <div class="flex items-center">
+                            <span class="text-2xl font-bold text-gray-900 mr-2">{{ culturas_ativas or 1 }}</span>
+                            <span class="text-xs px-2 py-1 rounded-full bg-green-100 text-green-800">
+                                <i class="fas fa-arrow-up text-xs mr-1"></i>
+                                <span>Saudáveis</span>
+                            </span>
+                        </div>
                     </div>
                 </div>
-                <div class="text-verde-agricultura">
-                    <i class="fas fa-seedling text-3xl"></i>
+                <div class="hidden sm:block">
+                    <a href="/gestao/culturas" class="text-verde-agricultura hover:text-verde-oliveira">
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="px-4 py-3 bg-gray-50 text-xs text-gray-600">
+                <span class="inline-block mr-3"><i class="fas fa-leaf mr-1"></i>Oliveiras</span>
+                <span class="inline-block mr-3"><i class="fas fa-wine-glass-alt mr-1"></i>Vinhas</span>
+                <span class="inline-block"><i class="fas fa-carrot mr-1"></i>Hortícolas</span>
+            </div>
+        </div>
+
+        <!-- Card Área Total -->
+        <div class="card-mobile bg-white shadow-sm hover:shadow rounded-xl overflow-hidden border-l-4 border-azul-oceano will-change-transform">
+            <div class="flex items-center justify-between p-4 sm:p-5">
+                <div class="flex items-center">
+                    <div class="rounded-lg bg-blue-50 p-3 mr-4">
+                        <i class="fas fa-map text-azul-oceano text-xl"></i>
+                    </div>
+                    <div>
+                        <div class="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Área Total</div>
+                        <div class="flex items-center">
+                            <span class="text-2xl font-bold text-gray-900 mr-2">{{ area_total or '1.0' }}m²</span>
+                            <span class="text-xs px-2 py-1 rounded-full bg-blue-100 text-blue-800">
+                                <i class="fas fa-check text-xs mr-1"></i>
+                                <span>Verificado</span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="hidden sm:block">
+                    <a href="/propriedades" class="text-azul-oceano hover:text-blue-700">
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="px-4 py-3 bg-gray-50 text-xs text-gray-600">
+                <span><i class="fas fa-map-marker-alt mr-1"></i>Registado no SIGPAC</span>
+            </div>
+        </div>
+
+        <!-- Card Receita -->
+        <div class="card-mobile bg-white shadow-sm hover:shadow rounded-xl overflow-hidden border-l-4 border-dourado-tradicional will-change-transform">
+            <div class="flex items-center justify-between p-4 sm:p-5">
+                <div class="flex items-center">
+                    <div class="rounded-lg bg-yellow-50 p-3 mr-4">
+                        <i class="fas fa-euro-sign text-dourado-tradicional text-xl"></i>
+                    </div>
+                    <div>
+                        <div class="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Receita Prevista</div>
+                        <div class="flex items-center">
+                            <span class="text-2xl font-bold text-gray-900 mr-2">€{{ receita_prevista or '0' }}</span>
+                            <span class="text-xs px-2 py-1 rounded-full bg-yellow-100 text-yellow-800">
+                                <i class="fas fa-chart-line text-xs mr-1"></i>
+                                <span>Estimativa</span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="hidden sm:block">
+                    <a href="/financeiro" class="text-dourado-tradicional hover:text-yellow-600">
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="px-4 py-3 bg-gray-50 text-xs text-gray-600">
+                <span><i class="fas fa-calendar mr-1"></i>Estimativa anual</span>
+            </div>
+        </div>
+
+        <!-- Card Tarefas -->
+        <div class="card-mobile bg-white shadow-sm hover:shadow rounded-xl overflow-hidden border-l-4 border-vermelho-vinho will-change-transform">
+            <div class="flex items-center justify-between p-4 sm:p-5">
+                <div class="flex items-center">
+                    <div class="rounded-lg bg-red-50 p-3 mr-4">
+                        <i class="fas fa-tasks text-vermelho-vinho text-xl"></i>
+                    </div>
+                    <div>
+                        <div class="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Tarefas Pendentes</div>
+                        <div class="flex items-center">
+                            <span class="text-2xl font-bold text-gray-900 mr-2">{{ tarefas_pendentes or 0 }}</span>
+                            <span class="text-xs px-2 py-1 rounded-full bg-red-100 text-red-800">
+                                <i class="fas fa-clock text-xs mr-1"></i>
+                                <span>Próximos 7 dias</span>
+                            </span>
+                        </div>
+                </div>
+                <div class="hidden sm:block">
+                    <a href="/tarefas" class="text-vermelho-vinho hover:text-red-700">
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="px-4 py-3 bg-gray-50 text-xs text-gray-600 flex justify-between items-center">
+                <span><i class="fas fa-calendar-check mr-1"></i>Próxima: Rega (hoje)</span>
+                <button class="text-vermelho-vinho hover:underline">Ver todas</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Previsão do tempo e alertas -->
+    <div class="flex flex-col lg:flex-row gap-4 mb-6 sm:mb-8">
+        <!-- Previsão do tempo -->
+        <div class="lg:w-2/3">
+            <div class="card-mobile bg-white rounded-xl shadow-sm p-4 sm:p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-responsive-lg font-semibold flex items-center">
+                        <i class="fas fa-cloud-sun text-dourado-tradicional mr-2"></i>
+                        Previsão IPMA
+                    </h2>
+                    <button class="btn-touch bg-green-50 hover:bg-green-100 text-verde-agricultura rounded-full w-10 h-10 flex items-center justify-center">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                </div>
+
+                <!-- Versão Mobile da Previsão -->
+                <div class="overflow-x-auto no-scrollbar pb-2">
+                    <div class="flex space-x-4">
+                        {% for i in range(5) %}
+                        <div class="weather-day-mobile flex-shrink-0 w-24 text-center bg-blue-50 rounded-lg p-3">
+                            <div class="text-xs font-medium mb-1">{{ (hoje + i)|default('Hoje') }}</div>
+                            <div class="text-center mb-1">
+                                <i class="fas fa-sun text-2xl text-dourado-tradicional"></i>
+                            </div>
+                            <div class="text-lg font-bold">{{ 18 + i }}°C</div>
+                            <div class="text-xs">Céu limpo</div>
+                        </div>
+                        {% endfor %}
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="metric-card area card-agricultura">
-            <div class="flex items-center justify-between">
-                <div>
-                    <div class="metric-label">Área Total</div>
-                    <div class="metric-value text-azul-oceano">{{ area_total or '1.0' }}m²</div>
-                    <div class="text-sm text-gray-600">
-                        <i class="fas fa-map mr-1"></i>
-                        Registado no SIGPAC
+        <!-- Alertas Meteorológicos -->
+        <div class="lg:w-1/3">
+            <div class="card-mobile bg-white rounded-xl shadow-sm p-4 sm:p-6 h-full">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-responsive-lg font-semibold flex items-center">
+                        <i class="fas fa-exclamation-triangle text-vermelho-vinho mr-2"></i>
+                        Alertas
+                    </h2>
+                    <span class="badge-atencao">2 novos</span>
+                </div>
+                
+                <div class="space-y-3">
+                    <div class="alert-item flex items-start p-2 rounded-lg bg-yellow-50 border-l-4 border-yellow-400">
+                        <div class="mr-3 mt-1">
+                            <i class="fas fa-thermometer-high text-yellow-500"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-sm font-medium">Temperatura alta</h4>
+                            <p class="text-xs text-gray-600">Aumente a rega das suas culturas</p>
+                        </div>
                     </div>
-                </div>
-                <div class="text-azul-oceano">
-                    <i class="fas fa-map text-3xl"></i>
-                </div>
-            </div>
-        </div>
-
-        <div class="metric-card receita card-agricultura">
-            <div class="flex items-center justify-between">
-                <div>
-                    <div class="metric-label">Receita Prevista</div>
-                    <div class="metric-value text-dourado-tradicional">€{{ receita_prevista or '0' }}</div>
-                    <div class="text-sm text-gray-600">
-                        <i class="fas fa-euro-sign mr-1"></i>
-                        Estimativa anual
+                    
+                    <div class="alert-item flex items-start p-2 rounded-lg bg-blue-50 border-l-4 border-blue-400">
+                        <div class="mr-3 mt-1">
+                            <i class="fas fa-cloud-rain text-blue-500"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-sm font-medium">Chuva prevista</h4>
+                            <p class="text-xs text-gray-600">Amanhã • 15mm previstos</p>
+                        </div>
                     </div>
-                </div>
-                <div class="text-dourado-tradicional">
-                    <i class="fas fa-euro-sign text-3xl"></i>
-                </div>
-            </div>
-        </div>
-
-        <div class="metric-card tarefas card-agricultura">
-            <div class="flex items-center justify-between">
-                <div>
-                    <div class="metric-label">Tarefas Pendentes</div>
-                    <div class="metric-value text-vermelho-vinho">{{ tarefas_pendentes or 0 }}</div>
-                    <div class="text-sm text-gray-600">
-                        <i class="fas fa-tasks mr-1"></i>
-                        Próximos 7 dias
-                    </div>
-                </div>
-                <div class="text-vermelho-vinho">
-                    <i class="fas fa-tasks text-3xl"></i>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Grid Principal -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
         <!-- Coluna Esquerda -->
         <div class="lg:col-span-2 space-y-6">
             <!-- Alertas Agrícolas -->
@@ -361,7 +489,7 @@
 </div>
 
 <!-- Scripts específicos do dashboard -->
-<script>
+<script nonce="{{ g.csp_nonce if g.csp_nonce else 'default' }}">
 document.addEventListener('DOMContentLoaded', function() {
     // Animações de entrada
     const cards = document.querySelectorAll('.metric-card');
@@ -393,7 +521,7 @@ document.addEventListener('DOMContentLoaded', function() {
 {% endblock %}
 
 {% block scripts %}
-<script>
+<script nonce="{{ g.csp_nonce if g.csp_nonce else 'default' }}">
 // Funcionalidades específicas do dashboard português
 console.log('🇵🇹 Dashboard AgroTech Portugal carregado');
 </script>

@@ -75,15 +75,15 @@ class SecurityMiddleware:
     def _add_security_headers(self, response):
         """Adiciona headers de segurança à resposta"""
         
-        # Content Security Policy - CORREÇÃO CSP para Service Worker
+        # Content Security Policy - Implementação segura com nonce
         nonce = getattr(g, 'csp_nonce', 'default')
         csp_policy = (
             f"default-src 'self'; "
-            f"script-src 'self' 'nonce-{nonce}' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; "
-            f"style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://fonts.googleapis.com; "
+            f"script-src 'self' 'nonce-{nonce}' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://maxcdn.bootstrapcdn.com; "
+            f"style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://fonts.googleapis.com https://maxcdn.bootstrapcdn.com; "
             f"img-src 'self' data: https:; "
-            f"font-src 'self' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://fonts.googleapis.com https://fonts.gstatic.com; "
-            f"connect-src 'self' https://api.openweathermap.org https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://fonts.googleapis.com https://fonts.gstatic.com; "
+            f"font-src 'self' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://fonts.googleapis.com https://fonts.gstatic.com https://maxcdn.bootstrapcdn.com; "
+            f"connect-src 'self' https://api.openweathermap.org https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://fonts.googleapis.com https://fonts.gstatic.com https://maxcdn.bootstrapcdn.com; "
             f"frame-ancestors 'none'; "
             f"base-uri 'self'; "
             f"form-action 'self'"

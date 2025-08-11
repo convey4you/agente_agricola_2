@@ -2,21 +2,24 @@
 <html lang="pt-PT" class="typography-portugal">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="color-scheme" content="light dark">
     <meta name="theme-color" content="#2E7D32">
     <meta name="description" content="AgroTech Portugal - Plataforma digital para agricultura familiar portuguesa">
     <meta name="keywords" content="agricultura familiar, Portugal, tecnologia agrícola, IPMA, olivicultura, viticultura">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
     <title>{% block title %}AgroTech Portugal - Inovação para a Agricultura Familiar{% endblock %}</title>
     
     <!-- Tailwind CSS (Base) -->
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="https://use.fontawesome.com/releases/v6.0.0/css/all.css" rel="stylesheet">
-    <!-- Google Fonts - Inter -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Google Fonts - Inter (carregada via font-loader.js) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" media="print">
     
     <!-- Sistema de Design Português -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/portugal-design-system.css') }}">
@@ -28,51 +31,56 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/icon-fixes.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/visual-improvements.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/mobile-first.css') }}">
     
     <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+    <link rel="apple-touch-icon" href="{{ url_for('static', filename='icons/apple-touch-icon.png') }}">
+    
+    <!-- Scripts de Otimização -->
+    <script nonce="{{ g.csp_nonce if g.csp_nonce else 'default' }}" src="{{ url_for('static', filename='js/mobile-optimizations.js') }}" defer></script>
     
     {% block head %}{% endblock %}
 </head>
-<body class="typography-portugal">
+<body class="typography-portugal has-bottom-nav">
     <div class="app-container">
         <!-- Header Português -->
-        <header class="navbar-portugal">
-            <div class="container mx-auto px-4">
-                <div class="flex justify-between items-center">
+        <header class="navbar-portugal sticky top-0 z-50">
+            <div class="container mx-auto px-2 sm:px-4">
+                <div class="flex justify-between items-center h-16">
                     <div class="flex items-center">
-                        <button id="sidebar-toggle" class="nav-icon-pt mr-4 lg:hidden text-white">
+                        <button id="sidebar-toggle" class="nav-icon-pt mr-3 lg:hidden text-white focus:outline-none focus:ring-2 focus:ring-green-300 rounded-md p-2" aria-label="Menu principal">
                             <i class="fas fa-bars"></i>
                         </button>
                         <a href="{{ url_for('dashboard.index') if current_user.is_authenticated else url_for('auth.login') }}" 
-                           class="navbar-brand-pt">
+                           class="navbar-brand-pt text-base sm:text-lg truncate max-w-[200px]">
                             🌱 AgroTech Portugal
                         </a>
-                        <div class="ml-4 hidden md:flex items-center">
-                            <span class="badge-sucesso">Integração IPMA</span>
+                        <div class="ml-2 sm:ml-4 hidden md:flex items-center">
+                            <span class="badge-sucesso text-xs">Integração IPMA</span>
                         </div>
                     </div>
                     
-                    <div class="flex items-center space-x-4">
+                    <div class="flex items-center space-x-2 sm:space-x-4">
                         <!-- Widget Clima Rápido -->
                         <div class="hidden md:flex items-center text-white bg-white bg-opacity-20 rounded-lg px-3 py-1">
                             <i class="fas fa-cloud-sun mr-2"></i>
-                            <span class="text-sm">23°C • Serta</span>
+                            <span class="text-xs sm:text-sm">23°C • Serta</span>
                         </div>
                         
                         <!-- Toggle Dark Mode -->
-                        <button id="theme-toggle" class="text-white hover:text-green-200 p-2 rounded-lg transition-colors" 
+                        <button id="theme-toggle" class="text-white hover:text-green-200 p-2 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-green-300" 
                                 aria-label="Alternar tema escuro/claro">
                             <i class="fas fa-moon" id="theme-icon"></i>
                         </button>
                         
                         {% if current_user.is_authenticated %}
                             <div class="relative dropdown-portugal">
-                                <button class="dropdown-trigger-pt text-white hover:text-green-200">
-                                    <i class="fas fa-user mr-2"></i>
-                                    <span class="hidden md:inline">{{ current_user.nome_completo or current_user.email }}</span>
-                                    <i class="fas fa-chevron-down text-sm ml-1"></i>
+                                <button class="dropdown-trigger-pt text-white hover:text-green-200 focus:outline-none focus:ring-2 focus:ring-green-300 rounded-md p-2">
+                                    <i class="fas fa-user mr-1 sm:mr-2"></i>
+                                    <span class="hidden md:inline text-xs sm:text-sm truncate max-w-[120px]">{{ current_user.nome_completo or current_user.email }}</span>
+                                    <i class="fas fa-chevron-down text-xs ml-1"></i>
                                 </button>
-                                <div class="dropdown-menu-pt">
+                                <div class="dropdown-menu-pt right-0 mt-2 w-48 origin-top-right rounded-md shadow-lg">
                                     <a href="#" class="dropdown-item-pt">
                                         <i class="fas fa-user"></i>
                                         Perfil
@@ -98,37 +106,43 @@
             {% if current_user.is_authenticated %}
             <!-- Sidebar Portuguesa -->
             <aside class="app-sidebar bg-white shadow-lg">
-                <nav class="sidebar-nav p-4" role="navigation" aria-label="Navegação principal">
-                    <ul class="nav-list space-y-2">
+                <nav class="sidebar-nav p-2 sm:p-4" role="navigation" aria-label="Navegação principal">
+                    <div class="flex justify-between items-center mb-6 px-2">
+                        <h2 class="text-base font-semibold text-gray-800">Menu Principal</h2>
+                        <button class="sidebar-close-btn lg:hidden text-gray-600 focus:outline-none" aria-label="Fechar menu">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <ul class="nav-list space-y-1">
                         <li class="nav-item">
                             <a href="{{ url_for('dashboard.index') }}" 
-                               class="nav-link-pt {{ 'active' if request.endpoint == 'dashboard.index' }}">
-                                <i class="nav-icon-pt fas fa-home text-verde-agricultura"></i>
-                                <span>Início</span>
+                               class="nav-link-pt {{ 'active' if request.endpoint == 'dashboard.index' }} flex items-center py-2 px-3 rounded-md transition-all">
+                                <i class="nav-icon-pt fas fa-home text-verde-agricultura mr-3"></i>
+                                <span class="text-sm">Início</span>
                             </a>
                         </li>
                         
                         <li class="nav-item">
                             <div class="dropdown-portugal">
-                                <button class="dropdown-trigger-pt nav-link-pt w-full text-left justify-between" 
+                                <button class="dropdown-trigger-pt nav-link-pt w-full text-left justify-between py-2 px-3 rounded-md transition-all" 
                                         aria-haspopup="true" aria-expanded="false">
                                     <div class="flex items-center">
-                                        <i class="nav-icon-pt fas fa-cloud-sun text-azul-oceano"></i>
-                                        <span>Central Climática</span>
+                                        <i class="nav-icon-pt fas fa-cloud-sun text-azul-oceano mr-3"></i>
+                                        <span class="text-sm">Central Climática</span>
                                     </div>
-                                    <i class="fas fa-chevron-down text-sm"></i>
+                                    <i class="fas fa-chevron-down text-xs"></i>
                                 </button>
-                                <div class="dropdown-menu-pt">
-                                    <a href="/clima/previsao" class="dropdown-item-pt">
-                                        <i class="fas fa-sun text-dourado-tradicional"></i>
+                                <div class="dropdown-menu-pt ml-8 mt-1 space-y-1">
+                                    <a href="/clima/previsao" class="dropdown-item-pt flex items-center py-2 px-3 rounded-md transition-all text-sm">
+                                        <i class="fas fa-sun text-dourado-tradicional mr-2 w-5"></i>
                                         Previsão IPMA
                                     </a>
-                                    <a href="/clima/alertas" class="dropdown-item-pt">
-                                        <i class="fas fa-exclamation-triangle text-vermelho-vinho"></i>
+                                    <a href="/clima/alertas" class="dropdown-item-pt flex items-center py-2 px-3 rounded-md transition-all text-sm">
+                                        <i class="fas fa-exclamation-triangle text-vermelho-vinho mr-2 w-5"></i>
                                         Alertas Meteorológicos
                                     </a>
-                                    <a href="/clima/historico" class="dropdown-item-pt">
-                                        <i class="fas fa-chart-line text-azul-oceano"></i>
+                                    <a href="/clima/historico" class="dropdown-item-pt flex items-center py-2 px-3 rounded-md transition-all text-sm">
+                                        <i class="fas fa-chart-line text-azul-oceano mr-2 w-5"></i>
                                         Dados Históricos
                                     </a>
                                 </div>
@@ -268,12 +282,13 @@
     </div>
 
     <!-- JavaScript - V2.0 Enhanced -->
-    <script src="{{ url_for('static', filename='js/icon-fallback.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/theme-manager.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/loading-manager.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/notification-system.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/portugal-interactions.js') }}"></script>
+    <script nonce="{{ g.csp_nonce if g.csp_nonce else 'default' }}" src="{{ url_for('static', filename='js/icon-fallback.js') }}"></script>
+    <script nonce="{{ g.csp_nonce if g.csp_nonce else 'default' }}" src="{{ url_for('static', filename='js/theme-manager.js') }}"></script>
+    <script nonce="{{ g.csp_nonce if g.csp_nonce else 'default' }}" src="{{ url_for('static', filename='js/loading-manager.js') }}"></script>
+    <script nonce="{{ g.csp_nonce if g.csp_nonce else 'default' }}" src="{{ url_for('static', filename='js/notification-system.js') }}"></script>
+    <script nonce="{{ g.csp_nonce if g.csp_nonce else 'default' }}" src="{{ url_for('static', filename='js/font-loader.js') }}"></script>
+    <script nonce="{{ g.csp_nonce if g.csp_nonce else 'default' }}" src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script nonce="{{ g.csp_nonce if g.csp_nonce else 'default' }}" src="{{ url_for('static', filename='js/portugal-interactions.js') }}"></script>
     {% block scripts %}{% endblock %}
 
     <!-- Modal de Logout Português -->
@@ -299,6 +314,31 @@
             </div>
         </div>
     </div>
+    
+    <!-- Navegação inferior para mobile -->
+    {% if current_user.is_authenticated %}
+    <nav class="bottom-nav lg:hidden safe-padding-bottom">
+        <a href="{{ url_for('dashboard.index') }}" class="bottom-nav-item {{ 'active' if request.endpoint == 'dashboard.index' }}">
+            <i class="bottom-nav-icon fas fa-home"></i>
+            <span class="bottom-nav-label">Início</span>
+        </a>
+        <a href="/clima/previsao" class="bottom-nav-item">
+            <i class="bottom-nav-icon fas fa-cloud-sun"></i>
+            <span class="bottom-nav-label">Clima</span>
+        </a>
+        <a href="/culturas" class="bottom-nav-item">
+            <i class="bottom-nav-icon fas fa-seedling"></i>
+            <span class="bottom-nav-label">Culturas</span>
+        </a>
+        <a href="/tarefas" class="bottom-nav-item">
+            <i class="bottom-nav-icon fas fa-tasks"></i>
+            <span class="bottom-nav-label">Tarefas</span>
+        </a>
+        <a href="#" class="bottom-nav-item" id="more-menu-btn">
+            <i class="bottom-nav-icon fas fa-ellipsis-h"></i>
+            <span class="bottom-nav-label">Mais</span>
+        </a>
+    </nav>
+    {% endif %}
 </body>
 </html>
-
